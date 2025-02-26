@@ -91,7 +91,7 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
                 let { idDepartamento, ...datosModificados } = data;
 
                 datosModificados = { ...data, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idEmpresa: parseInt(data.idEmpresa.toString()), idRol: parseInt(data.idRol.toString()), estadoUsuario: true, claveUsuario: watch('numeroDocumentoUsuario') };
-                
+
                 const respuesta = await axios.put(`/api/usuarios/${idUsuario}`, datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
@@ -110,7 +110,7 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response) {
                 // Capturar el mensaje de error del backend
-                const mensajeError = error.response.data?.message || idUsuario ? "Error al actualizar el usuario" : "Error al registrar el usuario";
+                const mensajeError = error.response.data?.message;
                 setSuccess(null);
                 setError(mensajeError);
                 console.error("Error de Axios:", mensajeError, error);
@@ -210,16 +210,8 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
                 </form>
 
                 {/* Notificaciones */}
-                {error && (
-                    <div className="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded-lg shadow-md">
-                        {error}
-                    </div>
-                )}
-                {success && (
-                    <div className="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md">
-                        {success}
-                    </div>
-                )}
+                {error && <Notificacion type="error" message={error} />}
+                {success && <Notificacion type="success" message={success} />}
             </div>
         </section>
     )

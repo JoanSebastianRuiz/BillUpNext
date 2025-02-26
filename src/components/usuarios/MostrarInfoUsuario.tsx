@@ -11,14 +11,23 @@ const MostrarInfoUsuario = ({ usuario }: { usuario: UsuarioResponseDTO }) => {
 
             <div className="grid grid-cols-2 gap-4 text-gray-800 dark:text-gray-300">
                 <p><span className="font-semibold">Tipo de documento:</span> {tiposDocumento.find(td => td.idTipoDocumento === usuario.idTipoDocumento)?.nombreTipoDocumento}</p>
+
                 <p><span className="font-semibold">Documento:</span> {usuario.numeroDocumentoUsuario}</p>
+
                 <p><span className="font-semibold">Empresa:</span> {empresas.find(e=>e.idEmpresa === usuario.idEmpresa)?.nombreEmpresa}</p>
+
                 <p><span className="font-semibold">Rol:</span> {roles.find(r=>r.idRol === usuario.idRol)?.nombreRol}</p>
+
                 <p><span className="font-semibold">Teléfono:</span> {usuario.telefonoUsuario}</p>
+
                 <p><span className="font-semibold">Correo:</span> {usuario.correoUsuario}</p>
+
                 <p><span className="font-semibold">Dirección:</span> {usuario.direccionUsuario}</p>
+
                 <p><span className="font-semibold">Departamento:</span> {departamentos.find(d=>d.idDepartamento === usuario.idDepartamento)?.nombreDepartamento}</p>
+
                 <p><span className="font-semibold">Municipio:</span> {municipios.find(m=>m.idMunicipio === usuario.idMunicipio)?.nombreMunicipio}</p>
+                
                 <p>
                     <span className="font-semibold">Estado:</span>
                     <span className={`ml-1 px-2 py-1 text-xs font-bold rounded-md ${usuario.estadoUsuario ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
