@@ -3,8 +3,7 @@
 import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Pencil, Trash2, Eye, X, PlusCircle, XCircle } from "lucide-react";
-import ReactModal from "react-modal";
+import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
 import MostrarInfoUsuario from "@/components/usuarios/MostrarInfoUsuario";
 import RegistrarUsuario from "@/components/usuarios/RegistrarUsuario";
 import { useUsuarioContext } from '@/context/UsuarioContext';
@@ -23,6 +22,7 @@ import SelectFiltro from "@/components/filtros/SelectFiltro";
 import UsuarioCard from "@/components/usuarios/UsuarioCard";
 import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAccionCard";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
+import Modal from "@/components/modal/Modal";
 
 
 const UsuariosPage: React.FC = () => {
@@ -215,7 +215,6 @@ const UsuariosPage: React.FC = () => {
         filtrarUsuarios();
     }
 
-
     return (
         <div className="max-w-4xl mx-auto p-6">
             <ContenedorFiltros title="Usuarios">
@@ -353,69 +352,21 @@ const UsuariosPage: React.FC = () => {
             </div >
 
             {/* Modal para mostrar la información de un usuario*/}
-            < ReactModal
-                isOpen={modalInfo}
-                onRequestClose={() => setModalInfo(false)}
-                ariaHideApp={false}
-                className="fixed inset-0 flex items-center justify-center z-50"
-                overlayClassName="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
-            >
-                <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 w-full max-w-md relative animate-fadeIn">
-                    {/* Botón para cerrar con icono X */}
-                    <button
-                        onClick={() => setModalInfo(false)}
-                        className="absolute top-3 right-3 p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-                    >
-                        <X className="w-5 h-5 text-gray-800 dark:text-gray-300" />
-                    </button>
-
-                    {usuarioSeleccionado && <MostrarInfoUsuario usuario={usuarioSeleccionado} />}
-                </div>
-            </ReactModal >
+            <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>
+                {usuarioSeleccionado && <MostrarInfoUsuario usuario={usuarioSeleccionado} />}
+            </Modal>
+            
 
             {/* Modal para registrar un usuario*/}
-            < ReactModal
-                isOpen={modalRegistrar}
-                onRequestClose={() => setModalRegistrar(false)}
-                ariaHideApp={false}
-                className="fixed inset-0 flex items-center justify-center z-50 p-4"
-                overlayClassName="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity"
-            >
-                <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6 w-full max-w-md sm:max-w-lg md:max-w-2xl relative animate-fadeIn 
-                    max-h-[90vh] overflow-y-auto modal-content">
-                    {/* Botón para cerrar con icono X */}
-                    <button
-                        onClick={() => setModalRegistrar(false)}
-                        className="absolute top-3 right-3 p-3 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-                    >
-                        <X className="w-6 h-6 text-gray-800 dark:text-gray-300" />
-                    </button>
-
-                    <RegistrarUsuario obtenerUsuarios={obtenerUsuarios} setModalRegistrar={setModalRegistrar} />
-                </div>
-            </ReactModal >
+            <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
+                <RegistrarUsuario obtenerUsuarios={obtenerUsuarios} setModalRegistrar={setModalRegistrar} />
+            </Modal>
+            
 
             {/* Modal para actualizar un usuario*/}
-            < ReactModal
-                isOpen={modalActualizar}
-                onRequestClose={() => setModalActualizar(false)}
-                ariaHideApp={false}
-                className="fixed inset-0 flex items-center justify-center z-50 p-4"
-                overlayClassName="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity"
-            >
-                <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6 w-full max-w-md sm:max-w-lg md:max-w-2xl relative animate-fadeIn 
-                    max-h-[90vh] overflow-y-auto modal-content">
-                    {/* Botón para cerrar con icono X */}
-                    <button
-                        onClick={() => setModalActualizar(false)}
-                        className="absolute top-3 right-3 p-3 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-                    >
-                        <X className="w-6 h-6 text-gray-800 dark:text-gray-300" />
-                    </button>
-
-                    <RegistrarUsuario idUsuario={usuarioSeleccionado?.idUsuario} obtenerUsuarios={obtenerUsuarios} setModalActualizar={setModalActualizar} />
-                </div>
-            </ReactModal >
+            <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
+                <RegistrarUsuario idUsuario={usuarioSeleccionado?.idUsuario} obtenerUsuarios={obtenerUsuarios} setModalActualizar={setModalActualizar} />
+            </Modal>
 
         </div >
     );
