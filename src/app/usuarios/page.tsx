@@ -11,10 +11,15 @@ import { useUsuarioContext } from '@/context/UsuarioContext';
 import { RolDTO } from '@/dto/RolDTO';
 import { DepartamentoDTO } from '@/dto/DepartamentoDTO';
 import { MunicipioDTO } from '@/dto/MunicipioDTO';
-import { EmpresaDTO } from '@/dto/EmpresaRequestDTO';
 import { TipoDocumentoDTO } from '@/dto/TipoDocumentoDTO';
-import { UsuarioRequestDTO } from '@/dto/UsuarioRequestDTO';
 import { useRef } from "react";
+import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
+import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
+import ContenedorBotonesFiltros from "@/components/filtros/ContenedorBotonesFiltros";
+import BotonFiltro from "@/components/filtros/BotonFiltro";
+import ContenedorSelectores from "@/components/filtros/ContenedorSelectores";
+import InputFiltro from "@/components/filtros/InputFiltro";
+import SelectFiltro from "@/components/filtros/SelectFiltro";
 
 
 const UsuariosPage: React.FC = () => {
@@ -53,7 +58,7 @@ const UsuariosPage: React.FC = () => {
 
     const obtenerUsuarios = async () => {
         try {
-            const respuesta= await axios.get<UsuarioResponseDTO[]>("/api/usuarios")
+            const respuesta = await axios.get<UsuarioResponseDTO[]>("/api/usuarios")
             if (respuesta.status === 200) {
                 setUsuarios(respuesta.data)
                 setUsuariosFiltrados(respuesta.data)
@@ -73,7 +78,7 @@ const UsuariosPage: React.FC = () => {
             } else {
                 console.error(respuesta.data)
             }
-            
+
         } catch (error) {
             console.error("Error al eliminar el usuario:", error)
         }
@@ -117,7 +122,7 @@ const UsuariosPage: React.FC = () => {
                 }
 
                 setDepartamentos(departamentosRes.data || [])
-                setEmpresas(empresasRes.data.filter((empresa: EmpresaDTO) => empresa.estadoEmpresa === true) || [])
+                setEmpresas(empresasRes.data.filter((empresa: EmpresaResponseDTO) => empresa.estadoEmpresa === true) || [])
                 setRoles(rolesRes.data.filter((rol: RolDTO) => rol.estadoRol === true) || [])
                 setTiposDocumento(
                     tiposDocumentoRes.data.filter(
@@ -196,7 +201,7 @@ const UsuariosPage: React.FC = () => {
         } else {
             setMunicipiosFiltrados(municipios); // Si no hay departamento seleccionado, mostrar todos los municipios
         }
-    }, [departamentos, municipios, idDepartamentoRef.current?.value]); 
+    }, [departamentos, municipios, idDepartamentoRef.current?.value]);
 
 
     useEffect(() => {
@@ -225,216 +230,168 @@ const UsuariosPage: React.FC = () => {
 
     return (
         <div className="max-w-4xl mx-auto p-6">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-5">
-                <h1 className="text-3xl font-bold text-center mb-6 text-gray-900 dark:text-gray-100">Usuarios</h1>
-
-                <div className="flex justify-end mb-4 gap-4">
-                    {/* Botón para agregar usuario */}
-                    <button
-                        className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
+            <ContenedorFiltros title="Usuarios">
+                {/* Botones de filtros */}
+                <ContenedorBotonesFiltros>
+                    <BotonFiltro
                         onClick={() => setModalRegistrar(true)}
-                    >
-                        <PlusCircle size={20} />
-                        Agregar usuario
-                    </button>
+                        Symbol={PlusCircle}
+                        name="Agregar usuario" />
 
-                    {/* Botón para limpiar filtros */}
-                    <button
-                        className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
+                    <BotonFiltro
                         onClick={limpiarFiltros}
-                    >
-                        <XCircle size={20} />
-                        Limpiar filtros
-                    </button>
-                </div>
+                        Symbol={XCircle}
+                        name="Limpiar filtros" />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                </ContenedorBotonesFiltros>
+
+                {/* Selectores de filtros */}
+                <ContenedorSelectores>
                     {/* Nombre */}
-                    <div>
-                        <label htmlFor="nombreUsuario" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                            Nombre
-                        </label>
-                        <input
-                            id="nombreUsuario"
-                            type="text"
-                            ref={nombreUsuarioRef}
-                            className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-gray-200 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:focus:ring-blue-600 transition-all duration-200"
-                            onChange={filtrarUsuarios}
-                        />
-                    </div>
+                    <InputFiltro
+                        id="nombreUsuario"
+                        name="Nombre"
+                        ref={nombreUsuarioRef}
+                        onChange={filtrarUsuarios} />
 
                     {/* Tipo de Documento */}
-                    <div>
-                        <label htmlFor="idTipoDocumento" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                            Tipo de documento
-                        </label>
-                        <select
-                            id="idTipoDocumento"
-                            ref={idTipoDocumentoRef}
-                            className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-gray-200 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:focus:ring-blue-600 transition-all duration-200"
-                            onChange={filtrarUsuarios}
-                        >
-                            <option value="0">Todos</option>
-                            {tiposDocumento.map((tipo) => (
-                                <option key={tipo.idTipoDocumento} value={tipo.idTipoDocumento.toString()}>
-                                    {tipo.nombreTipoDocumento}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    <SelectFiltro
+                        id="idTipoDocumento"
+                        name="Tipo de documento"
+                        onChange={filtrarUsuarios}
+                        ref={idTipoDocumentoRef}
+                    >
+                        {tiposDocumento.map((tipo) => (
+                            <option key={tipo.idTipoDocumento} value={tipo.idTipoDocumento.toString()}>
+                                {tipo.nombreTipoDocumento}
+                            </option>
+                        ))}
+                    </SelectFiltro>
 
                     {/* Empresa */}
-                    <div>
-                        <label htmlFor="idEmpresa" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                            Empresa
-                        </label>
-                        <select
-                            id="idEmpresa"
-                            ref={idEmpresaRef}
-                            className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-gray-200 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:focus:ring-blue-600 transition-all duration-200"
-                            onChange={filtrarUsuarios}
-                        >
-                            <option value="0">Todas</option>
-                            {empresas.map((emp) => (
-                                <option key={emp.idEmpresa} value={emp.idEmpresa.toString()}>
-                                    {emp.nombreEmpresa}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    <SelectFiltro
+                        id="idEmpresa"
+                        name="Empresa"
+                        onChange={filtrarUsuarios}
+                        ref={idEmpresaRef}
+                    >
+                        {empresas.map((emp) => (
+                            <option key={emp.idEmpresa} value={emp.idEmpresa.toString()}>
+                                {emp.nombreEmpresa}
+                            </option>
+                        ))}
+                    </SelectFiltro>
 
                     {/* Rol */}
-                    <div>
-                        <label htmlFor="idRol" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                            Rol
-                        </label>
-                        <select
-                            id="idRol"
-                            ref={idRolRef}
-                            className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-gray-200 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:focus:ring-blue-600 transition-all duration-200"
-                            onChange={filtrarUsuarios}
-                        >
-                            <option value="0">Todos</option>
-                            {roles.map((rol) => (
-                                <option key={rol.idRol} value={rol.idRol.toString()}>
-                                    {rol.nombreRol}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    <SelectFiltro
+                        id="idRol"
+                        name="Rol"
+                        onChange={filtrarUsuarios}
+                        ref={idRolRef}
+                    >
+                        {roles.map((rol) => (
+                            <option key={rol.idRol} value={rol.idRol.toString()}>
+                                {rol.nombreRol}
+                            </option>
+                        ))}
+                    </SelectFiltro>
 
                     {/* Departamento */}
-                    <div>
-                        <label htmlFor="idDepartamento" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                            Departamento
-                        </label>
-                        <select
-                            id="idDepartamento"
-                            ref={idDepartamentoRef}
-                            className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-gray-200 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:focus:ring-blue-600 transition-all duration-200"
-                            onChange={filtrarUsuarios}
-                        >
-                            <option value="0">Todos</option>
-                            {departamentosFiltrados.map((departamento) => (
-                                <option key={departamento.idDepartamento} value={departamento.idDepartamento.toString()}>
-                                    {departamento.nombreDepartamento}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    <SelectFiltro
+                        id="idDepartamento"
+                        name="Departamento"
+                        onChange={filtrarUsuarios}
+                        ref={idDepartamentoRef}
+                    >
+                        {departamentosFiltrados.map((departamento) => (
+                            <option key={departamento.idDepartamento} value={departamento.idDepartamento.toString()}>
+                                {departamento.nombreDepartamento}
+                            </option>
+                        ))}
+                    </SelectFiltro>
 
                     {/* Municipio */}
-                    <div>
-                        <label htmlFor="idMunicipio" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                            Municipio
-                        </label>
-                        <select
-                            id="idMunicipio"
-                            ref={idMunicipioRef}
-                            className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-gray-200 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:focus:ring-blue-600 transition-all duration-200"
-                            onChange={filtrarUsuarios}
-                        >
-                            <option value="0">Todos</option>
-                            {municipiosFiltrados.map((municipio) => (
-                                <option key={municipio.idMunicipio} value={municipio.idMunicipio.toString()}>
-                                    {municipio.nombreMunicipio}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    <SelectFiltro
+                        id="idMunicipio"
+                        name="Municipio"
+                        onChange={filtrarUsuarios}
+                        ref={idMunicipioRef}
+                    >
+                        {municipiosFiltrados.map((municipio) => (
+                            <option key={municipio.idMunicipio} value={municipio.idMunicipio.toString()}>
+                                {municipio.nombreMunicipio}
+                            </option>
+                        ))}
+                    </SelectFiltro>
 
                     {/* Estado */}
-                    <div>
-                        <label htmlFor="estadoUsuario" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                            Estado
-                        </label>
-                        <select
-                            id="estadoUsuario"
-                            ref={estadoUsuarioRef}
-                            className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-gray-200 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:focus:ring-blue-600 transition-all duration-200"
-                            onChange={filtrarUsuarios}
-                        >
-                            <option value="">Todos</option>
-                            <option value="true">Activo</option>
-                            <option value="false">Inactivo</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+                    <SelectFiltro
+                        id="estadoUsuario"
+                        name="Estado"
+                        onChange={filtrarUsuarios}
+                        ref={estadoUsuarioRef}
+                    >
+                        <option value="true">Activo</option>
+                        <option value="false">Inactivo</option>
+                    </SelectFiltro>
+                </ContenedorSelectores>
+            </ContenedorFiltros>
 
             {/* Grid de usuarios */}
-            <div className="grid gap-4 md:grid-cols-2">
-                {usuariosFiltrados.map((usuario) => (
-                    <div
-                        key={usuario.idUsuario}
-                        className="border border-gray-300 dark:border-gray-700 rounded-lg shadow-md p-4 bg-white dark:bg-gray-900"
-                    >
-                        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                            {usuario.nombreUsuario} {usuario.apellidoUsuario}
-                        </h2>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">
-                            <span className="font-semibold">Empresa:</span> {empresas.find(e => e.idEmpresa === usuario.idEmpresa)?.nombreEmpresa}
-                        </p>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">
-                            <span className="font-semibold">Rol:</span> {roles.find(r => r.idRol === usuario.idRol)?.nombreRol}
-                        </p>
-                        <div className="flex gap-6 mt-4 justify-center">
-                            <button
-                                className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-                            >
-                                <Pencil className="w-5 h-5 text-gray-600 dark:text-gray-300"
-                                    onClick={() => {
-                                        setUsuarioSeleccionado(usuario);
-                                        setModalActualizar(true);
-                                    }}
-                                />
-                            </button>
-                            <button
-                                className="p-2 rounded-lg bg-red-500 hover:bg-red-600 text-white transition"
-                                onClick={() => handleEliminarUsuario(usuario.idUsuario)}
-                            >
-                                <Trash2 className="w-5 h-5" />
-                            </button>
-                            <button
-                                className="flex items-center gap-2 p-2 rounded-lg border border-gray-300 dark:border-gray-600 
+            < div className="grid gap-4 md:grid-cols-2" >
+                {
+                    usuariosFiltrados.map((usuario) => (
+                        <div
+                            key={usuario.idUsuario}
+                            className="border border-gray-300 dark:border-gray-700 rounded-lg shadow-md p-4 bg-white dark:bg-gray-900"
+                        >
+                            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                                {usuario.nombreUsuario} {usuario.apellidoUsuario}
+                            </h2>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">
+                                <span className="font-semibold">Empresa:</span> {empresas.find(e => e.idEmpresa === usuario.idEmpresa)?.nombreEmpresa}
+                            </p>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">
+                                <span className="font-semibold">Rol:</span> {roles.find(r => r.idRol === usuario.idRol)?.nombreRol}
+                            </p>
+                            <div className="flex gap-6 mt-4 justify-center">
+                                <button
+                                    className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                                >
+                                    <Pencil className="w-5 h-5 text-gray-600 dark:text-gray-300"
+                                        onClick={() => {
+                                            setUsuarioSeleccionado(usuario);
+                                            setModalActualizar(true);
+                                        }}
+                                    />
+                                </button>
+                                <button
+                                    className="p-2 rounded-lg bg-red-500 hover:bg-red-600 text-white transition"
+                                    onClick={() => handleEliminarUsuario(usuario.idUsuario)}
+                                >
+                                    <Trash2 className="w-5 h-5" />
+                                </button>
+                                <button
+                                    className="flex items-center gap-2 p-2 rounded-lg border border-gray-300 dark:border-gray-600 
                bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300
                hover:bg-gray-200 dark:hover:bg-gray-700 transition-all 
                focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500"
-                                onClick={() => {
-                                    setUsuarioSeleccionado(usuario);
-                                    setModalInfo(true);
-                                }}
-                            >
-                                <Eye className="w-5 h-5 text-gray-600 dark:text-gray-300 transition-transform transform hover:scale-110" />
-                            </button>
+                                    onClick={() => {
+                                        setUsuarioSeleccionado(usuario);
+                                        setModalInfo(true);
+                                    }}
+                                >
+                                    <Eye className="w-5 h-5 text-gray-600 dark:text-gray-300 transition-transform transform hover:scale-110" />
+                                </button>
 
+                            </div>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))
+                }
+            </div >
 
             {/* Modal para mostrar la información de un usuario*/}
-            <ReactModal
+            < ReactModal
                 isOpen={modalInfo}
                 onRequestClose={() => setModalInfo(false)}
                 ariaHideApp={false}
@@ -452,10 +409,10 @@ const UsuariosPage: React.FC = () => {
 
                     {usuarioSeleccionado && <MostrarInfoUsuario usuario={usuarioSeleccionado} />}
                 </div>
-            </ReactModal>
+            </ReactModal >
 
             {/* Modal para registrar un usuario*/}
-            <ReactModal
+            < ReactModal
                 isOpen={modalRegistrar}
                 onRequestClose={() => setModalRegistrar(false)}
                 ariaHideApp={false}
@@ -474,10 +431,10 @@ const UsuariosPage: React.FC = () => {
 
                     <RegistrarUsuario obtenerUsuarios={obtenerUsuarios} setModalRegistrar={setModalRegistrar} />
                 </div>
-            </ReactModal>
+            </ReactModal >
 
             {/* Modal para actualizar un usuario*/}
-            <ReactModal
+            < ReactModal
                 isOpen={modalActualizar}
                 onRequestClose={() => setModalActualizar(false)}
                 ariaHideApp={false}
@@ -496,9 +453,9 @@ const UsuariosPage: React.FC = () => {
 
                     <RegistrarUsuario idUsuario={usuarioSeleccionado?.idUsuario} obtenerUsuarios={obtenerUsuarios} setModalActualizar={setModalActualizar} />
                 </div>
-            </ReactModal>
+            </ReactModal >
 
-        </div>
+        </div >
     );
 };
 

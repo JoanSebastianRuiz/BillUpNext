@@ -5,9 +5,8 @@ import { DepartamentoDTO } from "@/dto/DepartamentoDTO";
 import { MunicipioDTO } from "@/dto/MunicipioDTO";
 import { TipoDocumentoDTO } from "@/dto/TipoDocumentoDTO";
 import { RolDTO } from "@/dto/RolDTO";
-import { EmpresaDTO } from "@/dto/EmpresaRequestDTO";
-import { UsuarioRequestDTO } from "@/dto/UsuarioRequestDTO";
 import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
+import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
 
 interface UserContextType {
     documentoUsuario: string
@@ -20,8 +19,8 @@ interface UserContextType {
     setTiposDocumento: (tiposDocumento: TipoDocumentoDTO[]) => void
     roles: RolDTO[]
     setRoles: (roles: RolDTO[]) => void
-    empresas: EmpresaDTO[]
-    setEmpresas: (empresas: EmpresaDTO[]) => void
+    empresas: EmpresaResponseDTO[]
+    setEmpresas: (empresas: EmpresaResponseDTO[]) => void
     usuarios: UsuarioResponseDTO[]
     setUsuarios: (usuarios: UsuarioResponseDTO[]) => void
 }
@@ -39,7 +38,7 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
     const [municipios, setMunicipios] = useState<MunicipioDTO[]>([]);
     const [tiposDocumento, setTiposDocumento] = useState<TipoDocumentoDTO[]>([]);
     const [roles, setRoles] = useState<RolDTO[]>([]);
-    const [empresas, setEmpresas] = useState<EmpresaDTO[]>([]);
+    const [empresas, setEmpresas] = useState<EmpresaResponseDTO[]>([]);
     const [usuarios, setUsuarios] = useState<UsuarioResponseDTO[]>([]);
 
     return (
