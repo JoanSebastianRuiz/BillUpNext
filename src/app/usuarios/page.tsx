@@ -20,6 +20,9 @@ import BotonFiltro from "@/components/filtros/BotonFiltro";
 import ContenedorSelectores from "@/components/filtros/ContenedorSelectores";
 import InputFiltro from "@/components/filtros/InputFiltro";
 import SelectFiltro from "@/components/filtros/SelectFiltro";
+import UsuarioCard from "@/components/usuarios/UsuarioCard";
+import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAccionCard";
+import BotonAccionCard from "@/components/cards/BotonAccionCard";
 
 
 const UsuariosPage: React.FC = () => {
@@ -315,6 +318,7 @@ const UsuariosPage: React.FC = () => {
                         name="Estado"
                         onChange={filtrarUsuarios}
                         ref={estadoUsuarioRef}
+                        defaultValue="true"
                     >
                         <option value="true">Activo</option>
                         <option value="false">Inactivo</option>
@@ -326,49 +330,26 @@ const UsuariosPage: React.FC = () => {
             < div className="grid gap-4 md:grid-cols-2" >
                 {
                     usuariosFiltrados.map((usuario) => (
-                        <div
-                            key={usuario.idUsuario}
-                            className="border border-gray-300 dark:border-gray-700 rounded-lg shadow-md p-4 bg-white dark:bg-gray-900"
-                        >
-                            {/* Información del usuario */}
-                            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                                {usuario.nombreUsuario} {usuario.apellidoUsuario}
-                            </h2>
-
-                            <p className="text-sm text-gray-600 dark:text-gray-300">
-                                <span className="font-semibold">Empresa:</span> {empresas.find(e => e.idEmpresa === usuario.idEmpresa)?.nombreEmpresa}
-                            </p>
-
-                            <p className="text-sm text-gray-600 dark:text-gray-300">
-                                <span className="font-semibold">Rol:</span> {roles.find(r => r.idRol === usuario.idRol)?.nombreRol}
-                            </p>
-
-                            {/* Botones de acciones */}
-                            <div className="flex gap-6 mt-4 justify-center">
-                                <button
-                                    className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-                                >
-                                    <Pencil className="w-5 h-5 text-gray-600 dark:text-gray-300"
-                                        onClick={() => {
-                                            setUsuarioSeleccionado(usuario);
-                                            setModalActualizar(true);
-                                        }}
-                                    />
-                                </button>
-                                <button
-                                    className="flex items-center gap-2 p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500"
+                        <UsuarioCard usuario={usuario} key={usuario.idUsuario}>
+                            <ContenedorBotonesAccionCard>
+                                <BotonAccionCard
+                                    Symbol={Pencil}
+                                    onClick={() => {
+                                        setUsuarioSeleccionado(usuario);
+                                        setModalActualizar(true);
+                                    }}
+                                />
+                                <BotonAccionCard
+                                    Symbol={Eye}
                                     onClick={() => {
                                         setUsuarioSeleccionado(usuario);
                                         setModalInfo(true);
                                     }}
-                                >
-                                    <Eye className="w-5 h-5 text-gray-600 dark:text-gray-300 transition-transform transform hover:scale-110" />
-                                </button>
-
-                            </div>
-                        </div>
-                    ))
-                }
+                                />
+                            </ContenedorBotonesAccionCard>
+                        </UsuarioCard>
+                    ))}
+                        
             </div >
 
             {/* Modal para mostrar la información de un usuario*/}
