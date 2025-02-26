@@ -74,19 +74,6 @@ export class UsuarioDAOImpl implements UsuarioDAO {
         }
     }
 
-
-    public delete = async (idUsuario: number): Promise<boolean> => {
-        try {
-            const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-                `SELECT eliminarUsuario($1) as resultado;`,
-                [idUsuario]
-            );
-            return respuesta.length > 0 ? respuesta[0].resultado : false;
-        } catch (error) {
-            throw new Error(`Error en UsuarioDAO.delete: ${error}`);
-        }
-    }
-
     public getAll = async (): Promise<Array<UsuarioResponseDTO>> => {
         try {
             const respuesta: UsuarioResponseDTO[] = await ejecutarQuery(

@@ -6,6 +6,5 @@ export interface EmpresaService {
     getAll(): Promise<Array<EmpresaResponseDTO>>;
     create(empresa: EmpresaRequestDTO): Promise<NextResponse>;
     update(empresa: EmpresaRequestDTO): Promise<NextResponse>;
-    delete(idEmpresa: number): Promise<boolean>;
     getById(idEmpresa: number): Promise<EmpresaResponseDTO | null>;
 }

@@ -5,7 +5,6 @@ import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 export interface UsuarioDAO {
     create(usuario: UsuarioRequestDTO): Promise<boolean>;
     update(usuario: UsuarioRequestDTO): Promise<boolean>;
-    delete(idUsuario: number): Promise<boolean>;
     getAll(): Promise<Array<UsuarioResponseDTO>>;
     getByIdUser(idUsuario: number): Promise<UsuarioResponseDTO | null>;
     existUsuarioDoc(numeroDocumentoUsuario: string): Promise<boolean>;

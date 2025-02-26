@@ -141,18 +141,6 @@ export class EmpresaServiceImpl implements EmpresaService {
         }
     }
 
-    public delete = async (idEmpresa: number): Promise<boolean> =>{
-        try{
-            if(!idEmpresa){
-                return false;
-            }
-
-            return await this.empresaDAOImpl.delete(idEmpresa);
-        } catch (error) {
-            throw new Error(`Error en EmpresaService.delete: ${error}`);
-        }
-    }
-
     public getAll = async (): Promise<Array<EmpresaResponseDTO>> => {
         try { 
             const respuesta: EmpresaResponseDTO[] = await this.empresaDAOImpl.getAll();

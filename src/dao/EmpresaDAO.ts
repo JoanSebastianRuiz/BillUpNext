@@ -6,7 +6,6 @@ export interface EmpresaDAO{
     getById(idEmpresa: number): Promise<EmpresaResponseDTO | null>;
     create(empresa: EmpresaRequestDTO): Promise<boolean>;
     update(empresa: EmpresaRequestDTO): Promise<boolean>;
-    delete(idEmpresa: number): Promise<boolean>;
     existEmpresaNit(nitEmpresa: string): Promise<boolean>;
     existEmpresaCorreo(correoEmpresa: string): Promise<boolean>;
     existEmpresaTelefono(telefonoEmpresa: string): Promise<boolean>;

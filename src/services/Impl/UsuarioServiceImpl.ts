@@ -141,18 +141,6 @@ export class UsuarioServiceImpl implements UsuarioService {
             return NextResponse.json({ message: "Error interno del servidor" }, { status: 500 });
         }
     }
-
-    public delete = async(idUsuario: number): Promise<boolean> =>{
-        try {
-            if (!idUsuario) {
-                return false;
-            }
-            const respuesta = await this.usuarioDAOImpl.delete(idUsuario);
-            return respuesta;
-        } catch (error) {
-            throw new Error(`Error al eliminar el usuario ${error}`);
-        }
-    }
     
     public getAll = async (): Promise<UsuarioResponseDTO[]> =>{
         try {

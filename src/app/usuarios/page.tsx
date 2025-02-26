@@ -70,21 +70,6 @@ const UsuariosPage: React.FC = () => {
         }
     }
 
-    const handleEliminarUsuario = async (idUsuario: number) => {
-        try {
-            const respuesta = await axios.delete(`/api/usuarios/${idUsuario}`);
-            if (respuesta.status === 200) {
-                obtenerUsuarios()
-            } else {
-                console.error(respuesta.data)
-            }
-
-        } catch (error) {
-            console.error("Error al eliminar el usuario:", error)
-        }
-    }
-
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -345,15 +330,20 @@ const UsuariosPage: React.FC = () => {
                             key={usuario.idUsuario}
                             className="border border-gray-300 dark:border-gray-700 rounded-lg shadow-md p-4 bg-white dark:bg-gray-900"
                         >
+                            {/* Información del usuario */}
                             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                                 {usuario.nombreUsuario} {usuario.apellidoUsuario}
                             </h2>
+
                             <p className="text-sm text-gray-600 dark:text-gray-300">
                                 <span className="font-semibold">Empresa:</span> {empresas.find(e => e.idEmpresa === usuario.idEmpresa)?.nombreEmpresa}
                             </p>
+
                             <p className="text-sm text-gray-600 dark:text-gray-300">
                                 <span className="font-semibold">Rol:</span> {roles.find(r => r.idRol === usuario.idRol)?.nombreRol}
                             </p>
+
+                            {/* Botones de acciones */}
                             <div className="flex gap-6 mt-4 justify-center">
                                 <button
                                     className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
@@ -366,16 +356,7 @@ const UsuariosPage: React.FC = () => {
                                     />
                                 </button>
                                 <button
-                                    className="p-2 rounded-lg bg-red-500 hover:bg-red-600 text-white transition"
-                                    onClick={() => handleEliminarUsuario(usuario.idUsuario)}
-                                >
-                                    <Trash2 className="w-5 h-5" />
-                                </button>
-                                <button
-                                    className="flex items-center gap-2 p-2 rounded-lg border border-gray-300 dark:border-gray-600 
-               bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300
-               hover:bg-gray-200 dark:hover:bg-gray-700 transition-all 
-               focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500"
+                                    className="flex items-center gap-2 p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500"
                                     onClick={() => {
                                         setUsuarioSeleccionado(usuario);
                                         setModalInfo(true);

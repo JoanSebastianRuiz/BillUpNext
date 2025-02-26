@@ -13,24 +13,6 @@ export const GET = async ({ params }: { params: { idEmpresa: string } }) => {
     }
 }
 
-export const DELETE = async ({ params }: { params: { idEmpresa: string } }) => {
-    try {
-        const empresaService = EmpresaServiceImpl.getInstance();
-        const { idEmpresa } = await params;
-        console.log(idEmpresa);
-
-        if (!idEmpresa) {
-            return NextResponse.json({ message: "ID inválido" }, { status: 400 });
-        }
-
-        const respuesta = await empresaService.delete(parseInt(idEmpresa));
-        return NextResponse.json(respuesta, { status: 200 });
-    } catch (error) {
-        console.error("Error al eliminar la empresa:", error);
-        return NextResponse.json({ message: "Error al eliminar la empresa" }, { status: 500 });
-    }
-};
-
 export const PUT = async (request: Request, { params }: { params: { idEmpresa: string } }) => {
     const empresaService = EmpresaServiceImpl.getInstance();
     const { idEmpresa } = params;

@@ -99,20 +99,6 @@ export class EmpresaDAOImpl implements EmpresaDAO {
         }
     }
 
-    public delete = async (idEmpresa: number): Promise<boolean> =>{
-        try {
-            const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-                `SELECT eliminarEmpresa($1) as resultado;`,
-                [idEmpresa]
-            );
-
-            return respuesta.length > 0 ? respuesta[0].resultado : false;
-       
-        } catch (error) {
-            throw new Error(`Error en EmpresaDAO.delete: ${error}`);
-        }
-    }
-
     public existEmpresaNit = async (nitEmpresa: string): Promise<boolean> => {
         try {
             const respuesta = await ejecutarQuery(`SELECT validarExisteEmpresaNit ($1) as resultado;`, [nitEmpresa]);
