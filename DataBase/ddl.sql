@@ -246,6 +246,7 @@ CREATE TABLE IF NOT EXISTS "Producto" (
     "nombreProducto" varchar(50) not null,
     "descripcionProducto" varchar(250) not null,
     "precioVentaProducto" double precision not null,
+    "porcentajeDescuentoProducto" float,
     "stockMinimoProducto" int not null,
     "stockMaximoProducto" int not null,
     "stockProducto" int not null,
@@ -260,7 +261,6 @@ CREATE TABLE IF NOT EXISTS "TerceroProducto" (
     "idTercero" int not null,
     "idProducto" int not null,
     "precioCompraTerceroProducto" double precision not null,
-    "porcentajeDescuentoDetalleVenta" float not null,
     primary key ("idTerceroProducto"),
     foreign key ("idTercero") references "Tercero" ("idTercero"),
     foreign key ("idProducto") references "Producto" ("idProducto")
