@@ -19,8 +19,6 @@ interface UserContextType {
     setTiposDocumento: (tiposDocumento: TipoDocumentoResponseDTO[]) => void
     roles: RolDTO[]
     setRoles: (roles: RolDTO[]) => void
-    empresas: EmpresaResponseDTO[]
-    setEmpresas: (empresas: EmpresaResponseDTO[]) => void
     usuarios: UsuarioResponseDTO[]
     setUsuarios: (usuarios: UsuarioResponseDTO[]) => void
 }
@@ -38,7 +36,6 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
     const [municipios, setMunicipios] = useState<MunicipioResponseDTO[]>([]);
     const [tiposDocumento, setTiposDocumento] = useState<TipoDocumentoResponseDTO[]>([]);
     const [roles, setRoles] = useState<RolDTO[]>([]);
-    const [empresas, setEmpresas] = useState<EmpresaResponseDTO[]>([]);
     const [usuarios, setUsuarios] = useState<UsuarioResponseDTO[]>([]);
 
     return (
@@ -53,8 +50,6 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
             setTiposDocumento,
             roles,
             setRoles,
-            empresas,
-            setEmpresas,
             usuarios,
             setUsuarios
         }}>

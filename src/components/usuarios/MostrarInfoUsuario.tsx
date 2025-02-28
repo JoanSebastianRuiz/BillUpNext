@@ -1,8 +1,11 @@
 import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 import { useUsuarioContext } from "@/context/UsuarioContext";
+import { useEmpresaContext } from "@/context/EmpresaContext";
 
 const MostrarInfoUsuario = ({ usuario }: { usuario: UsuarioResponseDTO }) => {
-    const { tiposDocumento, departamentos, municipios, empresas, roles } = useUsuarioContext();
+    const { tiposDocumento, departamentos, municipios, roles } = useUsuarioContext();
+    const { empresas } = useEmpresaContext();
+    
     return (
         <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-lg w-full">
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-4 text-center">

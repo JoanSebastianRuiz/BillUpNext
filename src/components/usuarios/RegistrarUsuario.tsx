@@ -1,8 +1,9 @@
 "use client"
 
 import { useForm } from 'react-hook-form';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useUsuarioContext } from '@/context/UsuarioContext';
+import { useEmpresaContext } from '@/context/EmpresaContext';
 import axios from 'axios';
 import InputForm from '@/components/form/InputForm';
 import SelectForm from '@/components/form/SelectForm';
@@ -16,7 +17,8 @@ import { useSession } from 'next-auth/react';
 
 const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setModalRegistrar }: { idUsuario?: number, obtenerUsuarios: () => void, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
-    const { departamentos, municipios, empresas, roles, tiposDocumento } = useUsuarioContext();
+    const { departamentos, municipios, roles, tiposDocumento } = useUsuarioContext();
+    const { empresas } = useEmpresaContext();
 
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
     const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);

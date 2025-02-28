@@ -7,6 +7,7 @@ import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
 import MostrarInfoUsuario from "@/components/usuarios/MostrarInfoUsuario";
 import RegistrarUsuario from "@/components/usuarios/RegistrarUsuario";
 import { useUsuarioContext } from '@/context/UsuarioContext';
+import { useEmpresaContext } from "@/context/EmpresaContext";
 import { RolDTO } from '@/dto/RolDTO';
 import { DepartamentoResponseDTO } from '@/dto/DepartamentoResponseDTO';
 import { MunicipioResponseDTO } from '@/dto/MunicipioResponseDTO';
@@ -37,8 +38,6 @@ const UsuariosPage: React.FC = () => {
         setDepartamentos,
         municipios,
         setMunicipios,
-        empresas,
-        setEmpresas,
         roles,
         setRoles,
         tiposDocumento,
@@ -47,6 +46,7 @@ const UsuariosPage: React.FC = () => {
         setUsuarios,
     } = useUsuarioContext()
 
+    const {empresas, setEmpresas} = useEmpresaContext()
 
     const [usuariosFiltrados, setUsuariosFiltrados] = useState<UsuarioResponseDTO[]>([]);
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);

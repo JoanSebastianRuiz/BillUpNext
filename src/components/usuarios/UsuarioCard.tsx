@@ -1,9 +1,12 @@
 import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 import { useUsuarioContext } from "@/context/UsuarioContext";
+import { useEmpresaContext } from "@/context/EmpresaContext";
 import { ReactNode } from "react";
 
 const UsuarioCard = ({ usuario, children }: { usuario: UsuarioResponseDTO, children: ReactNode }) => {
-    const { empresas, roles } = useUsuarioContext();
+    const { roles } = useUsuarioContext();
+    const { empresas } = useEmpresaContext();
+    
     return (
         <div className="border rounded-lg shadow-md p-4 transition-all duration-200
         bg-gray-50 border-gray-300 text-gray-900
