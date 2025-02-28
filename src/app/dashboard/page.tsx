@@ -1,26 +1,24 @@
 "use client"
 
-import { useSession } from "next-auth/react"
+import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
+import { useSession } from "next-auth/react";
 
 const DashboardPage = () => {
-    const { data: session, status } = useSession()
 
-    if (status === "loading") {
-        return <p>Loading...</p>
-    }
-
-    if (status === "unauthenticated") {
-        return <p>Access Denied</p>
-    }
-
-
-    console.log(session, status)
-    
+    const { data: session, status } = useSession();
 
     return (
         <>
-            <h1>Dashboard</h1>
-            <p>{JSON.stringify(session, null, 2)}</p>
+            <ContenedorPrincipal>
+                <h1>Dashboard</h1>
+                {session ? (
+                    <div>
+                        <p>Welcome, {JSON.stringify(session.user)}</p>
+                    </div>
+                ) : (
+                    <p>Loading...</p>
+                )}
+            </ContenedorPrincipal>
         </>
     )
 }

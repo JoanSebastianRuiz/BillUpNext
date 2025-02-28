@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { UsuarioContextProvider } from "@/context/UsuarioContext";
 import AuthProvider from "@/context/AuthProvider";
+import { ThemeProvider } from "next-themes";
 
 
 export const metadata: Metadata = {
@@ -16,13 +17,15 @@ export default function RootLayout({
 }>) {
   return (
 
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        <AuthProvider>
-          <UsuarioContextProvider>
-            {children}
-          </UsuarioContextProvider>
-        </AuthProvider>
+        <ThemeProvider attribute="class">
+          <AuthProvider>
+            <UsuarioContextProvider>
+              {children}
+            </UsuarioContextProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
 

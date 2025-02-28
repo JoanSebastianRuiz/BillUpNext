@@ -1,4 +1,4 @@
-import NextAuth, { User } from "next-auth";
+import NextAuth, { User, DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { UsuarioServiceImpl } from "@/services/Impl/UsuarioServiceImpl";
 import { UsuarioRequestDTO } from "@/dto/UsuarioRequestDTO";
@@ -6,7 +6,24 @@ import { UsuarioAutenticacionDTO } from "@/dto/UsuarioAutenticacionDTO";
 
 declare module "next-auth" {
     interface User {
-        rolUsuario: string;
+        idRol: number;
+        idEmpresa: number;
+        numeroDocumentoUsuario: string;
+    }
+
+    interface Session {
+        user: {
+            idRol: number;
+            idEmpresa: number;
+            numeroDocumentoUsuario: string;
+        } & DefaultSession["user"];
+    }
+}
+
+declare module "next-auth/jwt" {
+    interface JWT {
+        idRol: number;
+        idEmpresa: number;
         numeroDocumentoUsuario: string;
     }
 }
@@ -26,16 +43,17 @@ const handler = NextAuth({
                         return null;
                     }
                     const { numeroDocumentoUsuario, claveUsuario } = credentials;
-                    const respuesta  = await usuarioService.autenticarUsuario(numeroDocumentoUsuario, claveUsuario);
+                    const respuesta = await usuarioService.autenticarUsuario(numeroDocumentoUsuario, claveUsuario);
 
-                    if (respuesta!=null) {
+                    if (respuesta != null) {
                         const usuario = respuesta as UsuarioAutenticacionDTO;
                         if (!usuario) {
                             throw new Error("Usuario o contraseña incorrectos");
                         }
                         return {
                             id: usuario.idUsuario ? usuario.idUsuario.toString() : "",
-                            rolUsuario: usuario.idRol.toString(),
+                            idRol: usuario.idRol,
+                            idEmpresa: usuario.idEmpresa,
                             numeroDocumentoUsuario: usuario.numeroDocumentoUsuario
                         };
                     } else {
@@ -49,31 +67,28 @@ const handler = NextAuth({
         })
     ],
     callbacks: {
-        jwt({ token, account, user, profile, session }) {
+        jwt({ token, user }) {
             if (user) {
-                token.user = {
-                    id: user.id,
-                    rolUsuario: user.rolUsuario,
-                    numeroDocumentoUsuario: user.numeroDocumentoUsuario
-                };
+                token.idRol = user.idRol;
+                token.idEmpresa = user.idEmpresa;
+                token.numeroDocumentoUsuario = user.numeroDocumentoUsuario;
             }
             return token;
-
         },
 
-        // session guarda la información del usuario en la sesión
-        session({ session, token }) {    
-            if (token.user) {
-                session.user = token.user;
+        session({ session, token }) {
+            if (token) {
+                session.user.idRol = token.idRol as number;
+                session.user.idEmpresa = token.idEmpresa as number;
+                session.user.numeroDocumentoUsuario = token.numeroDocumentoUsuario as string;
             }
             return session;
-
         }
     },
     pages: {
-        signIn: "/", 
-        error: "/",
-    },
+        signIn: "/",
+        error: "/"
+    }
 });
 
 export { handler as GET, handler as POST };

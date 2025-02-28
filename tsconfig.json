@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/connection/conexion.ts", "src/dto/UsuarioResponseDTO.ts", "src/app/usuarios/page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/connection/conexion.ts", "src/dto/UsuarioResponseDTO.ts", "src/app/usuarios/page.jsx", "src/components/common/ContenedorAdministrar.Entidadtsx"],
   "exclude": ["node_modules"]
 }

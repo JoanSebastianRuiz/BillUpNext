@@ -23,6 +23,8 @@ import UsuarioCard from "@/components/usuarios/UsuarioCard";
 import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAccionCard";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
+import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
+import { useSession } from "next-auth/react";
 
 
 const UsuariosPage: React.FC = () => {
@@ -58,9 +60,25 @@ const UsuariosPage: React.FC = () => {
     const idRolRef = useRef<HTMLSelectElement>(null)
     const estadoUsuarioRef = useRef<HTMLSelectElement>(null)
 
+    const { data: session } = useSession()
+    const idRol = session?.user?.idRol;
+    const idEmpresa = session?.user?.idEmpresa;
+
 
     const obtenerUsuarios = async () => {
-        try {
+        if (!session || idRol === undefined || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
+        try { 
+            if (idRol === 2) {
+                const respuesta = await axios.get<UsuarioResponseDTO[]>(`/api/empresas/${idEmpresa}/usuarios`)
+                if (respuesta.status === 200) {
+                    setUsuarios(respuesta.data)
+                    setUsuariosFiltrados(respuesta.data)
+                } else {
+                    console.error(respuesta.data)
+                }
+                return
+            }
+            
             const respuesta = await axios.get<UsuarioResponseDTO[]>("/api/usuarios")
             if (respuesta.status === 200) {
                 setUsuarios(respuesta.data)
@@ -75,6 +93,7 @@ const UsuariosPage: React.FC = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            if (!session || idRol === undefined || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
             try {
                 const [departamentosRes, empresasRes, rolesRes, tiposDocumentoRes, municipiosRes, usuariosRes] = await Promise.all([
                     axios.get("/api/departamentos"),
@@ -82,7 +101,7 @@ const UsuariosPage: React.FC = () => {
                     axios.get("/api/roles"),
                     axios.get("/api/tipos-documento"),
                     axios.get("/api/municipios"),
-                    axios.get("/api/usuarios"),
+                    idRol === 2 ? axios.get(`/api/empresas/${idEmpresa}/usuarios`) : axios.get("/api/usuarios"),
                 ])
 
                 if (departamentosRes.status !== 200) {
@@ -111,7 +130,11 @@ const UsuariosPage: React.FC = () => {
 
                 setDepartamentos(departamentosRes.data || [])
                 setEmpresas(empresasRes.data.filter((empresa: EmpresaResponseDTO) => empresa.estadoEmpresa === true) || [])
-                setRoles(rolesRes.data.filter((rol: RolDTO) => rol.estadoRol === true) || [])
+                setRoles(
+                    rolesRes.data.filter((rol: RolDTO) =>
+                        rol.estadoRol === true && !(idRol === 2 && rol.idRol === 1)
+                    )
+                );
                 setTiposDocumento(
                     tiposDocumentoRes.data.filter(
                         (tipoDocumento: TipoDocumentoDTO) => tipoDocumento.estadoTipoDocumento === true,
@@ -125,7 +148,8 @@ const UsuariosPage: React.FC = () => {
             }
         }
         fetchData()
-    }, [setDepartamentos, setEmpresas, setRoles, setTiposDocumento, setMunicipios, setUsuarios])
+    }, [session, idRol, idEmpresa, setDepartamentos, setEmpresas, setRoles, setTiposDocumento, setMunicipios, setUsuarios])
+
 
     const filtrarUsuarios = () => {
         const idTipoDocumento = idTipoDocumentoRef.current?.value;
@@ -216,7 +240,7 @@ const UsuariosPage: React.FC = () => {
     }
 
     return (
-        <div className="max-w-4xl mx-auto p-6">
+        <ContenedorPrincipal>
             <ContenedorFiltros title="Usuarios">
                 {/* Botones de filtros */}
                 <ContenedorBotonesFiltros>
@@ -256,18 +280,23 @@ const UsuariosPage: React.FC = () => {
                     </SelectFiltro>
 
                     {/* Empresa */}
-                    <SelectFiltro
-                        id="idEmpresa"
-                        name="Empresa"
-                        onChange={filtrarUsuarios}
-                        ref={idEmpresaRef}
-                    >
-                        {empresas.map((emp) => (
-                            <option key={emp.idEmpresa} value={emp.idEmpresa.toString()}>
-                                {emp.nombreEmpresa}
-                            </option>
-                        ))}
-                    </SelectFiltro>
+                    {idRol === 1 && (
+                        <SelectFiltro
+                            id="idEmpresa"
+                            name="Empresa"
+                            onChange={filtrarUsuarios}
+                            ref={idEmpresaRef}
+                        >
+                            {empresas.map((emp) => (
+                                <option key={emp.idEmpresa} value={emp.idEmpresa.toString()}>
+                                    {emp.nombreEmpresa}
+                                </option>
+                            ))}
+                        </SelectFiltro>
+                    )
+                    }
+
+
 
                     {/* Rol */}
                     <SelectFiltro
@@ -326,7 +355,7 @@ const UsuariosPage: React.FC = () => {
             </ContenedorFiltros>
 
             {/* Grid de usuarios */}
-            < div className="grid gap-4 md:grid-cols-2" >
+            < div className="grid gap-4 md:grid-cols-3" >
                 {
                     usuariosFiltrados.map((usuario) => (
                         <UsuarioCard usuario={usuario} key={usuario.idUsuario}>
@@ -348,27 +377,27 @@ const UsuariosPage: React.FC = () => {
                             </ContenedorBotonesAccionCard>
                         </UsuarioCard>
                     ))}
-                        
+
             </div >
 
             {/* Modal para mostrar la información de un usuario*/}
             <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>
                 {usuarioSeleccionado && <MostrarInfoUsuario usuario={usuarioSeleccionado} />}
             </Modal>
-            
+
 
             {/* Modal para registrar un usuario*/}
             <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
                 <RegistrarUsuario obtenerUsuarios={obtenerUsuarios} setModalRegistrar={setModalRegistrar} />
             </Modal>
-            
+
 
             {/* Modal para actualizar un usuario*/}
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
                 <RegistrarUsuario idUsuario={usuarioSeleccionado?.idUsuario} obtenerUsuarios={obtenerUsuarios} setModalActualizar={setModalActualizar} />
             </Modal>
 
-        </div >
+        </ContenedorPrincipal >
     );
 };
 

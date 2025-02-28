@@ -1,7 +1,7 @@
 "use client"
 
 import { useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useUsuarioContext } from '@/context/UsuarioContext';
 import axios from 'axios';
 import InputForm from '@/components/form/InputForm';
@@ -10,6 +10,8 @@ import { isValidEmail, isValidPhoneNumber, isValidDocument } from '@/util/valida
 import { DepartamentoDTO } from '@/dto/DepartamentoDTO';
 import { MunicipioDTO } from '@/dto/MunicipioDTO';
 import { UsuarioRequestDTO } from '@/dto/UsuarioRequestDTO';
+import Notificacion from '@/components/form/Notificacion';
+import { useSession } from 'next-auth/react';
 
 
 const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setModalRegistrar }: { idUsuario?: number, obtenerUsuarios: () => void, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
@@ -25,6 +27,10 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
 
     const idDepartamento = watch("idDepartamento");
     const idMunicipio = watch("idMunicipio");
+
+    const { data: session } = useSession()
+    const idRol = session?.user?.idRol;
+    const idEmpresa = session?.user?.idEmpresa;
 
     useEffect(() => {
         if (!departamentos.length) return;
@@ -72,7 +78,7 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
                         setValue("telefonoUsuario", usuario.telefonoUsuario || '');
                         setValue("direccionUsuario", usuario.direccionUsuario || '');
                         setValue("correoUsuario", usuario.correoUsuario || '');
-                        setValue("estadoUsuario", usuario.estadoUsuario || false);
+                        setValue("estadoUsuario", usuario.estadoUsuario.toString());
                     } else {
                         console.error("Error al obtener datos del usuario:", response.data.message);
                     }
@@ -85,12 +91,18 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
         fetchUsuario();
     }, [idUsuario, setValue]);
 
+    useEffect(() => {
+        if (idRol === 2) {
+            setValue("idEmpresa", idEmpresa || 0);
+        }
+    }, [idEmpresa, idRol, setValue]);
+
     const onSubmit = async (data: UsuarioRequestDTO) => {
         try {
             if (idUsuario) {
                 let { idDepartamento, ...datosModificados } = data;
 
-                datosModificados = { ...data, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idEmpresa: parseInt(data.idEmpresa.toString()), idRol: parseInt(data.idRol.toString()), estadoUsuario: true, claveUsuario: watch('numeroDocumentoUsuario') };
+                datosModificados = { ...data, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idEmpresa: parseInt(data.idEmpresa.toString()), idRol: parseInt(data.idRol.toString()), estadoUsuario: Boolean(data.estadoUsuario), claveUsuario: watch('numeroDocumentoUsuario') };
 
                 const respuesta = await axios.put(`/api/usuarios/${idUsuario}`, datosModificados);
                 setError(null);
@@ -168,12 +180,19 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
                         {municipiosFiltrados.map(mun => <option key={mun.idMunicipio} value={mun.idMunicipio}>{mun.nombreMunicipio}</option>)}
                     </SelectForm>
 
-                    <SelectForm label="Empresa" register={register} name="idEmpresa"
-                        validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
-                        errors={errors} >
-                        <option value="" disabled>Seleccione una empresa</option>
-                        {empresas.map(emp => <option key={emp.idEmpresa} value={emp.idEmpresa}>{emp.nombreEmpresa}</option>)}
-                    </SelectForm>
+                    {idRol === 1 ? (
+                        <SelectForm label="Empresa" register={register} name="idEmpresa"
+                            validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
+                            errors={errors} >
+                            <option value="" disabled>Seleccione una empresa</option>
+                            {empresas.map(emp => <option key={emp.idEmpresa} value={emp.idEmpresa}>{emp.nombreEmpresa}</option>)}
+                        </SelectForm>
+                    ) :
+                        <SelectForm label="Empresa" register={register} name="idEmpresa"
+                            validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
+                            errors={errors} >
+                                {idEmpresa && empresas.find(emp => emp.idEmpresa == idEmpresa) && <option value={idEmpresa}>{empresas.find(emp => emp.idEmpresa == idEmpresa)?.nombreEmpresa}</option>}
+                        </SelectForm>}
 
                     <SelectForm label="Rol" register={register} name="idRol"
                         validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
@@ -197,6 +216,16 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
                             required: { value: true, message: "Este campo es obligatorio" },
                             validate: (value: string) => isValidEmail(value) || "Correo inválido"
                         }} errors={errors} />
+
+                    {idUsuario && (
+                        <SelectForm label="Estado" register={register} name="estadoUsuario"
+                            validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
+                            errors={errors} >
+                            <option value="" disabled>Seleccione un estado</option>
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </SelectForm>
+                    )}
 
                     <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
                         <button

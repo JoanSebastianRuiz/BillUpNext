@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
 import { EmpresaRequestDTO } from "@/dto/EmpresaRequestDTO";
 import { isValidDigitoVerificacion, isValidNit, isValidPhoneNumber, isValidEmail } from "@/util/validators/validators";
+import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 
 export class EmpresaServiceImpl implements EmpresaService {
     private static instancia: EmpresaServiceImpl;
@@ -150,6 +151,20 @@ export class EmpresaServiceImpl implements EmpresaService {
         }
 
     }
+
+    public getUsuarios = async (idEmpresa : number): Promise<UsuarioResponseDTO[]> =>{
+            try {
+                const usuariosResponseDTO = await this.empresaDAOImpl.getUsuarios(idEmpresa);
+                if (!usuariosResponseDTO) {
+                    return Promise.resolve([]);
+                }
+    
+                return usuariosResponseDTO;
+            } catch (error) {
+                console.error("Error al obtener los usuarios de la empresa:", error);
+                throw new Error(`Error al obtener los usuarios de la empresa ${error}`);
+            }
+        }
 
     public getById = async (idEmpresa: number): Promise<EmpresaResponseDTO | null> => {
         try { 

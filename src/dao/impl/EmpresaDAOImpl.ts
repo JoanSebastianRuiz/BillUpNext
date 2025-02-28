@@ -3,6 +3,7 @@ import { ejecutarQuery } from "@/connection/conexion"
 import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
 import { EmpresaRequestDTO } from "@/dto/EmpresaRequestDTO";
 import { ResultadoBooleanDTO } from "@/dto/ResultadoBooleanDTO";
+import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 
 export class EmpresaDAOImpl implements EmpresaDAO {
     private static instancia: EmpresaDAOImpl;
@@ -42,6 +43,25 @@ export class EmpresaDAOImpl implements EmpresaDAO {
             throw new Error(`Error en EmpresaDAO.getById: ${error}`);
         }
     }
+
+    public getUsuarios = async (idEmpresa: number): Promise<Array<UsuarioResponseDTO>> => {
+            try {
+                const respuesta: UsuarioResponseDTO[] = await ejecutarQuery(
+                    `SELECT u.\"idUsuario\", u.\"idEmpresa\", u.\"idTipoDocumento\", u.\"idMunicipio\", 
+                    m.\"idDepartamento\", u.\"idRol\", u.\"numeroDocumentoUsuario\", u.\"nombreUsuario\", 
+                    u.\"apellidoUsuario\", u.\"correoUsuario\", u.\"telefonoUsuario\", u.\"direccionUsuario\", 
+                    u.\"estadoUsuario\"
+                    FROM \"Usuario\" u 
+                    JOIN \"Municipio\" m ON m.\"idMunicipio\" = u.\"idMunicipio\"
+                    WHERE u.\"idEmpresa\"=$1;`,
+                    [idEmpresa]
+                );
+    
+                return respuesta;
+            } catch (error) {
+                throw new Error(`Error en EmpresaDAOImpl.getUsuarios: ${error}`);
+            }
+        }
 
     public create = async (empresa: EmpresaRequestDTO): Promise<boolean> => {
         try {
