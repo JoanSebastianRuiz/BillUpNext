@@ -13,7 +13,7 @@ export class TipoPersonaDAOImpl implements TipoPersonaDAO {
     }
     public getAll = async (): Promise<Array<TipoPersonaDTO>> => {
         try {
-            const query = "SELECT * FROM `\"TipoPersona\"`";
+            const query = "SELECT * FROM \"TipoPersona\";";
             const result = await ejecutarQuery(query, []);
             return result;
         } catch (error) {
