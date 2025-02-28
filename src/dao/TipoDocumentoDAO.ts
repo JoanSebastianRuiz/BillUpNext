@@ -1,6 +1,6 @@
 import { TipoDocumento } from "@/models/TipoDocumento";
-import { TipoDocumentoDTO } from "@/dto/TipoDocumentoDTO";
+import { TipoDocumentoResponseDTO } from "@/dto/TipoDocumentoResponseDTO";
 
 export interface TipoDocumentoDAO{
-    getAll(): Promise<Array<TipoDocumentoDTO>>;
+    getAll(): Promise<Array<TipoDocumentoResponseDTO>>;
 }

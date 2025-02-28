@@ -16,14 +16,6 @@ export class RolServiceImpl implements RolService {
         return RolServiceImpl.instance;
     }
 
-    public async create(data: any): Promise<NextResponse> {
-        throw new Error("Method not implemented.");
-    }
-
-    public async delete(idRol: number): Promise<NextResponse> {
-        throw new Error("Method not implemented.");
-    }
-
     public getAll = async (): Promise<RolDTO[]> =>{
         try {
             const respuesta: RolDTO[] = await this.rolDAOImpl.getAll();
@@ -31,9 +23,5 @@ export class RolServiceImpl implements RolService {
         } catch (error) {
             throw new Error(`Error en RolService.getAll: ${error}`);
         }
-    }
-
-    public async update(data: any): Promise<NextResponse> {
-        throw new Error("Method not implemented.");
     }
 }

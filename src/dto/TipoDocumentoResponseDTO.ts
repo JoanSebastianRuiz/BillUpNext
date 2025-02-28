@@ -1,6 +1,5 @@
-export interface TipoDocumentoDTO {
+export interface TipoDocumentoResponseDTO {
     idTipoDocumento: number,
     nombreTipoDocumento: string,
-    abreviaturaTipoDocumento: string,
     estadoTipoDocumento: boolean
 }

@@ -1,5 +1,5 @@
-import { MunicipioDTO } from "@/dto/MunicipioDTO";
+import { MunicipioResponseDTO } from "@/dto/MunicipioResponseDTO";
 
 export interface MunicipioService{
-    getAll(): Promise<MunicipioDTO[]>;
+    getAll(): Promise<MunicipioResponseDTO[]>;
 }

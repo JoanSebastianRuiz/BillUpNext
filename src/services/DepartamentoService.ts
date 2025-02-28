@@ -1,6 +1,6 @@
-import { DepartamentoDTO } from "@/dto/DepartamentoDTO";
+import { DepartamentoResponseDTO } from "@/dto/DepartamentoResponseDTO";
 import { NextResponse } from "next/server";
 
 export interface DepartamentoService{
-    getAll(): Promise<DepartamentoDTO[]>;
+    getAll(): Promise<DepartamentoResponseDTO[]>;
 }

@@ -2,7 +2,7 @@ import { MunicipioService } from "@/services/MunicipioService";
 import { MunicipioDAOImpl } from "@/dao/impl/MunicipioDAOImpl";
 import { Municipio } from "@/models/Municipio";
 import { NextResponse } from "next/server";
-import { MunicipioDTO } from "@/dto/MunicipioDTO";
+import { MunicipioResponseDTO } from "@/dto/MunicipioResponseDTO";
 
 export class MunicipioServiceImpl implements MunicipioService {
     private static instance: MunicipioServiceImpl;
@@ -18,9 +18,9 @@ export class MunicipioServiceImpl implements MunicipioService {
         return MunicipioServiceImpl.instance;
     }
 
-    public getAll = async (): Promise<MunicipioDTO[]> => {
+    public getAll = async (): Promise<MunicipioResponseDTO[]> => {
         try {
-            const municipiosDatabase: MunicipioDTO[] = await this.municipioDAOImpl.getAll();
+            const municipiosDatabase: MunicipioResponseDTO[] = await this.municipioDAOImpl.getAll();
             return municipiosDatabase;
         } catch (error) {
             throw new Error(`Error en MunicipioService.getAll: ${error}`);

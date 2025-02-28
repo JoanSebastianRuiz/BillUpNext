@@ -1,5 +1,5 @@
-import { TipoDocumentoDTO } from "@/dto/TipoDocumentoDTO";
+import { TipoDocumentoResponseDTO } from "@/dto/TipoDocumentoResponseDTO";
 
 export interface TipoDocumentoService {
-    getAll(): Promise<Array<TipoDocumentoDTO>>;
+    getAll(): Promise<Array<TipoDocumentoResponseDTO>>;
 }

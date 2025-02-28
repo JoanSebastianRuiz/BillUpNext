@@ -8,9 +8,9 @@ import MostrarInfoUsuario from "@/components/usuarios/MostrarInfoUsuario";
 import RegistrarUsuario from "@/components/usuarios/RegistrarUsuario";
 import { useUsuarioContext } from '@/context/UsuarioContext';
 import { RolDTO } from '@/dto/RolDTO';
-import { DepartamentoDTO } from '@/dto/DepartamentoDTO';
-import { MunicipioDTO } from '@/dto/MunicipioDTO';
-import { TipoDocumentoDTO } from '@/dto/TipoDocumentoDTO';
+import { DepartamentoResponseDTO } from '@/dto/DepartamentoResponseDTO';
+import { MunicipioResponseDTO } from '@/dto/MunicipioResponseDTO';
+import { TipoDocumentoResponseDTO } from '@/dto/TipoDocumentoResponseDTO';
 import { useRef } from "react";
 import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
 import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
@@ -49,8 +49,8 @@ const UsuariosPage: React.FC = () => {
 
 
     const [usuariosFiltrados, setUsuariosFiltrados] = useState<UsuarioResponseDTO[]>([]);
-    const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioDTO[]>([]);
-    const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoDTO[]>([]);
+    const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
+    const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);
 
     const nombreUsuarioRef = useRef<HTMLInputElement>(null)
     const idTipoDocumentoRef = useRef<HTMLSelectElement>(null)
@@ -137,7 +137,7 @@ const UsuariosPage: React.FC = () => {
                 );
                 setTiposDocumento(
                     tiposDocumentoRes.data.filter(
-                        (tipoDocumento: TipoDocumentoDTO) => tipoDocumento.estadoTipoDocumento === true,
+                        (tipoDocumento: TipoDocumentoResponseDTO) => tipoDocumento.estadoTipoDocumento === true,
                     ) || [],
                 )
                 setMunicipios(municipiosRes.data || [])

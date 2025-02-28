@@ -7,8 +7,8 @@ import axios from 'axios';
 import InputForm from '@/components/form/InputForm';
 import SelectForm from '@/components/form/SelectForm';
 import { isValidEmail, isValidPhoneNumber, isValidDocument } from '@/util/validators/validators';
-import { DepartamentoDTO } from '@/dto/DepartamentoDTO';
-import { MunicipioDTO } from '@/dto/MunicipioDTO';
+import { DepartamentoResponseDTO } from '@/dto/DepartamentoResponseDTO';
+import { MunicipioResponseDTO } from '@/dto/MunicipioResponseDTO';
 import { UsuarioRequestDTO } from '@/dto/UsuarioRequestDTO';
 import Notificacion from '@/components/form/Notificacion';
 import { useSession } from 'next-auth/react';
@@ -18,8 +18,8 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
 
     const { departamentos, municipios, empresas, roles, tiposDocumento } = useUsuarioContext();
 
-    const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioDTO[]>([]);
-    const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoDTO[]>([]);
+    const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
+    const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 

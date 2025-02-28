@@ -1,6 +1,6 @@
 import { Departamento } from "@/models/Departamento";
-import { DepartamentoDTO } from "@/dto/DepartamentoDTO";
+import { DepartamentoResponseDTO } from "@/dto/DepartamentoResponseDTO";
 
 export interface DepartamentoDAO {
-    getAll(): Promise<DepartamentoDTO[]>;
+    getAll(): Promise<DepartamentoResponseDTO[]>;
 }

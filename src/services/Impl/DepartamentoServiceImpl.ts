@@ -2,7 +2,7 @@ import { DepartamentoService } from "../DepartamentoService";
 import { Departamento } from "../../models/Departamento";
 import { NextResponse } from "next/server";
 import { DepartamentoDAOImpl } from "@/dao/impl/DepartamentoDAOImpl";
-import { DepartamentoDTO } from "@/dto/DepartamentoDTO";
+import { DepartamentoResponseDTO } from "@/dto/DepartamentoResponseDTO";
 
 export class DepartamentoServiceImpl implements DepartamentoService {
     private static instance: DepartamentoServiceImpl;
@@ -17,7 +17,7 @@ export class DepartamentoServiceImpl implements DepartamentoService {
         return this.instance;
     }
 
-    public getAll = async (): Promise<DepartamentoDTO[]> => {
+    public getAll = async (): Promise<DepartamentoResponseDTO[]> => {
         try {
             const departamentosDatabase = await this.departamentoDAOImpl.getAll();
             return Promise.resolve(departamentosDatabase);

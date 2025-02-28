@@ -1,5 +1,5 @@
 import { DepartamentoDAO } from "../DepartamentoDAO";
-import { DepartamentoDTO } from "@/dto/DepartamentoDTO";
+import { DepartamentoResponseDTO } from "@/dto/DepartamentoResponseDTO";
 import { ejecutarQuery } from "@/connection/conexion";
 import { Departamento } from "@/models/Departamento";
 
@@ -15,10 +15,10 @@ export class DepartamentoDAOImpl implements DepartamentoDAO{
         return DepartamentoDAOImpl.instance;
     }
 
-    public getAll = async (): Promise<DepartamentoDTO[]> =>{
+    public getAll = async (): Promise<DepartamentoResponseDTO[]> =>{
         try{
-            const departamentos: DepartamentoDTO[] = await ejecutarQuery(
-                `SELECT * FROM \"Departamento\";`,
+            const departamentos: DepartamentoResponseDTO[] = await ejecutarQuery(
+                `SELECT \"idDepartamento\", \"nombreDepartamento\" FROM \"Departamento\";`,
                 []
             );
             return departamentos;

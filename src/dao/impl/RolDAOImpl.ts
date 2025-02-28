@@ -12,14 +12,6 @@ export class RolDAOImpl implements RolDAO {
         }
         return RolDAOImpl.instance;
     }
-    
-    public async create(role: Rol): Promise<boolean> {
-        throw new Error("Method not implemented.");
-    }
-
-    public async delete(idRole: number): Promise<boolean> {
-        throw new Error("Method not implemented.");
-    }
 
     public getAll = async(): Promise<RolDTO[]> =>{
         try {
@@ -31,9 +23,5 @@ export class RolDAOImpl implements RolDAO {
         } catch (error) {
             throw new Error(`Error en RolDAO.getAll: ${error}`);
         }
-    }
-    
-    public async update(role: Rol): Promise<boolean> {
-        throw new Error("Method not implemented.");
     }
 }

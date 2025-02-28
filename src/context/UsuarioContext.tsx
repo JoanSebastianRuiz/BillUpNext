@@ -1,9 +1,9 @@
 "use client"
 
 import { createContext, useState, useContext, ReactNode } from "react";
-import { DepartamentoDTO } from "@/dto/DepartamentoDTO";
-import { MunicipioDTO } from "@/dto/MunicipioDTO";
-import { TipoDocumentoDTO } from "@/dto/TipoDocumentoDTO";
+import { DepartamentoResponseDTO } from "@/dto/DepartamentoResponseDTO";
+import { MunicipioResponseDTO } from "@/dto/MunicipioResponseDTO";
+import { TipoDocumentoResponseDTO } from "@/dto/TipoDocumentoResponseDTO";
 import { RolDTO } from "@/dto/RolDTO";
 import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
@@ -11,12 +11,12 @@ import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
 interface UserContextType {
     documentoUsuario: string
     setDocumentoUsuario: (documento: string) => void
-    departamentos: DepartamentoDTO[]
-    setDepartamentos: (departamentos: DepartamentoDTO[]) => void
-    municipios: MunicipioDTO[]
-    setMunicipios: (municipios: MunicipioDTO[]) => void
-    tiposDocumento: TipoDocumentoDTO[]
-    setTiposDocumento: (tiposDocumento: TipoDocumentoDTO[]) => void
+    departamentos: DepartamentoResponseDTO[]
+    setDepartamentos: (departamentos: DepartamentoResponseDTO[]) => void
+    municipios: MunicipioResponseDTO[]
+    setMunicipios: (municipios: MunicipioResponseDTO[]) => void
+    tiposDocumento: TipoDocumentoResponseDTO[]
+    setTiposDocumento: (tiposDocumento: TipoDocumentoResponseDTO[]) => void
     roles: RolDTO[]
     setRoles: (roles: RolDTO[]) => void
     empresas: EmpresaResponseDTO[]
@@ -34,9 +34,9 @@ interface UserProviderProps {
 
 export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }) => {
     const [documentoUsuario, setDocumentoUsuario] = useState("");
-    const [departamentos, setDepartamentos] = useState<DepartamentoDTO[]>([]);
-    const [municipios, setMunicipios] = useState<MunicipioDTO[]>([]);
-    const [tiposDocumento, setTiposDocumento] = useState<TipoDocumentoDTO[]>([]);
+    const [departamentos, setDepartamentos] = useState<DepartamentoResponseDTO[]>([]);
+    const [municipios, setMunicipios] = useState<MunicipioResponseDTO[]>([]);
+    const [tiposDocumento, setTiposDocumento] = useState<TipoDocumentoResponseDTO[]>([]);
     const [roles, setRoles] = useState<RolDTO[]>([]);
     const [empresas, setEmpresas] = useState<EmpresaResponseDTO[]>([]);
     const [usuarios, setUsuarios] = useState<UsuarioResponseDTO[]>([]);

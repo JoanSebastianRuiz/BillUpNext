@@ -1,6 +1,6 @@
 import { MunicipioDAO } from "@/dao/MunicipioDAO";
 import { Municipio } from "@/models/Municipio";
-import { MunicipioDTO } from "@/dto/MunicipioDTO";
+import { MunicipioResponseDTO } from "@/dto/MunicipioResponseDTO";
 import { ejecutarQuery } from "@/connection/conexion";
 
 export class MunicipioDAOImpl implements MunicipioDAO {
@@ -13,10 +13,10 @@ export class MunicipioDAOImpl implements MunicipioDAO {
         return MunicipioDAOImpl.instance;
     }
 
-    public getAll = async (): Promise<MunicipioDTO[]> => {
+    public getAll = async (): Promise<MunicipioResponseDTO[]> => {
         try{
-            const municipios: MunicipioDTO[] = await ejecutarQuery(
-                `SELECT * FROM \"Municipio\";`,
+            const municipios: MunicipioResponseDTO[] = await ejecutarQuery(
+                `SELECT \"idMunicipio\", \"idDepartamento\", \"nombreMunicipio\" FROM \"Municipio\";`,
                 []
             );
             return municipios;
