@@ -1,5 +1,5 @@
 export interface CategoriaDTO {
-    idCategoria: number,
+    idCategoria?: number,
     nombreCategoria: string,
     estadoCategoria: boolean
 }
