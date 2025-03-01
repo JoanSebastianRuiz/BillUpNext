@@ -13,7 +13,7 @@ export default withAuth(
     const userRole = token.idRol; // Extraer el rol del token
 
     // Definir rutas según el rol
-    const adminRoutes = ["/dashboard", "/usuarios"];
+    const adminRoutes = ["/dashboard", "/usuarios", "/empresas"];
     if (adminRoutes.some((route) => req.nextUrl.pathname.startsWith(route)) && userRole !== 1 && userRole !== 2) {
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
@@ -38,6 +38,7 @@ export const config = {
     "/dashboard/:path*",
     "/usuarios/:path*",
     "/api/:path*",
-    "/productos/:path*"
+    "/productos/:path*",
+    "/empresas/:path*",
   ], // Protege estas rutas
 };

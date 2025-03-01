@@ -3,6 +3,10 @@ const isValidEmail = (email: string): boolean => {
   return regex.test(email);
 }
 
+const isValidLength = (value: string, maxLength: number): boolean => {
+  return value.length >0 && value.length <= maxLength;
+}
+
 const isValidPhoneNumber = (phone: string): boolean => {
   const regex = /^\d{10}$/;
   return regex.test(phone);
@@ -19,15 +23,20 @@ const isValidNit = (nit: string): boolean => {
 }
 
 const isValidDigitoVerificacion = (nit: string): boolean => {
-  const regex = /^\d{9}$/;
+  const regex = /^\d{1}$/;
   return regex.test(nit);
+}
+
+const isValidCodigoPostal = (codigoPostal: string): boolean => {
+  const regex = /^\d{6}$/;
+  return regex.test(codigoPostal);
 }
 
 const isValidPassword = (password: string): boolean => {
   const minLength = 8;
 
   // Verificar longitud
-  if (password.length < minLength || password.length > 50) {
+  if (password.length < minLength || password.length > 250) {
     return false;
   }
 
@@ -49,4 +58,4 @@ const isValidPassword = (password: string): boolean => {
   return hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar && hasNoSpaces;
 };
 
-export { isValidEmail, isValidPhoneNumber, isValidDocument, isValidPassword, isValidNit, isValidDigitoVerificacion };
+export { isValidEmail, isValidPhoneNumber, isValidDocument, isValidPassword, isValidNit, isValidDigitoVerificacion, isValidCodigoPostal, isValidLength };

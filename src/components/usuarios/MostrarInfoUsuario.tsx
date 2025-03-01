@@ -1,44 +1,40 @@
-import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 import { useUsuarioContext } from "@/context/UsuarioContext";
 import { useEmpresaContext } from "@/context/EmpresaContext";
+
+import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
+
+import ContenedorMostrarInfo from "../modal/ContenedorMostrarInfo";
+import ParrafoMostrarInfo from "../modal/ParrafoMostrarInfo";
+import EstadoMostrarInfo from "../modal/EstadoMostrarInfo";
+
 
 const MostrarInfoUsuario = ({ usuario }: { usuario: UsuarioResponseDTO }) => {
     const { tiposDocumento, departamentos, municipios, roles } = useUsuarioContext();
     const { empresas } = useEmpresaContext();
-    
+
     return (
-        <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-lg w-full">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-4 text-center">
-                {usuario.nombreUsuario} {usuario.apellidoUsuario}
-            </h2>
+        <ContenedorMostrarInfo name={`${usuario.nombreUsuario} ${usuario.apellidoUsuario}`}>
+            <ParrafoMostrarInfo subtitle="Tipo de documento" text={tiposDocumento.find(td => td.idTipoDocumento === usuario.idTipoDocumento)?.nombreTipoDocumento || 'N/A'} />
 
-            <div className="grid grid-cols-2 gap-4 text-gray-800 dark:text-gray-300">
-                <p><span className="font-semibold">Tipo de documento:</span> {tiposDocumento.find(td => td.idTipoDocumento === usuario.idTipoDocumento)?.nombreTipoDocumento}</p>
+            <ParrafoMostrarInfo subtitle="Documento" text={usuario.numeroDocumentoUsuario} />
 
-                <p><span className="font-semibold">Documento:</span> {usuario.numeroDocumentoUsuario}</p>
+            <ParrafoMostrarInfo subtitle="Empresa" text={empresas.find(e => e.idEmpresa === usuario.idEmpresa)?.nombreEmpresa || 'N/A'} />
 
-                <p><span className="font-semibold">Empresa:</span> {empresas.find(e=>e.idEmpresa === usuario.idEmpresa)?.nombreEmpresa}</p>
+            <ParrafoMostrarInfo subtitle="Rol" text={roles.find(r => r.idRol === usuario.idRol)?.nombreRol || 'N/A'} />
 
-                <p><span className="font-semibold">Rol:</span> {roles.find(r=>r.idRol === usuario.idRol)?.nombreRol}</p>
+            <ParrafoMostrarInfo subtitle="Teléfono" text={usuario.telefonoUsuario} />
 
-                <p><span className="font-semibold">Teléfono:</span> {usuario.telefonoUsuario}</p>
+            <ParrafoMostrarInfo subtitle="Correo" text={usuario.correoUsuario} />
 
-                <p><span className="font-semibold">Correo:</span> {usuario.correoUsuario}</p>
+            <ParrafoMostrarInfo subtitle="Dirección" text={usuario.direccionUsuario} />
 
-                <p><span className="font-semibold">Dirección:</span> {usuario.direccionUsuario}</p>
+            <ParrafoMostrarInfo subtitle="Departamento" text={departamentos.find(d => d.idDepartamento === usuario.idDepartamento)?.nombreDepartamento || 'N/A'} />
 
-                <p><span className="font-semibold">Departamento:</span> {departamentos.find(d=>d.idDepartamento === usuario.idDepartamento)?.nombreDepartamento}</p>
+            <ParrafoMostrarInfo subtitle="Municipio" text={municipios.find(m => m.idMunicipio === usuario.idMunicipio)?.nombreMunicipio || 'N/A'} />
 
-                <p><span className="font-semibold">Municipio:</span> {municipios.find(m=>m.idMunicipio === usuario.idMunicipio)?.nombreMunicipio}</p>
-                
-                <p>
-                    <span className="font-semibold">Estado:</span>
-                    <span className={`ml-1 px-2 py-1 text-xs font-bold rounded-md ${usuario.estadoUsuario ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
-                        {usuario.estadoUsuario ? "Activo" : "Inactivo"}
-                    </span>
-                </p>
-            </div>
-        </div>
+            <EstadoMostrarInfo estado={usuario.estadoUsuario} />
+
+        </ContenedorMostrarInfo>
     );
 };
 

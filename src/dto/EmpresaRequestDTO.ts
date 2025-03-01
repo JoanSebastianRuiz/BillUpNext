@@ -12,5 +12,6 @@ export interface EmpresaRequestDTO {
     telefonoEmpresa: string,
     correoEmpresa: string,
     logoEmpresa: string,
-    estadoEmpresa: boolean
+    estadoEmpresa: boolean,
+    idDepartamento?: number
 }

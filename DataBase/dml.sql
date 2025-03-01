@@ -25,7 +25,7 @@ VALUES
 ('Cedula de extranjeria','CE', TRUE),
 ('Permiso de permanencia','PP', TRUE);
 
-INSERT INTO "TipoPersona"  ("tipoPersona")
+INSERT INTO "TipoPersona"  ("nombreTipoPersona")
 VALUES
 ('Persona Natural'),
 ('Persona Jurídica'),
@@ -37,17 +37,14 @@ VALUES
 ('Régimen Común', 'IVA'),
 ('Régimen Especial', 'ICA');
 
-INSERT INTO "Empresa" ("idTipoPersona", "idRegimenContribuyente", "idMunicipio", "nitEmpresa", "digitoVerificacionEmpresa", "nombreEmpresa", "razonSocialEmpresa", "direccionEmpresa", "codigoPostalEmpresa", "telefonoEmpresa", "correoEmpresa", "logoEmpresa", "estadoEmpresa")
+INSERT INTO "Empresa" ("idTipoPersona", "idRegimenContribuyente", "idMunicipio", "nitEmpresa", "digitoVerificacionEmpresa", "nombreEmpresa", "razonSocialEmpresa", "direccionEmpresa", "codigoPostalEmpresa", "telefonoEmpresa", "correoEmpresa", "estadoEmpresa")
 VALUES
-(1, 2, 1, '9001234567', '5', 'AgroIndustria del Valle', 'AgroIndustria del Valle S.A.S.', 
- 'Cra 50 # 15-30', '760001', '+573001234567', 'contacto@agrovalle.com', 
- 'logo_agrovalle.png', TRUE),
-(2, 1, 1, '8007654321', '3', 'Transportes Unidos', 'Transportes Unidos Ltda.', 
- 'Calle 45 # 9-67', '110011', '+573001122334', 'info@transunidos.com', 
- 'logo_transunidos.png', TRUE),
-(3, 3, 1, '9009876543', '8', 'Servicios Globales', 'Servicios Globales S.A.', 
- 'Av. Central # 123', '120012', '+573112223344', 'servicios@globales.com', 
- 'logo_globales.png', TRUE);
+(1, 2, 1, '900123456', '5', 'AgroIndustria del Valle', 'AgroIndustria del Valle S.A.S.', 
+ 'Cra 50 # 15-30', '760001', '3001234567', 'contacto@agrovalle.com', TRUE),
+(2, 1, 1, '800765432', '3', 'Transportes Unidos', 'Transportes Unidos Ltda.', 
+ 'Calle 45 # 9-67', '110011', '3001122334', 'info@transunidos.com', TRUE),
+(3, 3, 1, '900987654', '8', 'Servicios Globales', 'Servicios Globales S.A.', 
+ 'Av. Central # 123', '120012', '3112223344', 'servicios@globales.com', TRUE);
 
 INSERT INTO "Rol" ("nombreRol", "estadoRol")
 VALUES 
@@ -57,7 +54,6 @@ VALUES
 
 INSERT INTO "Usuario" ("idEmpresa", "idTipoDocumento", "idMunicipio", "idRol", "numeroDocumentoUsuario", "nombreUsuario", "apellidoUsuario", "correoUsuario", "telefonoUsuario", "direccionUsuario", "claveUsuario", "estadoUsuario")
 VALUES 
-(1,1,1,1,'1095837983','Joan','Ruiz','joan@gmail.com','3053724006','Calle 100#33A-13','1095837983',TRUE),
-(2,2,7,2,'63325117','Rosalba','Angarita','rosalba@gmail.com','3053724006','Calle 100#33A-13','63325117',TRUE);
+(1,1,1,1,'11111111','Joan','Ruiz','joan@gmail.com','3053724777','Calle 100#44A-14','11111111',TRUE),
+(2,2,7,2,'66666666','Rosalba','Angarita','rosalba@gmail.com','3053888007','Calle 178#33A-13','66666666',TRUE);
 
-jghjhgj

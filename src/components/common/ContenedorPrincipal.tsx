@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
+import { useSession } from 'next-auth/react';
+
 import NavBarAdmin from '../navs/NavBarAdmin';
 import ThemeSwitcher from './ThemeSwitcher';
-import { useSession } from 'next-auth/react';
 import NavBarSupervisor from '../navs/NavBarSupervisor';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 

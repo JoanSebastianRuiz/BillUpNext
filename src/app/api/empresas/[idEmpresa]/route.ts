@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import { EmpresaServiceImpl } from "@/services/Impl/EmpresaServiceImpl";
 
-export const GET = async ({ params }: { params: { idEmpresa: string } }) => {
+export const GET = async (_:Request, { params }: { params: { idEmpresa: string } }) => {
     try {
         const empresaService = EmpresaServiceImpl.getInstance();
         const { idEmpresa } = await params;
+
+        if (!idEmpresa) {
+            return NextResponse.json({ message: "idEmpresa es requerido" }, { status: 400 });
+        }
+        
         const empresa = await empresaService.getById(parseInt(idEmpresa));
         return NextResponse.json(empresa, { status: 200 });
     } catch (error) {
@@ -15,7 +20,7 @@ export const GET = async ({ params }: { params: { idEmpresa: string } }) => {
 
 export const PUT = async (request: Request, { params }: { params: { idEmpresa: string } }) => {
     const empresaService = EmpresaServiceImpl.getInstance();
-    const { idEmpresa } = params;
+    const { idEmpresa } = await params;
     const data = await request.json();
 
     if (!idEmpresa) {

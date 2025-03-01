@@ -1,5 +1,3 @@
-import ContenedorBotonesFiltros from "./ContenedorBotonesFiltros";
-
 interface ContenedorFiltrosProps {
     title: string;
     children: React.ReactNode;

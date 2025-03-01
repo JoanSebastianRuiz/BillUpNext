@@ -19,7 +19,12 @@ export class EmpresaDAOImpl implements EmpresaDAO {
     public getAll = async(): Promise<Array<EmpresaResponseDTO>> => {
         try {
             const empresasDatabase : EmpresaResponseDTO[] = await ejecutarQuery(
-                `SELECT * FROM \"Empresa\";`,
+                `SELECT e.\"idEmpresa\", e.\"idTipoPersona\", e.\"idRegimenContribuyente\", e.\"idMunicipio\", 
+                m.\"idDepartamento\", e.\"nitEmpresa\", e.\"digitoVerificacionEmpresa\", e.\"nombreEmpresa\", 
+                e.\"razonSocialEmpresa\", e.\"direccionEmpresa\", e.\"codigoPostalEmpresa\", e.\"telefonoEmpresa\", 
+                e.\"correoEmpresa\", e.\"estadoEmpresa\"
+                FROM \"Empresa\" e 
+                JOIN \"Municipio\" m ON m.\"idMunicipio\" = e.\"idMunicipio\";`,
                 []
             );
 
@@ -33,7 +38,13 @@ export class EmpresaDAOImpl implements EmpresaDAO {
     public getById = async(idEmpresa : number): Promise<EmpresaResponseDTO | null> => {
         try {
             const respuesta : EmpresaResponseDTO[] = await ejecutarQuery(
-                `SELECT * FROM \"Empresa\" WHERE \"idEmpresa\" = $1;`,
+                `SELECT e.\"idEmpresa\", e.\"idTipoPersona\", e.\"idRegimenContribuyente\", e.\"idMunicipio\", 
+                m.\"idDepartamento\", e.\"nitEmpresa\", e.\"digitoVerificacionEmpresa\", e.\"nombreEmpresa\", 
+                e.\"razonSocialEmpresa\", e.\"direccionEmpresa\", e.\"codigoPostalEmpresa\", e.\"telefonoEmpresa\", 
+                e.\"correoEmpresa\", e.\"estadoEmpresa\"
+                FROM \"Empresa\" e 
+                JOIN \"Municipio\" m ON m.\"idMunicipio\" = e.\"idMunicipio\" 
+                WHERE \"idEmpresa\" = $1;`,
                 [idEmpresa]
             );
 
@@ -66,7 +77,7 @@ export class EmpresaDAOImpl implements EmpresaDAO {
     public create = async (empresa: EmpresaRequestDTO): Promise<boolean> => {
         try {
             const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-                `SELECT insertarEmpresa($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) as resultado;`,
+                `SELECT insertarEmpresa($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) as resultado;`,
                 [
                     empresa.idTipoPersona,
                     empresa.idRegimenContribuyente,
@@ -79,7 +90,6 @@ export class EmpresaDAOImpl implements EmpresaDAO {
                     empresa.codigoPostalEmpresa,
                     empresa.telefonoEmpresa,
                     empresa.correoEmpresa,
-                    empresa.logoEmpresa,
                     empresa.estadoEmpresa
                 ]
             );
@@ -93,7 +103,7 @@ export class EmpresaDAOImpl implements EmpresaDAO {
     public update = async (empresa: EmpresaRequestDTO): Promise<boolean> => {
         try {
             const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-                `SELECT actualizarEmpresa($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) as resultado;`,
+                `SELECT actualizarEmpresa($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) as resultado;`,
                 [
                     empresa.idEmpresa,
                     empresa.idTipoPersona,
@@ -107,7 +117,6 @@ export class EmpresaDAOImpl implements EmpresaDAO {
                     empresa.codigoPostalEmpresa,
                     empresa.telefonoEmpresa,
                     empresa.correoEmpresa,
-                    empresa.logoEmpresa,
                     empresa.estadoEmpresa
                 ]
             );

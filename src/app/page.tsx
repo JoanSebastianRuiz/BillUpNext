@@ -42,61 +42,58 @@ export default function Home() {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
-      <div className="absolute top-4 right-4">
+      {/* ThemeSwitcher mejor posicionado */}
+      <div className="absolute top-6 right-6">
         <ThemeSwitcher />
       </div>
 
+      {/* Contenedor del formulario con más espacio y diseño mejorado */}
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-md bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-300 dark:border-gray-700 p-8 space-y-6"
+        className="w-full max-w-md bg-white dark:bg-gray-800 shadow-2xl rounded-2xl border border-gray-200 dark:border-gray-700 p-10 space-y-8 transition-all"
       >
-        <h1 className="text-4xl font-bold text-center text-gray-900 dark:text-gray-200">
+        {/* Título centrado con un poco más de separación */}
+        <h1 className="text-4xl font-extrabold text-center text-gray-900 dark:text-gray-200">
           Billup
         </h1>
 
-        <InputForm
-          label="Número de documento"
-          type="number"
-          name="numeroDocumentoUsuario"
-          register={register}
-          errors={errors}
-          validationRules={{
-            required: {
-              value: true,
-              message: "Este campo es obligatorio"
-            },
-            minLength: {
-              value: 8,
-              message: "El documento debe tener al menos 8 caracteres"
-            },
-            maxLength: {
-              value: 10,
-              message: "El documento debe tener máximo 10 caracteres"
-            },
-            validate: (value: string) => isValidDocument(value) || "Documento inválido"
-          }}
-        />
+        {/* Inputs con más espacio entre ellos */}
+        <div className="space-y-6">
+          <InputForm
+            label="Número de documento"
+            type="number"
+            name="numeroDocumentoUsuario"
+            register={register}
+            errors={errors}
+            validationRules={{
+              required: { value: true, message: "Este campo es obligatorio" },
+              minLength: { value: 8, message: "El documento debe tener al menos 8 caracteres" },
+              maxLength: { value: 10, message: "El documento debe tener máximo 10 caracteres" },
+              validate: (value: string) => isValidDocument(value) || "Documento inválido"
+            }}
+          />
 
-        <InputForm
-          label="Contraseña"
-          type="password"
-          name="claveUsuario"
-          register={register}
-          errors={errors}
-          validationRules={{
-            required: {
-              value: true,
-              message: "Este campo es obligatorio"
-            }
-          }}
-        />
+          <InputForm
+            label="Contraseña"
+            type="password"
+            name="claveUsuario"
+            register={register}
+            errors={errors}
+            validationRules={{
+              required: { value: true, message: "Este campo es obligatorio" }
+            }}
+          />
+        </div>
 
-        <div className='flex justify-center'>
+        {/* Botón con mayor tamaño y espaciado */}
+        <div className="flex justify-center">
           <ButtonForm name="Ingresar" type="submit" />
         </div>
       </form>
 
+      {/* Notificación si hay error */}
       {error && <Notificacion type="error" message={error} />}
     </div>
+
   );
 }

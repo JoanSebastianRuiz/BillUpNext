@@ -28,9 +28,12 @@ const SelectForm = ({ label, register, name, validationRules, errors, children }
                 {children}
             </select>
 
-            {errors[name] && (
-                <span className="text-red-500 text-sm font-medium">{errors[name].message}</span>
-            )}
+            {/* Contenedor con altura mínima para evitar movimiento */}
+            <div className="min-h-[25px]">
+                {errors[name] && (
+                    <span className="text-red-500 text-sm font-medium">{errors[name].message}</span>
+                )}
+            </div>
         </div>
     )
 };

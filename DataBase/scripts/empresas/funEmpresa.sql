@@ -10,8 +10,7 @@ CREATE OR REPLACE FUNCTION actualizarEmpresa(
     _direccionEmpresa "Empresa"."direccionEmpresa"%TYPE,
     _codigoPostalEmpresa "Empresa"."codigoPostalEmpresa"%TYPE,   
     _telefonoEmpresa "Empresa"."telefonoEmpresa"%TYPE,  
-    _correoEmpresa "Empresa"."correoEmpresa"%TYPE, 
-    _logoEmpresa "Empresa"."logoEmpresa"%TYPE, 
+    _correoEmpresa "Empresa"."correoEmpresa"%TYPE,
     _estadoEmpresa "Empresa"."estadoEmpresa"%TYPE
 )
 RETURNS BOOLEAN AS
@@ -29,7 +28,6 @@ BEGIN
         "codigoPostalEmpresa" = COALESCE(_codigoPostalEmpresa, "codigoPostalEmpresa"),
         "telefonoEmpresa" = COALESCE(_telefonoEmpresa, "telefonoEmpresa"),
         "correoEmpresa" = COALESCE(_correoEmpresa, "correoEmpresa"),
-        "logoEmpresa" = COALESCE(_logoEmpresa, "logoEmpresa"),
         "estadoEmpresa" = COALESCE(_estadoEmpresa, "estadoEmpresa")
     WHERE "idEmpresa" = _idEmpresa;
 
@@ -77,7 +75,6 @@ CREATE OR REPLACE FUNCTION insertarEmpresa(
     _codigoPostalEmpresa "Empresa"."codigoPostalEmpresa"%TYPE,   
     _telefonoEmpresa "Empresa"."telefonoEmpresa"%TYPE,  
     _correoEmpresa "Empresa"."correoEmpresa"%TYPE, 
-    _logoEmpresa "Empresa"."logoEmpresa"%TYPE, 
     _estadoEmpresa "Empresa"."estadoEmpresa"%TYPE)
 RETURNS BOOLEAN AS
 $$
@@ -96,7 +93,6 @@ BEGIN
         "codigoPostalEmpresa", 
         "telefonoEmpresa", 
         "correoEmpresa", 
-        "logoEmpresa", 
         "estadoEmpresa"
     ) 
     VALUES (
@@ -110,8 +106,7 @@ BEGIN
         _direccionEmpresa, 
         _codigoPostalEmpresa, 
         _telefonoEmpresa, 
-        _correoEmpresa, 
-        _logoEmpresa, 
+        _correoEmpresa,
         _estadoEmpresa
     )
     RETURNING "idEmpresa" INTO id;

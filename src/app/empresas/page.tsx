@@ -1,205 +1,172 @@
 "use client";
 
-import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 import axios from "axios";
-import { useEffect, useState } from "react";
+
+import { useEffect, useState, useRef } from "react";
 import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
-import MostrarInfoUsuario from "@/components/usuarios/MostrarInfoUsuario";
-import RegistrarUsuario from "@/components/usuarios/RegistrarUsuario";
-import { useUsuarioContext } from '@/context/UsuarioContext';
-import { RolDTO } from '@/dto/RolDTO';
+
+import { useEmpresaContext } from "@/context/EmpresaContext";
+import { useUsuarioContext } from "@/context/UsuarioContext";
+
 import { DepartamentoResponseDTO } from '@/dto/DepartamentoResponseDTO';
 import { MunicipioResponseDTO } from '@/dto/MunicipioResponseDTO';
-import { TipoDocumentoResponseDTO } from '@/dto/TipoDocumentoResponseDTO';
-import { useRef } from "react";
 import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
+
+import MostrarInfoEmpresa from "@/components/empresas/MostrarInfoEmpresa";
+import RegistrarEmpresa from "@/components/empresas/RegistrarEmpresa";
 import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
 import ContenedorBotonesFiltros from "@/components/filtros/ContenedorBotonesFiltros";
 import BotonFiltro from "@/components/filtros/BotonFiltro";
 import ContenedorSelectores from "@/components/filtros/ContenedorSelectores";
 import InputFiltro from "@/components/filtros/InputFiltro";
 import SelectFiltro from "@/components/filtros/SelectFiltro";
-import UsuarioCard from "@/components/usuarios/UsuarioCard";
+import EmpresaCard from "@/components/empresas/EmpresaCard";
 import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAccionCard";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
-import { useSession } from "next-auth/react";
 
 
 const EmpresasPage: React.FC = () => {
     const [modalInfo, setModalInfo] = useState(false)
     const [modalRegistrar, setModalRegistrar] = useState(false)
     const [modalActualizar, setModalActualizar] = useState(false)
-    const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<UsuarioResponseDTO | null>(null)
+    const [empresaSeleccionada, setempresaSeleccionada] = useState<EmpresaResponseDTO | null>(null)
+    const {
+        tiposPersona,
+        setTiposPersona,
+        regimenesContribuyente,
+        setRegimenesContribuyente,
+        empresas,
+        setEmpresas
+    } = useEmpresaContext()
+
     const {
         departamentos,
         setDepartamentos,
         municipios,
-        setMunicipios,
-        empresas,
-        setEmpresas,
-        roles,
-        setRoles,
-        tiposDocumento,
-        setTiposDocumento,
-        usuarios,
-        setUsuarios,
+        setMunicipios
     } = useUsuarioContext()
 
-
-    const [usuariosFiltrados, setUsuariosFiltrados] = useState<UsuarioResponseDTO[]>([]);
+    const [empresasFiltradas, setEmpresasFiltradas] = useState<EmpresaResponseDTO[]>([]);
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
     const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);
 
-    const nombreUsuarioRef = useRef<HTMLInputElement>(null)
-    const idTipoDocumentoRef = useRef<HTMLSelectElement>(null)
-    const idDepartamentoRef = useRef<HTMLSelectElement>(null)
+    const nombreEmpresaRef = useRef<HTMLInputElement>(null)
+    const idTipoPersonaRef = useRef<HTMLSelectElement>(null)
+    const idRegimenContribuyenteRef = useRef<HTMLSelectElement>(null)
     const idMunicipioRef = useRef<HTMLSelectElement>(null)
-    const idEmpresaRef = useRef<HTMLSelectElement>(null)
-    const idRolRef = useRef<HTMLSelectElement>(null)
-    const estadoUsuarioRef = useRef<HTMLSelectElement>(null)
+    const idDepartamentoRef = useRef<HTMLSelectElement>(null)
+    const nitEmpresaRef = useRef<HTMLInputElement>(null)
+    const estadoEmpresaRef = useRef<HTMLSelectElement>(null)
 
-    const { data: session } = useSession()
-    const idRol = session?.user?.idRol;
-    const idEmpresa = session?.user?.idEmpresa;
-
-
-    const obtenerUsuarios = async () => {
-        if (!session || idRol === undefined || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
+    const obtenerEmpresas = async () => {
         try { 
-            if (idRol === 2) {
-                const respuesta = await axios.get<UsuarioResponseDTO[]>(`/api/empresas/${idEmpresa}/usuarios`)
-                if (respuesta.status === 200) {
-                    setUsuarios(respuesta.data)
-                    setUsuariosFiltrados(respuesta.data)
-                } else {
-                    console.error(respuesta.data)
-                }
-                return
-            }
-            
-            const respuesta = await axios.get<UsuarioResponseDTO[]>("/api/usuarios")
+            const respuesta = await axios.get<EmpresaResponseDTO[]>("/api/empresas")
             if (respuesta.status === 200) {
-                setUsuarios(respuesta.data)
-                setUsuariosFiltrados(respuesta.data)
-            } else {
-                console.error(respuesta.data)
+                setEmpresas(respuesta.data)
+                setEmpresasFiltradas(respuesta.data)
             }
         } catch (error) {
-            console.error("Error al obtener los usuarios:", error)
+            console.error("Error obteniendo empresas", error)
         }
     }
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!session || idRol === undefined || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
             try {
-                const [departamentosRes, empresasRes, rolesRes, tiposDocumentoRes, municipiosRes, usuariosRes] = await Promise.all([
-                    axios.get("/api/departamentos"),
-                    axios.get("/api/empresas"),
-                    axios.get("/api/roles"),
-                    axios.get("/api/tipos-documento"),
-                    axios.get("/api/municipios"),
-                    idRol === 2 ? axios.get(`/api/empresas/${idEmpresa}/usuarios`) : axios.get("/api/usuarios"),
-                ])
-
-                if (departamentosRes.status !== 200) {
-                    console.error(departamentosRes.data)
+                if (!tiposPersona.length) {
+                    const tiposPersonaRes = await axios.get("/api/tipos-persona")
+                    if (tiposPersonaRes.status === 200) {
+                        setTiposPersona(tiposPersonaRes.data)
+                    }
                 }
 
-                if (empresasRes.status !== 200) {
-                    console.error(empresasRes.data)
+                if (!regimenesContribuyente.length) {
+                    const regimenesContribuyenteRes = await axios.get("/api/regimenes-contribuyente")
+                    if (regimenesContribuyenteRes.status === 200) {
+                        setRegimenesContribuyente(regimenesContribuyenteRes.data)
+                    }
                 }
 
-                if (rolesRes.status !== 200) {
-                    console.error(rolesRes.data)
+                if (!empresas.length) {
+                    obtenerEmpresas()
                 }
 
-                if (tiposDocumentoRes.status !== 200) {
-                    console.error(tiposDocumentoRes.data)
+                if (!departamentos.length) {
+                    const departamentosRes = await axios.get("/api/departamentos")
+                    if (departamentosRes.status === 200) {
+                        setDepartamentos(departamentosRes.data)
+                        setDepartamentosFiltrados(departamentosRes.data)
+                    }
                 }
 
-                if (municipiosRes.status !== 200) {
-                    console.error(municipiosRes.data)
+                if (!municipios.length) {
+                    const municipiosRes = await axios.get("/api/municipios")
+                    if (municipiosRes.status === 200) {
+                        setMunicipios(municipiosRes.data)
+                        setMunicipiosFiltrados(municipiosRes.data)
+                    }
                 }
 
-                if (usuariosRes.status !== 200) {
-                    console.error(usuariosRes.data)
-                }
-
-                setDepartamentos(departamentosRes.data || [])
-                setEmpresas(empresasRes.data.filter((empresa: EmpresaResponseDTO) => empresa.estadoEmpresa === true) || [])
-                setRoles(
-                    rolesRes.data.filter((rol: RolDTO) =>
-                        rol.estadoRol === true && !(idRol === 2 && rol.idRol === 1)
-                    )
-                );
-                setTiposDocumento(
-                    tiposDocumentoRes.data.filter(
-                        (tipoDocumento: TipoDocumentoResponseDTO) => tipoDocumento.estadoTipoDocumento === true,
-                    ) || [],
-                )
-                setMunicipios(municipiosRes.data || [])
-                setUsuarios(usuariosRes.data || [])
-                setUsuariosFiltrados(usuariosRes.data || [])
             } catch (error) {
                 console.log(error)
             }
         }
         fetchData()
-    }, [session, idRol, idEmpresa, setDepartamentos, setEmpresas, setRoles, setTiposDocumento, setMunicipios, setUsuarios])
+    }, [setDepartamentos, setEmpresas, setMunicipios, setRegimenesContribuyente, setTiposPersona])
 
 
-    const filtrarUsuarios = () => {
-        const idTipoDocumento = idTipoDocumentoRef.current?.value;
-        const nombreUsuario = nombreUsuarioRef.current?.value;
-        const idEmpresa = idEmpresaRef.current?.value;
-        const idRol = idRolRef.current?.value;
-        const estadoUsuario = estadoUsuarioRef.current?.value;
+    const filtrarEmpresas = () => {
+        const nombreEmpresa = nombreEmpresaRef.current?.value;
+        const idTipoPersona = idTipoPersonaRef.current?.value;
+        const idRegimenContribuyente = idRegimenContribuyenteRef.current?.value;
+        const nitEmpresa = nitEmpresaRef.current?.value;
+        const estadoEmpresa = estadoEmpresaRef.current?.value;
         const idDepartamento = idDepartamentoRef.current?.value;
         const idMunicipio = idMunicipioRef.current?.value;
 
-        let usuariosFiltrados = [...usuarios];
+        let empresasFiltradas = [...empresas];
 
-        if (idRol && idRol !== "0") {
-            usuariosFiltrados = usuariosFiltrados.filter((usuario) => usuario.idRol === Number(idRol));
+        if (idTipoPersona && idTipoPersona !== "0") {
+            empresasFiltradas = empresasFiltradas.filter((empresa) => empresa.idTipoPersona === Number(idTipoPersona));
         }
 
-        if (estadoUsuario !== undefined && estadoUsuario !== "") {
-            usuariosFiltrados = usuariosFiltrados.filter((usuario) => usuario.estadoUsuario === (estadoUsuario === "true"));
+        if (estadoEmpresa && estadoEmpresa !== "true") {
+            empresasFiltradas = empresasFiltradas.filter((empresa) => empresa.estadoEmpresa === (estadoEmpresa === "true"));
         }
 
-        if (idEmpresa && idEmpresa !== "0") {
-            usuariosFiltrados = usuariosFiltrados.filter((usuario) => usuario.idEmpresa === Number(idEmpresa));
-        }
-
-        if (idTipoDocumento && idTipoDocumento !== "0") {
-            usuariosFiltrados = usuariosFiltrados.filter((usuario) => usuario.idTipoDocumento === Number(idTipoDocumento));
+        if (idRegimenContribuyente && idRegimenContribuyente !== "0") {
+            empresasFiltradas = empresasFiltradas.filter((empresa) => empresa.idRegimenContribuyente === Number(idRegimenContribuyente));
         }
 
         if (idDepartamento && idDepartamento !== "0") {
-            usuariosFiltrados = usuariosFiltrados.filter((usuario) => usuario.idDepartamento === Number(idDepartamento));
+            empresasFiltradas = empresasFiltradas.filter((empresa) => empresa.idDepartamento === Number(idDepartamento));
         }
 
         if (idMunicipio && idMunicipio !== "0") {
-            usuariosFiltrados = usuariosFiltrados.filter((usuario) => usuario.idMunicipio === Number(idMunicipio));
+            empresasFiltradas = empresasFiltradas.filter((empresa) => empresa.idMunicipio === Number(idMunicipio));
         }
 
-        if (nombreUsuario) {
-            usuariosFiltrados = usuariosFiltrados.filter((usuario) => {
-                const nombreCompleto = `${usuario.nombreUsuario} ${usuario.apellidoUsuario}`;
-                return nombreCompleto.toLowerCase().includes(nombreUsuario.toLowerCase());
+        if (nombreEmpresa) {
+            empresasFiltradas = empresasFiltradas.filter((empresa) => {
+                return empresa.nombreEmpresa.toLowerCase().includes(nombreEmpresa.toLowerCase());
             });
         }
 
-        setUsuariosFiltrados(usuariosFiltrados);
-        console.log(usuariosFiltrados);
+        if (nitEmpresa) {
+            empresasFiltradas = empresasFiltradas.filter((empresa) => {
+                return empresa.nitEmpresa.toLowerCase().includes(nitEmpresa.toLowerCase());
+            });
+        }
+
+        setEmpresasFiltradas(empresasFiltradas);
+        console.log(empresasFiltradas);
     };
 
     useEffect(() => {
-        filtrarUsuarios();
-    }, [usuarios]);
+        filtrarEmpresas();
+    }, [empresas]);
 
     useEffect(() => {
         if (!departamentos.length || !municipios.length) return;
@@ -209,7 +176,7 @@ const EmpresasPage: React.FC = () => {
         const idDepartamento = idDepartamentoRef.current?.value;
 
         if (idDepartamento && idDepartamento !== "0") {
-            setMunicipiosFiltrados(municipios.filter((municipio) => municipio.idDepartamento === Number(idDepartamento)));
+            setMunicipiosFiltrados(municipios.filter((municipio: MunicipioResponseDTO) => municipio.idDepartamento === Number(idDepartamento)));
         } else {
             setMunicipiosFiltrados(municipios); // Si no hay departamento seleccionado, mostrar todos los municipios
         }
@@ -221,33 +188,33 @@ const EmpresasPage: React.FC = () => {
 
         const idMunicipio = idMunicipioRef.current?.value;
         if (idMunicipio && idMunicipio !== "0") {
-            const departamentoEncontrado = municipios.find((municipio) => municipio.idMunicipio === Number(idMunicipio))?.idDepartamento;
+            const departamentoEncontrado = municipios.find((municipio: MunicipioResponseDTO) => municipio.idMunicipio === Number(idMunicipio))?.idDepartamento;
             if (departamentoEncontrado && idDepartamentoRef.current) {
                 idDepartamentoRef.current.value = departamentoEncontrado.toString();
-                setMunicipiosFiltrados(municipios.filter((municipio) => municipio.idDepartamento === departamentoEncontrado));
+                setMunicipiosFiltrados(municipios.filter((municipio: MunicipioResponseDTO) => municipio.idDepartamento === departamentoEncontrado));
             }
         }
     }, [municipios, idMunicipioRef.current?.value]);
 
     const limpiarFiltros = () => {
-        if (idTipoDocumentoRef.current) idTipoDocumentoRef.current.value = "0";
-        if (nombreUsuarioRef.current) nombreUsuarioRef.current.value = "";
-        if (idEmpresaRef.current) idEmpresaRef.current.value = "0";
-        if (idRolRef.current) idRolRef.current.value = "0";
+        if (idTipoPersonaRef.current) idTipoPersonaRef.current.value = "0";
+        if (nombreEmpresaRef.current) nombreEmpresaRef.current.value = "";
+        if (nitEmpresaRef.current) nitEmpresaRef.current.value = "";
+        if (idRegimenContribuyenteRef.current) idRegimenContribuyenteRef.current.value = "0";
         if (idDepartamentoRef.current) idDepartamentoRef.current.value = "0";
         if (idMunicipioRef.current) idMunicipioRef.current.value = "0";
-        filtrarUsuarios();
+        filtrarEmpresas();
     }
 
     return (
         <ContenedorPrincipal>
-            <ContenedorFiltros title="Usuarios">
+            <ContenedorFiltros title="Empresas">
                 {/* Botones de filtros */}
                 <ContenedorBotonesFiltros>
                     <BotonFiltro
                         onClick={() => setModalRegistrar(true)}
                         Symbol={PlusCircle}
-                        name="Agregar usuario" />
+                        name="Agregar empresa" />
 
                     <BotonFiltro
                         onClick={limpiarFiltros}
@@ -260,54 +227,42 @@ const EmpresasPage: React.FC = () => {
                 <ContenedorSelectores>
                     {/* Nombre */}
                     <InputFiltro
-                        id="nombreUsuario"
+                        id="nombreEmpresa"
                         name="Nombre"
-                        ref={nombreUsuarioRef}
-                        onChange={filtrarUsuarios} />
+                        ref={nombreEmpresaRef}
+                        onChange={filtrarEmpresas} />
 
-                    {/* Tipo de Documento */}
+                    {/* NIT */}
+                    <InputFiltro
+                        id="nitEmpresa"
+                        name="NIT"
+                        ref={nitEmpresaRef}
+                        onChange={filtrarEmpresas} />
+
+                    {/* Tipo de Persona */}
                     <SelectFiltro
-                        id="idTipoDocumento"
-                        name="Tipo de documento"
-                        onChange={filtrarUsuarios}
-                        ref={idTipoDocumentoRef}
+                        id="idTipoPersona"
+                        name="Tipo de persona"
+                        onChange={filtrarEmpresas}
+                        ref={idTipoPersonaRef}
                     >
-                        {tiposDocumento.map((tipo) => (
-                            <option key={tipo.idTipoDocumento} value={tipo.idTipoDocumento.toString()}>
-                                {tipo.nombreTipoDocumento}
+                        {tiposPersona.map((tipo) => (
+                            <option key={tipo.idTipoPersona} value={tipo.idTipoPersona.toString()}>
+                                {tipo.nombreTipoPersona}
                             </option>
                         ))}
                     </SelectFiltro>
 
-                    {/* Empresa */}
-                    {idRol === 1 && (
-                        <SelectFiltro
-                            id="idEmpresa"
-                            name="Empresa"
-                            onChange={filtrarUsuarios}
-                            ref={idEmpresaRef}
-                        >
-                            {empresas.map((emp) => (
-                                <option key={emp.idEmpresa} value={emp.idEmpresa.toString()}>
-                                    {emp.nombreEmpresa}
-                                </option>
-                            ))}
-                        </SelectFiltro>
-                    )
-                    }
-
-
-
-                    {/* Rol */}
+                    {/* Regimen Contribuyente */}
                     <SelectFiltro
-                        id="idRol"
-                        name="Rol"
-                        onChange={filtrarUsuarios}
-                        ref={idRolRef}
+                        id="idRegimenContribuyente"
+                        name="Regimen Contribuyente"
+                        onChange={filtrarEmpresas}
+                        ref={idRegimenContribuyenteRef}
                     >
-                        {roles.map((rol) => (
-                            <option key={rol.idRol} value={rol.idRol.toString()}>
-                                {rol.nombreRol}
+                        {regimenesContribuyente.map((regimen) => (
+                            <option key={regimen.idRegimenContribuyente} value={regimen.idRegimenContribuyente.toString()}>
+                                {regimen.nombreRegimenContribuyente}
                             </option>
                         ))}
                     </SelectFiltro>
@@ -316,7 +271,7 @@ const EmpresasPage: React.FC = () => {
                     <SelectFiltro
                         id="idDepartamento"
                         name="Departamento"
-                        onChange={filtrarUsuarios}
+                        onChange={filtrarEmpresas}
                         ref={idDepartamentoRef}
                     >
                         {departamentosFiltrados.map((departamento) => (
@@ -330,7 +285,7 @@ const EmpresasPage: React.FC = () => {
                     <SelectFiltro
                         id="idMunicipio"
                         name="Municipio"
-                        onChange={filtrarUsuarios}
+                        onChange={filtrarEmpresas}
                         ref={idMunicipioRef}
                     >
                         {municipiosFiltrados.map((municipio) => (
@@ -342,10 +297,10 @@ const EmpresasPage: React.FC = () => {
 
                     {/* Estado */}
                     <SelectFiltro
-                        id="estadoUsuario"
+                        id="estadoEmpresa"
                         name="Estado"
-                        onChange={filtrarUsuarios}
-                        ref={estadoUsuarioRef}
+                        onChange={filtrarEmpresas}
+                        ref={estadoEmpresaRef}
                         defaultValue="true"
                     >
                         <option value="true">Activo</option>
@@ -354,47 +309,47 @@ const EmpresasPage: React.FC = () => {
                 </ContenedorSelectores>
             </ContenedorFiltros>
 
-            {/* Grid de usuarios */}
+            {/* Grid de empresas */}
             < div className="grid gap-4 md:grid-cols-3" >
                 {
-                    usuariosFiltrados.map((usuario) => (
-                        <UsuarioCard usuario={usuario} key={usuario.idUsuario}>
+                    empresasFiltradas.map((empresa) => (
+                        <EmpresaCard empresa={empresa} key={empresa.idEmpresa}>
                             <ContenedorBotonesAccionCard>
                                 <BotonAccionCard
                                     Symbol={Pencil}
                                     onClick={() => {
-                                        setUsuarioSeleccionado(usuario);
+                                        setempresaSeleccionada(empresa);
                                         setModalActualizar(true);
                                     }}
                                 />
                                 <BotonAccionCard
                                     Symbol={Eye}
                                     onClick={() => {
-                                        setUsuarioSeleccionado(usuario);
+                                        setempresaSeleccionada(empresa);
                                         setModalInfo(true);
                                     }}
                                 />
                             </ContenedorBotonesAccionCard>
-                        </UsuarioCard>
+                        </EmpresaCard>
                     ))}
 
             </div >
 
-            {/* Modal para mostrar la información de un usuario*/}
+            {/* Modal para mostrar la información de una empresa*/}
             <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>
-                {usuarioSeleccionado && <MostrarInfoUsuario usuario={usuarioSeleccionado} />}
+                {empresaSeleccionada && <MostrarInfoEmpresa empresa={empresaSeleccionada} />}
             </Modal>
 
 
-            {/* Modal para registrar un usuario*/}
+            {/* Modal para registrar un empresa*/}
             <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
-                <RegistrarUsuario obtenerUsuarios={obtenerUsuarios} setModalRegistrar={setModalRegistrar} />
+                <RegistrarEmpresa obtenerEmpresas={obtenerEmpresas} setModalRegistrar={setModalRegistrar} />
             </Modal>
 
 
-            {/* Modal para actualizar un usuario*/}
+            {/* Modal para actualizar un empresa*/}
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
-                <RegistrarUsuario idUsuario={usuarioSeleccionado?.idUsuario} obtenerUsuarios={obtenerUsuarios} setModalActualizar={setModalActualizar} />
+                <RegistrarEmpresa idEmpresa={empresaSeleccionada?.idEmpresa} obtenerEmpresas={obtenerEmpresas} setModalActualizar={setModalActualizar} />
             </Modal>
 
         </ContenedorPrincipal >

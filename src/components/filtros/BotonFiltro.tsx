@@ -1,7 +1,5 @@
 import { FC } from 'react';
 
-
-
 interface BotonFiltroProps {
     Symbol: FC<{ size: number }>;
     onClick: () => void;

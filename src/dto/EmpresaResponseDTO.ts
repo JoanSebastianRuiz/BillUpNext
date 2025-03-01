@@ -3,6 +3,7 @@ export interface EmpresaResponseDTO {
     idTipoPersona: number,
     idRegimenContribuyente: number,
     idMunicipio: number,
+    idDepartamento: number,
     nitEmpresa: string,
     digitoVerificacionEmpresa: string,
     nombreEmpresa: string,
@@ -11,6 +12,5 @@ export interface EmpresaResponseDTO {
     codigoPostalEmpresa: string,
     telefonoEmpresa: string,
     correoEmpresa: string,
-    logoEmpresa: string,
     estadoEmpresa: boolean
 }

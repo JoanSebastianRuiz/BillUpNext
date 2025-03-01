@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS "TipoDocumento" (
 
 CREATE TABLE IF NOT EXISTS "TipoPersona" (
     "idTipoPersona" serial,
-    "tipoPersona" varchar(20),
+    "nombreTipoPersona" varchar(20),
     primary key ("idTipoPersona")
 );
 
@@ -115,13 +115,13 @@ CREATE TABLE IF NOT EXISTS "Empresa" (
     "idTipoPersona" int not null,
     "idRegimenContribuyente" int not null,
     "idMunicipio" int not null,
-    "nitEmpresa" varchar(15) not null unique,
-    "digitoVerificacionEmpresa" varchar(3) not null,
+    "nitEmpresa" varchar(9) not null unique,
+    "digitoVerificacionEmpresa" varchar(1) not null,
     "nombreEmpresa" varchar(250) not null,
     "razonSocialEmpresa" varchar(250) not null,
     "direccionEmpresa" varchar(250) not null,
-    "codigoPostalEmpresa" varchar(10) not null,
-    "telefonoEmpresa" varchar(15) not null unique,
+    "codigoPostalEmpresa" varchar(6) not null,
+    "telefonoEmpresa" varchar(10) not null unique,
     "correoEmpresa" varchar(250) not null unique,
     "estadoEmpresa" boolean not null,
     primary key ("idEmpresa"),
@@ -145,13 +145,13 @@ CREATE TABLE IF NOT EXISTS "Usuario" (
     "idTipoDocumento" int not null,
     "idMunicipio" int not null,
     "idRol" int not null,
-    "numeroDocumentoUsuario" varchar(15) not null unique,
+    "numeroDocumentoUsuario" varchar(10) not null unique,
     "nombreUsuario" varchar(100) not null,
     "apellidoUsuario" varchar(100) not null,
     "correoUsuario" varchar(250) not null unique,
-    "telefonoUsuario" varchar(15) not null unique,
+    "telefonoUsuario" varchar(10) not null unique,
     "direccionUsuario" varchar(250) not null,
-    "claveUsuario" varchar(100) not null,
+    "claveUsuario" text not null,
     "estadoUsuario" boolean not null,
     primary key ("idUsuario"),
     foreign key ("idEmpresa") references "Empresa" ("idEmpresa"),

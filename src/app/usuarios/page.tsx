@@ -1,19 +1,21 @@
 "use client";
 
-import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 import axios from "axios";
-import { useEffect, useState } from "react";
+
+import { useEffect, useState, useRef } from "react";
+import { useSession } from "next-auth/react";
 import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
-import MostrarInfoUsuario from "@/components/usuarios/MostrarInfoUsuario";
-import RegistrarUsuario from "@/components/usuarios/RegistrarUsuario";
+
 import { useUsuarioContext } from '@/context/UsuarioContext';
 import { useEmpresaContext } from "@/context/EmpresaContext";
+
 import { RolDTO } from '@/dto/RolDTO';
 import { DepartamentoResponseDTO } from '@/dto/DepartamentoResponseDTO';
 import { MunicipioResponseDTO } from '@/dto/MunicipioResponseDTO';
 import { TipoDocumentoResponseDTO } from '@/dto/TipoDocumentoResponseDTO';
-import { useRef } from "react";
+import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
+
 import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
 import ContenedorBotonesFiltros from "@/components/filtros/ContenedorBotonesFiltros";
 import BotonFiltro from "@/components/filtros/BotonFiltro";
@@ -25,7 +27,8 @@ import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAcc
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
-import { useSession } from "next-auth/react";
+import MostrarInfoUsuario from "@/components/usuarios/MostrarInfoUsuario";
+import RegistrarUsuario from "@/components/usuarios/RegistrarUsuario";
 
 
 const UsuariosPage: React.FC = () => {
