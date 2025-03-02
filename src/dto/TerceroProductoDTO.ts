@@ -1,7 +1,6 @@
 export interface TerceroProductoDTO {
-    idTerceroProducto: number,
+    idTerceroProducto?: number,
     idTercero: number,
     idProducto: number,
     precioCompraTerceroProducto: number,
-    porcentajeDescuentoDetalleVenta: number
 }
