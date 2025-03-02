@@ -6,7 +6,7 @@ import { CategoriaDTO } from "@/dto/CategoriaDTO";
 export class CategoriaServiceImpl implements CategoriaService {
   private static instancia: CategoriaServiceImpl;
   private CategoriaDAOImpl: CategoriaDAOImpl = CategoriaDAOImpl.getInstance();
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): CategoriaServiceImpl {
     if (!CategoriaServiceImpl.instancia) {
@@ -63,7 +63,7 @@ export class CategoriaServiceImpl implements CategoriaService {
         );
       }
 
-      if (await this.CategoriaDAOImpl.existCategoriaNombre(nombreCategoria)) {
+      if (await this.CategoriaDAOImpl.existCategoriaNombre(nombreCategoria, idCategoria)) {
         return NextResponse.json(
           { message: "El nombre de la categoría ya existe" },
           { status: 400 }
