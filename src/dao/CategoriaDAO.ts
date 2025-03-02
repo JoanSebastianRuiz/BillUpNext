@@ -5,5 +5,5 @@ export interface CategoriaDAO{
     getById(idCategoria: number): Promise<CategoriaDTO | null>; 
     create(categoria: CategoriaDTO): Promise<boolean>; 
     update(categoria: CategoriaDTO): Promise<boolean>;
-    existCategoriaNombre(nombreCategoria: string): Promise<boolean>; 
+    existCategoriaNombre(nombreCategoria: string, idCategoria?: number): Promise<boolean>; 
 } 
