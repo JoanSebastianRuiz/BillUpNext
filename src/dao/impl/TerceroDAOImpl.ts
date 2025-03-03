@@ -237,11 +237,11 @@ export class TerceroDAOImpl implements TerceroDAO {
         }
     }
 
-    public existTerceroDoc = async (numeroDocumentoTercero: string, idEmpresa: number): Promise<boolean> => {
+    public existTerceroDoc = async (numeroDocumentoTercero: string, idEmpresa: number, estadoProveedor: boolean): Promise<boolean> => {
         try {
             const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-                `SELECT validarExisteTerceroDoc ($1,$2) as resultado;`,
-                [numeroDocumentoTercero, idEmpresa]
+                `SELECT validarExisteTerceroDoc ($1,$2,$3) as resultado;`,
+                [numeroDocumentoTercero, idEmpresa, estadoProveedor]
             );
             return respuesta.length > 0 ? respuesta[0].resultado : false;
         } catch (error) {
@@ -249,11 +249,11 @@ export class TerceroDAOImpl implements TerceroDAO {
         }
     }
 
-    public existTerceroNit = async (nitTercero: string, idEmpresa: number): Promise<boolean> => {
+    public existTerceroNit = async (nitTercero: string, idEmpresa: number, estadoProveedor: boolean): Promise<boolean> => {
         try {
             const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-                `SELECT validarExisteTerceroNit ($1,$2) as resultado;`,
-                [nitTercero, idEmpresa]
+                `SELECT validarExisteTerceroNit ($1,$2,$3) as resultado;`,
+                [nitTercero, idEmpresa, estadoProveedor]
             );
             return respuesta.length > 0 ? respuesta[0].resultado : false;
         } catch (error) {
@@ -261,11 +261,11 @@ export class TerceroDAOImpl implements TerceroDAO {
         }
     }
 
-    public existTerceroCorreo = async (correoTercero: string, idEmpresa: number): Promise<boolean> => {
+    public existTerceroCorreo = async (correoTercero: string, idEmpresa: number, estadoProveedor: boolean): Promise<boolean> => {
         try {
             const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-                `SELECT validarExisteTerceroCorreo ($1,$2) as resultado;`,
-                [correoTercero, idEmpresa]
+                `SELECT validarExisteTerceroCorreo ($1,$2,$3) as resultado;`,
+                [correoTercero, idEmpresa, estadoProveedor]
             );
             return respuesta.length > 0 ? respuesta[0].resultado : false;
         } catch (error) {
@@ -273,11 +273,11 @@ export class TerceroDAOImpl implements TerceroDAO {
         }
     }
 
-    public existTerceroTelefono = async (telefonoTercero: string, idEmpresa: number): Promise<boolean> => {
+    public existTerceroTelefono = async (telefonoTercero: string, idEmpresa: number, estadoProveedor: boolean): Promise<boolean> => {
         try {
             const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-                `SELECT validarExisteTerceroTelefono ($1,$2) as resultado;`,
-                [telefonoTercero, idEmpresa]
+                `SELECT validarExisteTerceroTelefono ($1,$2,$3) as resultado;`,
+                [telefonoTercero, idEmpresa, estadoProveedor]
             );
             return respuesta.length > 0 ? respuesta[0].resultado : false;
         } catch (error) {

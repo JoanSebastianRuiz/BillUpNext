@@ -211,7 +211,8 @@ LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION validarExisteTerceroCorreo(
     _correoTercero "Tercero"."correoTercero"%TYPE,
-    _idEmpresa "Tercero"."idEmpresa"%TYPE
+    _idEmpresa "Tercero"."idEmpresa"%TYPE,
+    _proveedorTercero "Tercero"."proveedorTercero"%TYPE
 ) 
 RETURNS BOOLEAN AS
 $$
@@ -220,7 +221,7 @@ BEGIN
     RETURN EXISTS (
         SELECT 1
         FROM "Tercero"
-        WHERE "correoTercero" = _correoTercero and "idEmpresa" = _idEmpresa
+        WHERE "correoTercero" = _correoTercero and "idEmpresa" = _idEmpresa and "proveedorTercero" = _proveedorTercero
     );
 END;
 $$
@@ -230,7 +231,8 @@ LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION validarExisteTerceroDoc(
     _numeroDocumentoTercero "Tercero"."numeroDocumentoTercero"%TYPE,
-    _idEmpresa "Tercero"."idEmpresa"%TYPE
+    _idEmpresa "Tercero"."idEmpresa"%TYPE,
+    _proveedorTercero "Tercero"."proveedorTercero"%TYPE
 ) 
 RETURNS BOOLEAN AS
 $$
@@ -239,7 +241,7 @@ BEGIN
     RETURN EXISTS (
         SELECT 1
         FROM "Tercero"
-        WHERE "numeroDocumentoTercero" = _numeroDocumentoTercero and "idEmpresa" = _idEmpresa
+        WHERE "numeroDocumentoTercero" = _numeroDocumentoTercero and "idEmpresa" = _idEmpresa and "proveedorTercero" = _proveedorTercero
     );
 END;
 $$
@@ -249,7 +251,8 @@ LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION validarExisteTerceroTelefono(
     _telefonoTercero "Tercero"."telefonoTercero"%TYPE,
-    _idEmpresa "Tercero"."idEmpresa"%TYPE
+    _idEmpresa "Tercero"."idEmpresa"%TYPE,
+    _proveedorTercero "Tercero"."proveedorTercero"%TYPE
 ) 
 RETURNS BOOLEAN AS
 $$
@@ -258,7 +261,7 @@ BEGIN
     RETURN EXISTS (
         SELECT 1
         FROM "Tercero"
-        WHERE "telefonoTercero" = _telefonoTercero and "idEmpresa" = _idEmpresa
+        WHERE "telefonoTercero" = _telefonoTercero and "idEmpresa" = _idEmpresa and "proveedorTercero" = _proveedorTercero
     );
 END;
 $$
@@ -268,7 +271,8 @@ LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION validarExisteTerceroNit(
     _nitTercero "Tercero"."nitTercero"%TYPE,
-    _idEmpresa "Tercero"."idEmpresa"%TYPE
+    _idEmpresa "Tercero"."idEmpresa"%TYPE,
+    _proveedorTercero "Tercero"."proveedorTercero"%TYPE
 ) 
 RETURNS BOOLEAN AS
 $$
@@ -277,7 +281,7 @@ BEGIN
     RETURN EXISTS (
         SELECT 1
         FROM "Tercero"
-        WHERE "nitTercero" = _nitEmpresa and "idEmpresa" = _idEmpresa
+        WHERE "nitTercero" = _nitEmpresa and "idEmpresa" = _idEmpresa and "proveedorTercero" = _proveedorTercero
     );
 END;
 $$

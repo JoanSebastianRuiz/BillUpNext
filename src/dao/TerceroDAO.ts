@@ -12,8 +12,8 @@ export interface TerceroDAO {
     getAllPersona(idEmpresa: number): Promise<Array<TerceroResponsePersonaDTO>>;
     getByIdTerceroPersona(idTercero: number, idEmpresa: number): Promise<TerceroResponsePersonaDTO | null>;
     getByIdTerceroEmpresa(idTercero: number, idEmpresa: number): Promise<TerceroResponseEmpresaDTO | null>;
-    existTerceroDoc(numeroDocumentoTercero: string, idEmpresa: number): Promise<boolean>;
-    existTerceroNit(nitTercero: string, idEmpresa: number): Promise<boolean>;
-    existTerceroCorreo(correoTercero: string, idEmpresa: number): Promise<boolean>;
-    existTerceroTelefono(telefonoTercero: string, idEmpresa: number): Promise<boolean>;
+    existTerceroDoc(numeroDocumentoTercero: string, idEmpresa: number, estadoProveedor: boolean): Promise<boolean>;
+    existTerceroNit(nitTercero: string, idEmpresa: number, estadoProveedor: boolean): Promise<boolean>;
+    existTerceroCorreo(correoTercero: string, idEmpresa: number, estadoProveedor: boolean): Promise<boolean>;
+    existTerceroTelefono(telefonoTercero: string, idEmpresa: number, estadoProveedor: boolean): Promise<boolean>;
 }

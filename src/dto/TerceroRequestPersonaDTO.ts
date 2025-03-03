@@ -9,6 +9,6 @@ export interface TerceroRequestPersonaDTO {
     telefonoTercero: string,
     direccionTercero: string,
     correoTercero: string,
-    proveedorTercero?: boolean,
+    proveedorTercero: boolean,
     estadoTercero: boolean
 }

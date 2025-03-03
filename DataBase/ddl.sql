@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS "Tercero" (
     "digitoVerificacionTercero" varchar(1) null,
     "razonSocialTercero" varchar(250) null,
     "numeroDocumentoTercero" varchar(10) null,
-    "nombreTercero" varchar(100) not null,
+    "nombreTercero" varchar(250) not null,
     "apellidoTercero" varchar(100) not null,
     "telefonoTercero" varchar(10) not null,
     "direccionTercero" varchar(250) not null,
