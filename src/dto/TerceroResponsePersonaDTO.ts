@@ -1,6 +1,7 @@
 export interface TerceroResponsePersonaDTO {
     idTercero: number,
     idTipoDocumento: number,
+    idEmpresa?: number,
     idMunicipio: number,
     idDepartamento: number,
     numeroDocumentoTercero: string,

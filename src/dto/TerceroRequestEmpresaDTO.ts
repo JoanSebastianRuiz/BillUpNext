@@ -3,6 +3,7 @@ export interface TerceroRequestEmpresaDTO {
     idEmpresa: number,
     idTipoPersona: number,
     idMunicipio: number,
+    idDepartamento?: number,
     idRegimenContribuyente: number,
     nitTercero: string,
     digitoVerificacionTercero: string,

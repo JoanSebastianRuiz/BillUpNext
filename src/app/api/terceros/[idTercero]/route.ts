@@ -1,5 +1,5 @@
 import { TerceroServiceImpl } from "@/services/Impl/TerceroServiceImpl";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const terceroService = TerceroServiceImpl.getInstance();
 
@@ -9,7 +9,7 @@ export const PUT = async (request: NextRequest, {params} : {params : {idTercero 
     const {idTercero} = await params;
 
     if (!idTercero) {
-        return {message: "ID inválido"};
+        return NextResponse.json({message: "ID inválido"}, {status: 400});
     }
     
     const data = await request.json();
@@ -22,7 +22,7 @@ export const PUT = async (request: NextRequest, {params} : {params : {idTercero 
         const respuesta = await terceroService.updateEmpresa(dataWithId);
         return respuesta;
     } else {
-        return {message: "Tipo de tercero no válido"};
+        return NextResponse.json({message: "Tipo de tercero no válido"}, {status: 400});
     }
 }
 
@@ -32,16 +32,16 @@ export const GET = async (request: NextRequest, {params} : {params : {idTercero 
     const {idTercero} = await params;
 
     if (!idTercero) {
-        return {message: "ID inválido"};
+        return NextResponse.json({message: "ID inválido"}, {status: 400});
     }
 
     if(tipo === "persona"){
         const tercero = await terceroService.getByIdTerceroPersona(parseInt(idTercero));
-        return tercero;
+        return NextResponse.json(tercero, {status: 200});
     } else if(tipo === "empresa"){
         const tercero = await terceroService.getByIdTerceroEmpresa(parseInt(idTercero));
-        return tercero;
+        return NextResponse.json(tercero, {status: 200});
     } else {
-        return {message: "Tipo de tercero no válido"};
+        return NextResponse.json({message: "Tipo de tercero no válido"}, {status: 400});
     }
 }

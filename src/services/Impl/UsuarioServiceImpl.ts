@@ -36,29 +36,29 @@ export class UsuarioServiceImpl implements UsuarioService {
             claveUsuario,
             estadoUsuario
         } = data
-        
 
-        if (!idEmpresa || !idTipoDocumento || !idRol || !idMunicipio || !numeroDocumentoUsuario || !nombreUsuario || !apellidoUsuario || !correoUsuario || !telefonoUsuario || !direccionUsuario || !claveUsuario || !estadoUsuario) {
+
+        if (!idEmpresa || !idTipoDocumento || !idRol || !idMunicipio || !numeroDocumentoUsuario || !nombreUsuario || !apellidoUsuario || !correoUsuario || !telefonoUsuario || !direccionUsuario || !claveUsuario || estadoUsuario === undefined) {
             return NextResponse.json({ message: "Faltan campos por llenar" }, { status: 400 })
         }
 
-        if(!isValidLength(nombreUsuario, 100)){
+        if (!isValidLength(nombreUsuario, 100)) {
             return NextResponse.json({ message: "Nombre inválido" }, { status: 400 });
         }
 
-        if(!isValidLength(apellidoUsuario, 100)){
+        if (!isValidLength(apellidoUsuario, 100)) {
             return NextResponse.json({ message: "Apellido inválido" }, { status: 400 });
         }
 
-        if(!isValidLength(direccionUsuario, 250)){
+        if (!isValidLength(direccionUsuario, 250)) {
             return NextResponse.json({ message: "Dirección inválida" }, { status: 400 });
         }
 
-        if(!isValidLength(correoUsuario, 250)){
+        if (!isValidLength(correoUsuario, 250)) {
             return NextResponse.json({ message: "Correo inválido" }, { status: 400 });
         }
 
-        if(!isValidLength(claveUsuario, 250)){
+        if (!isValidLength(claveUsuario, 250)) {
             return NextResponse.json({ message: "Clave inválida" }, { status: 400 });
         }
 
@@ -89,7 +89,7 @@ export class UsuarioServiceImpl implements UsuarioService {
 
             // Encriptar clave
             const hashClave = await bycript.hash(claveUsuario, 12);
-            const dataFinal : UsuarioRequestDTO = { ...data, claveUsuario: hashClave };
+            const dataFinal: UsuarioRequestDTO = { ...data, claveUsuario: hashClave };
 
             const respuesta = await this.usuarioDAOImpl.create(dataFinal);
 
@@ -108,23 +108,23 @@ export class UsuarioServiceImpl implements UsuarioService {
     public update = async (data: UsuarioRequestDTO): Promise<NextResponse> => {
         const { idUsuario, idEmpresa, idTipoDocumento, idRol, idMunicipio, numeroDocumentoUsuario, nombreUsuario, apellidoUsuario, correoUsuario, telefonoUsuario, direccionUsuario, estadoUsuario } = data;
 
-        if (!idUsuario || !idEmpresa || !idTipoDocumento || !idRol || !idMunicipio || !numeroDocumentoUsuario || !nombreUsuario || !apellidoUsuario || !correoUsuario || !telefonoUsuario || !direccionUsuario || !estadoUsuario) {
+        if (!idUsuario || !idEmpresa || !idTipoDocumento || !idRol || !idMunicipio || !numeroDocumentoUsuario || !nombreUsuario || !apellidoUsuario || !correoUsuario || !telefonoUsuario || !direccionUsuario || estadoUsuario === undefined) {
             return Promise.resolve(NextResponse.json({ message: "Faltan campos por llenar" }, { status: 400 }))
         }
 
-        if(!isValidLength(nombreUsuario, 100)){
+        if (!isValidLength(nombreUsuario, 100)) {
             return NextResponse.json({ message: "Nombre inválido" }, { status: 400 });
         }
 
-        if(!isValidLength(apellidoUsuario, 100)){
+        if (!isValidLength(apellidoUsuario, 100)) {
             return NextResponse.json({ message: "Apellido inválido" }, { status: 400 });
         }
 
-        if(!isValidLength(direccionUsuario, 250)){
+        if (!isValidLength(direccionUsuario, 250)) {
             return NextResponse.json({ message: "Dirección inválida" }, { status: 400 });
         }
 
-        if(!isValidLength(correoUsuario, 250)){
+        if (!isValidLength(correoUsuario, 250)) {
             return NextResponse.json({ message: "Correo inválido" }, { status: 400 });
         }
 
@@ -176,8 +176,8 @@ export class UsuarioServiceImpl implements UsuarioService {
             return NextResponse.json({ message: "Error interno del servidor" }, { status: 500 });
         }
     }
-    
-    public getAll = async (): Promise<UsuarioResponseDTO[]> =>{
+
+    public getAll = async (): Promise<UsuarioResponseDTO[]> => {
         try {
             const usuariosResponseDTO = await this.usuarioDAOImpl.getAll();
             if (!usuariosResponseDTO) {
@@ -191,7 +191,7 @@ export class UsuarioServiceImpl implements UsuarioService {
         }
     }
 
-    public getByIdUser = async(idUser: number): Promise<UsuarioResponseDTO | null> =>{
+    public getByIdUser = async (idUser: number): Promise<UsuarioResponseDTO | null> => {
         try {
             const usuarioResponseDTO = await this.usuarioDAOImpl.getByIdUser(idUser);
             if (!usuarioResponseDTO) {
@@ -210,31 +210,31 @@ export class UsuarioServiceImpl implements UsuarioService {
             if (!numeroDocumentoUsuario || !claveUsuario) {
                 return null;
             }
-    
+
             const usuarioAutenticacionDTO = await this.getClaveAutenticacion(numeroDocumentoUsuario);
             if (!usuarioAutenticacionDTO) {
                 return null;
             }
 
             // Para pruebas
-            if(usuarioAutenticacionDTO.claveUsuario == claveUsuario){
+            if (usuarioAutenticacionDTO.claveUsuario == claveUsuario) {
                 return usuarioAutenticacionDTO;
             }
-    
+
             const isValidPassword = await bycript.compare(claveUsuario, usuarioAutenticacionDTO.claveUsuario);
             if (!isValidPassword) {
                 return null;
             }
-    
+
             return usuarioAutenticacionDTO;
-    
+
         } catch (error) {
             console.error("Error al autenticar el usuario:", error);
             return null;
         }
     }
 
-    private getClaveAutenticacion = async(numeroDocumentoUsuario: string): Promise<UsuarioAutenticacionDTO | null> =>{
+    private getClaveAutenticacion = async (numeroDocumentoUsuario: string): Promise<UsuarioAutenticacionDTO | null> => {
         try {
             const UsuarioAutenticacionDTO = await this.usuarioDAOImpl.getClaveAutenticacion(numeroDocumentoUsuario);
             if (!UsuarioAutenticacionDTO) {

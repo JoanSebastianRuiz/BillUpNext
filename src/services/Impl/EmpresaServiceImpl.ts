@@ -34,7 +34,7 @@ export class EmpresaServiceImpl implements EmpresaService {
                 estadoEmpresa
             } = empresa;
 
-            if (!idTipoPersona || !idRegimenContribuyente || !idMunicipio || !nitEmpresa || !digitoVerificacionEmpresa || !nombreEmpresa || !razonSocialEmpresa || !direccionEmpresa || !codigoPostalEmpresa || !telefonoEmpresa || !correoEmpresa || !estadoEmpresa) {
+            if (!idTipoPersona || !idRegimenContribuyente || !idMunicipio || !nitEmpresa || !digitoVerificacionEmpresa || !nombreEmpresa || !razonSocialEmpresa || !direccionEmpresa || !codigoPostalEmpresa || !telefonoEmpresa || !correoEmpresa || estadoEmpresa === undefined) {
                 return NextResponse.json({ message: 'Faltan campos por llenar' }, { status: 400 });
             }
 
@@ -116,7 +116,7 @@ export class EmpresaServiceImpl implements EmpresaService {
                 estadoEmpresa
             } = empresa;
 
-            if (!idEmpresa || !idTipoPersona || !idRegimenContribuyente || !idMunicipio || !nitEmpresa || !digitoVerificacionEmpresa || !nombreEmpresa || !razonSocialEmpresa || !direccionEmpresa || !codigoPostalEmpresa || !telefonoEmpresa || !correoEmpresa || !estadoEmpresa) {
+            if (!idEmpresa || !idTipoPersona || !idRegimenContribuyente || !idMunicipio || !nitEmpresa || !digitoVerificacionEmpresa || !nombreEmpresa || !razonSocialEmpresa || !direccionEmpresa || !codigoPostalEmpresa || !telefonoEmpresa || !correoEmpresa || estadoEmpresa === undefined) {
                 return NextResponse.json({ message: 'Faltan campos por llenar' }, { status: 400 });
             }
 

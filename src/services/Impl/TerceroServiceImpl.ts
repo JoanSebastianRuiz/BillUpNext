@@ -40,7 +40,7 @@ export class TerceroServiceImpl implements TerceroService {
                 estadoTercero
             } = tercero;
 
-            if (!idEmpresa || !idTipoPersona || !idMunicipio || !idRegimenContribuyente || !nitTercero || !digitoVerificacionTercero || !razonSocialTercero || !nombreTercero || !telefonoTercero || !direccionTercero || !correoTercero || !codigoPostalTercero || !proveedorTercero || !estadoTercero) {
+            if (!idEmpresa || !idTipoPersona || !idMunicipio || !idRegimenContribuyente || !nitTercero || !digitoVerificacionTercero || !razonSocialTercero || !nombreTercero || !telefonoTercero || !direccionTercero || !correoTercero || !codigoPostalTercero || proveedorTercero === undefined || estadoTercero === undefined) {
                 return NextResponse.json({ message: 'Faltan datos' }, { status: 400 });
             }
 
@@ -116,7 +116,7 @@ export class TerceroServiceImpl implements TerceroService {
                 estadoTercero
             } = tercero;
 
-            if (!idEmpresa || !idTipoDocumento || !idMunicipio || !numeroDocumentoTercero || !nombreTercero || !apellidoTercero || !telefonoTercero || !direccionTercero || !correoTercero || !proveedorTercero || !estadoTercero) {
+            if (!idEmpresa || !idTipoDocumento || !idMunicipio || !numeroDocumentoTercero || !nombreTercero || !apellidoTercero || !telefonoTercero || !direccionTercero || !correoTercero || proveedorTercero === undefined || estadoTercero === undefined) {
                 return NextResponse.json({ message: 'Faltan datos' }, { status: 400 });
             }
 
@@ -192,7 +192,7 @@ export class TerceroServiceImpl implements TerceroService {
                 estadoTercero
             } = tercero;
 
-            if (!idTercero || !idEmpresa || !idTipoPersona || !idMunicipio || !idRegimenContribuyente || !nitTercero || !digitoVerificacionTercero || !razonSocialTercero || !nombreTercero || !telefonoTercero || !direccionTercero || !correoTercero || !codigoPostalTercero || !proveedorTercero || !estadoTercero) {
+            if (!idTercero || !idEmpresa || !idTipoPersona || !idMunicipio || !idRegimenContribuyente || !nitTercero || !digitoVerificacionTercero || !razonSocialTercero || !nombreTercero || !telefonoTercero || !direccionTercero || !correoTercero || !codigoPostalTercero || proveedorTercero === undefined || estadoTercero === undefined) {
                 return NextResponse.json({ message: 'Faltan datos' }, { status: 400 });
             }
 
@@ -275,7 +275,7 @@ export class TerceroServiceImpl implements TerceroService {
                 estadoTercero
             } = tercero;
 
-            if (!idTercero || !idEmpresa || !idTipoDocumento || !idMunicipio || !numeroDocumentoTercero || !nombreTercero || !apellidoTercero || !telefonoTercero || !direccionTercero || !correoTercero || !proveedorTercero || !estadoTercero) {
+            if (!idTercero || !idEmpresa || !idTipoDocumento || !idMunicipio || !numeroDocumentoTercero || !nombreTercero || !apellidoTercero || !telefonoTercero || !direccionTercero || !correoTercero || proveedorTercero === undefined || estadoTercero === undefined) {
                 return NextResponse.json({ message: 'Faltan datos' }, { status: 400 });
             }
 
@@ -337,9 +337,9 @@ export class TerceroServiceImpl implements TerceroService {
         }
     }
 
-    public getAllEmpresa = async (idEmpresa: number, estadoProveedor: boolean): Promise<Array<TerceroResponseEmpresaDTO>> => {
+    public getAllEmpresa = async (idEmpresa: number, proveedorTercero: boolean): Promise<Array<TerceroResponseEmpresaDTO>> => {
         try {
-            const response = await this.terceroDAO.getAllEmpresa(idEmpresa, estadoProveedor);
+            const response = await this.terceroDAO.getAllEmpresa(idEmpresa, proveedorTercero);
 
             return response;
         } catch (error) {
@@ -347,9 +347,9 @@ export class TerceroServiceImpl implements TerceroService {
         }
     }
 
-    public getAllPersona = async (idEmpresa: number, estadoProveedor: boolean): Promise<Array<TerceroResponsePersonaDTO>> => {
+    public getAllPersona = async (idEmpresa: number, proveedorTercero: boolean): Promise<Array<TerceroResponsePersonaDTO>> => {
         try {
-            const response = await this.terceroDAO.getAllPersona(idEmpresa, estadoProveedor);
+            const response = await this.terceroDAO.getAllPersona(idEmpresa, proveedorTercero);
 
             return response;
         } catch (error) {

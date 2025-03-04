@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { UsuarioContextProvider } from "@/context/UsuarioContext";
 import { EmpresaContextProvider } from "@/context/EmpresaContext";
+import { TerceroContextProvider } from "@/context/TerceroContext";
 import AuthProvider from "@/context/AuthProvider";
 import { ThemeProvider } from "next-themes";
 
@@ -24,7 +25,9 @@ export default function RootLayout({
           <AuthProvider>
             <UsuarioContextProvider>
               <EmpresaContextProvider>
-                {children}
+                <TerceroContextProvider>
+                  {children}
+                </TerceroContextProvider>
               </EmpresaContextProvider>
             </UsuarioContextProvider>
           </AuthProvider>

@@ -9,16 +9,16 @@ export const GET = async (request : NextRequest, {params} : {params : {idEmpresa
     const {idEmpresa} = await params;
 
     if (!idEmpresa) {
-        return {message: "ID inválido"};
+        return NextResponse.json({message: "ID inválido"}, {status: 400});
     }
 
     if(tipo === "persona"){
-        const tercero = await terceroService.getAllPersona(parseInt(idEmpresa), true);
-        return tercero;
+        const terceros = await terceroService.getAllPersona(parseInt(idEmpresa), true);
+        return NextResponse.json(terceros, {status: 200});
     } else if(tipo === "empresa"){
-        const tercero = await terceroService.getAllEmpresa(parseInt(idEmpresa), true);
-        return tercero;
+        const terceros = await terceroService.getAllEmpresa(parseInt(idEmpresa), true);
+        return NextResponse.json(terceros, {status: 200});
     } else {
-        return {message: "Tipo de tercero no válido"};
+        return NextResponse.json({message: "Tipo de tercero no válido"}, {status: 400});
     }
 }
