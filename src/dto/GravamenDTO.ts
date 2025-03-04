@@ -1,5 +1,5 @@
 export interface GravamenDTO {
-    idGravamen: number,
+    idGravamen?: number,
     nombreGravamen: string,
     estadoGravamen: boolean,
     negativoGravamen: boolean,
