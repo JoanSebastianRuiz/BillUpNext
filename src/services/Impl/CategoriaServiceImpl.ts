@@ -5,7 +5,7 @@ import { CategoriaDTO } from "@/dto/CategoriaDTO";
 
 export class CategoriaServiceImpl implements CategoriaService {
   private static instancia: CategoriaServiceImpl;
-  private CategoriaDAOImpl: CategoriaDAOImpl = CategoriaDAOImpl.getInstance();
+  private categoriaDAOImpl: CategoriaDAOImpl = CategoriaDAOImpl.getInstance();
   private constructor() { }
 
   public static getInstance(): CategoriaServiceImpl {
@@ -22,20 +22,18 @@ export class CategoriaServiceImpl implements CategoriaService {
       if (!nombreCategoria || !estadoCategoria) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
-          {
-            status: 400,
-          }
+          { status: 400 }
         );
       }
 
-      if (await this.CategoriaDAOImpl.existCategoriaNombre(nombreCategoria)) {
+      if (await this.categoriaDAOImpl.existCategoriaNombre(nombreCategoria)) {
         return NextResponse.json(
           { message: "El nombre de la categoría ya existe" },
           { status: 400 }
         );
       }
 
-      const respuesta = await this.CategoriaDAOImpl.create(categoria);
+      const respuesta = await this.categoriaDAOImpl.create(categoria);
       if (respuesta) {
         return NextResponse.json(
           { message: "Categoría creada correctamente" },
@@ -63,14 +61,14 @@ export class CategoriaServiceImpl implements CategoriaService {
         );
       }
 
-      if (await this.CategoriaDAOImpl.existCategoriaNombre(nombreCategoria, idCategoria)) {
+      if (await this.categoriaDAOImpl.existCategoriaNombre(nombreCategoria, idCategoria)) {
         return NextResponse.json(
           { message: "El nombre de la categoría ya existe" },
           { status: 400 }
         );
       }
 
-      const respuesta = await this.CategoriaDAOImpl.update(categoria);
+      const respuesta = await this.categoriaDAOImpl.update(categoria);
       if (respuesta) {
         return NextResponse.json(
           { message: "Categoría actualizada correctamente" },
@@ -89,7 +87,7 @@ export class CategoriaServiceImpl implements CategoriaService {
 
   public getAll = async (): Promise<Array<CategoriaDTO>> => {
     try {
-      const respuesta: CategoriaDTO[] = await this.CategoriaDAOImpl.getAll();
+      const respuesta: CategoriaDTO[] = await this.categoriaDAOImpl.getAll();
       return respuesta;
     } catch (error) {
       throw new Error(`Error en CategoríaService.getAll: ${error}`);
@@ -100,7 +98,7 @@ export class CategoriaServiceImpl implements CategoriaService {
     idCategoria: number
   ): Promise<CategoriaDTO | null> => {
     try {
-      const respuesta = await this.CategoriaDAOImpl.getById(idCategoria);
+      const respuesta = await this.categoriaDAOImpl.getById(idCategoria);
 
       if (!respuesta) {
         return null;
