@@ -1,8 +1,19 @@
 import { ReactNode, useState } from "react";
 import { Menu, X } from "lucide-react"; // Íconos para abrir/cerrar
+import { signOut } from "next-auth/react";
 
-const ContenedorNav = ({children}: {children: ReactNode}) => {
+const ContenedorNav = ({ children }: { children: ReactNode }) => {
     const [isOpen, setIsOpen] = useState(false);
+
+    const handleLogout = () => {
+        // Eliminar cookies manualmente
+        document.cookie = "next-auth.session-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "__Secure-next-auth.session-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "__Host-next-auth.csrf-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+        // Cerrar sesión con NextAuth
+        signOut({ callbackUrl: "/" });
+    };
 
     return (
         <div className="relative">
@@ -24,6 +35,15 @@ const ContenedorNav = ({children}: {children: ReactNode}) => {
             >
                 <ul className="p-4 space-y-2">
                     {children}
+                    <li>
+                        <button
+                            onClick={handleLogout}
+                            className="block text-red-500 dark:text-red-400 font-medium px-4 py-2 rounded-lg transition-all 
+                                       hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-300"
+                        >
+                            <span>Cerrar sesión</span>
+                        </button>
+                    </li>
                 </ul>
             </nav>
         </div>

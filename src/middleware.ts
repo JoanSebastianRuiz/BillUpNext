@@ -7,7 +7,11 @@ export default withAuth(
     const token = req.nextauth.token; // Obtiene el token de la sesión
 
     if (!token) {
-      return NextResponse.redirect(new URL("/", req.url)); // Si no está autenticado, redirigir al login
+      const response = NextResponse.redirect(new URL("/", req.url));
+      response.cookies.set("next-auth.session-token", "", { expires: new Date(0) });
+      response.cookies.set("__Secure-next-auth.session-token", "", { expires: new Date(0) });
+      response.cookies.set("__Host-next-auth.csrf-token", "", { expires: new Date(0) });
+      return response;
     }
 
     const userRole = token.idRol; // Extraer el rol del token
