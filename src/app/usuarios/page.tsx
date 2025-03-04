@@ -49,7 +49,7 @@ const UsuariosPage: React.FC = () => {
         setUsuarios,
     } = useUsuarioContext()
 
-    const {empresas, setEmpresas} = useEmpresaContext()
+    const { empresas, setEmpresas } = useEmpresaContext()
 
     const [usuariosFiltrados, setUsuariosFiltrados] = useState<UsuarioResponseDTO[]>([]);
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
@@ -70,7 +70,7 @@ const UsuariosPage: React.FC = () => {
 
     const obtenerUsuarios = async () => {
         if (!session || idRol === undefined || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
-        try { 
+        try {
             if (idRol === 2) {
                 const respuesta = await axios.get<UsuarioResponseDTO[]>(`/api/empresas/${idEmpresa}/usuarios`)
                 if (respuesta.status === 200) {
@@ -81,7 +81,7 @@ const UsuariosPage: React.FC = () => {
                 }
                 return
             }
-            
+
             const respuesta = await axios.get<UsuarioResponseDTO[]>("/api/usuarios")
             if (respuesta.status === 200) {
                 setUsuarios(respuesta.data)
@@ -98,54 +98,59 @@ const UsuariosPage: React.FC = () => {
         const fetchData = async () => {
             if (!session || idRol === undefined || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
             try {
-                const [departamentosRes, empresasRes, rolesRes, tiposDocumentoRes, municipiosRes, usuariosRes] = await Promise.all([
-                    axios.get("/api/departamentos"),
-                    axios.get("/api/empresas"),
-                    axios.get("/api/roles"),
-                    axios.get("/api/tipos-documento"),
-                    axios.get("/api/municipios"),
-                    idRol === 2 ? axios.get(`/api/empresas/${idEmpresa}/usuarios`) : axios.get("/api/usuarios"),
-                ])
-
-                if (departamentosRes.status !== 200) {
-                    console.error(departamentosRes.data)
+                if (!departamentos.length) {
+                    const departamentosRes = await axios.get("/api/departamentos")
+                    if (departamentosRes.status === 200) {
+                        setDepartamentos(departamentosRes.data)
+                    }
                 }
 
-                if (empresasRes.status !== 200) {
-                    console.error(empresasRes.data)
+                if (!municipios.length) {
+                    const municipiosRes = await axios.get("/api/municipios")
+                    if (municipiosRes.status === 200) {
+                        setMunicipios(municipiosRes.data)
+                    }
                 }
 
-                if (rolesRes.status !== 200) {
-                    console.error(rolesRes.data)
+                if (!empresas.length) {
+                    const empresasRes = await axios.get("/api/empresas")
+                    if (empresasRes.status === 200) {
+                        setEmpresas(empresasRes.data.filter((empresa: EmpresaResponseDTO) => empresa.estadoEmpresa === true) || [])
+                    }
                 }
 
-                if (tiposDocumentoRes.status !== 200) {
-                    console.error(tiposDocumentoRes.data)
+                if (!roles.length) {
+                    const rolesRes = await axios.get("/api/roles")
+                    if (rolesRes.status === 200) {
+                        setRoles(
+                            rolesRes.data.filter((rol: RolDTO) =>
+                                rol.estadoRol === true && !(idRol === 2 && rol.idRol === 1)
+                            )
+                        );
+                    }
                 }
 
-                if (municipiosRes.status !== 200) {
-                    console.error(municipiosRes.data)
+                if(!tiposDocumento.length) {
+                    const tiposDocumentoRes = await axios.get("/api/tipos-documento")
+                    if (tiposDocumentoRes.status === 200) {
+                        setTiposDocumento(tiposDocumentoRes.data.filter((tipoDocumento: TipoDocumentoResponseDTO) => tipoDocumento.estadoTipoDocumento === true) || [])
+                    }
                 }
 
-                if (usuariosRes.status !== 200) {
-                    console.error(usuariosRes.data)
+                if(!usuarios.length) {
+                    let usuariosRes;
+                    if(idRol === 2) {
+                        usuariosRes = await axios.get(`/api/empresas/${idEmpresa}/usuarios`)
+                    } else {
+                        usuariosRes = await axios.get("/api/usuarios")
+                    }
+
+                    if (usuariosRes.status === 200) {
+                        setUsuarios(usuariosRes.data || [])
+                        setUsuariosFiltrados(usuariosRes.data || [])
+                    }
                 }
 
-                setDepartamentos(departamentosRes.data || [])
-                setEmpresas(empresasRes.data.filter((empresa: EmpresaResponseDTO) => empresa.estadoEmpresa === true) || [])
-                setRoles(
-                    rolesRes.data.filter((rol: RolDTO) =>
-                        rol.estadoRol === true && !(idRol === 2 && rol.idRol === 1)
-                    )
-                );
-                setTiposDocumento(
-                    tiposDocumentoRes.data.filter(
-                        (tipoDocumento: TipoDocumentoResponseDTO) => tipoDocumento.estadoTipoDocumento === true,
-                    ) || [],
-                )
-                setMunicipios(municipiosRes.data || [])
-                setUsuarios(usuariosRes.data || [])
-                setUsuariosFiltrados(usuariosRes.data || [])
             } catch (error) {
                 console.log(error)
             }
