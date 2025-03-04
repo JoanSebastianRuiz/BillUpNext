@@ -3,12 +3,12 @@
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
 import TercerosPersona from "@/components/terceros/TercerosPersona";
 
-const ClientesPage = () => {
+const ProveedoresPage = () => {
   return (
     <ContenedorPrincipal>
-        <TercerosPersona proveedorTerceroPersona={false} tipoPersonas="clientes" />
+        <TercerosPersona proveedorTerceroPersona={true} tipoPersonas="proveedores" />
     </ContenedorPrincipal>
   )
 };
 
-export default ClientesPage;
+export default ProveedoresPage;

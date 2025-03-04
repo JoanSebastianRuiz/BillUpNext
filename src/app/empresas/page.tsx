@@ -161,7 +161,6 @@ const EmpresasPage: React.FC = () => {
         }
 
         setEmpresasFiltradas(empresasFiltradas);
-        console.log(empresasFiltradas);
     };
 
     useEffect(() => {
