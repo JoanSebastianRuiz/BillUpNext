@@ -7,7 +7,7 @@ import ParrafoMostrarInfo from "../modal/ParrafoMostrarInfo";
 import EstadoMostrarInfo from "../modal/EstadoMostrarInfo";
 
 
-const MostrarInfoTercero = ({ tercero }: { tercero: TerceroResponsePersonaDTO }) => {
+const MostrarInfoTerceroPersona = ({ tercero }: { tercero: TerceroResponsePersonaDTO }) => {
     const { tiposDocumento, departamentos, municipios } = useUsuarioContext();
 
     return (
@@ -32,4 +32,4 @@ const MostrarInfoTercero = ({ tercero }: { tercero: TerceroResponsePersonaDTO })
     );
 };
 
-export default MostrarInfoTercero;
+export default MostrarInfoTerceroPersona;

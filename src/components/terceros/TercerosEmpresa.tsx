@@ -7,12 +7,13 @@ import { useSession } from "next-auth/react";
 import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
 
 import { useUsuarioContext } from '@/context/UsuarioContext';
+import { useEmpresaContext } from "@/context/EmpresaContext";
 import { useTerceroContext } from "@/context/TerceroContext";
 
 import { DepartamentoResponseDTO } from '@/dto/DepartamentoResponseDTO';
 import { MunicipioResponseDTO } from '@/dto/MunicipioResponseDTO';
 import { TipoDocumentoResponseDTO } from '@/dto/TipoDocumentoResponseDTO';
-import { TerceroResponsePersonaDTO } from "@/dto/TerceroResponsePersonaDTO";
+import { TerceroResponseEmpresaDTO } from "@/dto/TerceroResponseEmpresaDTO";
 
 import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
 import ContenedorBotonesFiltros from "@/components/filtros/ContenedorBotonesFiltros";
@@ -20,36 +21,44 @@ import BotonFiltro from "@/components/filtros/BotonFiltro";
 import ContenedorSelectores from "@/components/filtros/ContenedorSelectores";
 import InputFiltro from "@/components/filtros/InputFiltro";
 import SelectFiltro from "@/components/filtros/SelectFiltro";
-import TerceroPersonaCard from "@/components/terceros/TerceroPersonaCard";
+import TerceroEmpresaCard from "@/components/terceros/TerceroEmpresaCard";
 import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAccionCard";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
-import MostrarInfoTerceroPersona from "@/components/terceros/MostrarInfoTerceroPersona";
-import RegistrarTerceroPersona from "@/components/terceros/RegistrarTerceroPersona";
+import MostrarInfoTerceroEmpresa from "@/components/terceros/MostrarInfoTerceroEmpresa";
+import RegistrarTerceroEmpresa from "@/components/terceros/RegistrarTerceroEmpresa";
+import { TipoPersonaDTO } from "@/dto/TipoPersonaDTO";
 
 
-const TercerosPersona = ({proveedorTerceroPersona, tipoPersonas}:{proveedorTerceroPersona:boolean, tipoPersonas: "clientes" | "proveedores"}) => {
+const TercerosEmpresa = ({proveedorTerceroEmpresa, tipoEmpresas}:{proveedorTerceroEmpresa:boolean, tipoEmpresas: "clientes" | "proveedores"}) => {
     const [modalInfo, setModalInfo] = useState(false)
     const [modalRegistrar, setModalRegistrar] = useState(false)
     const [modalActualizar, setModalActualizar] = useState(false)
-    const [terceroSeleccionado, setTerceroSeleccionado] = useState<TerceroResponsePersonaDTO | null>(null)
+    const [terceroSeleccionado, setTerceroSeleccionado] = useState<TerceroResponseEmpresaDTO | null>(null)
     const {
         departamentos,
         setDepartamentos,
         municipios,
         setMunicipios,
-        tiposDocumento,
-        setTiposDocumento,
     } = useUsuarioContext()
+    const {
+        tiposPersona,
+        setTiposPersona,
+        regimenesContribuyente,
+        setRegimenesContribuyente,
+        
+    } = useEmpresaContext()
 
-    const { clientesPersona, setClientesPersona, proveedoresPersona, setProveedoresPersona } = useTerceroContext()
+    const { clientesEmpresa, setClientesEmpresa, proveedoresEmpresa, setProveedoresEmpresa } = useTerceroContext()
 
-    const [personasFiltradas, setPersonasFiltradas] = useState<TerceroResponsePersonaDTO[]>([]);
+    const [empresasFiltradas, setEmpresasFiltradas] = useState<TerceroResponseEmpresaDTO[]>([]);
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
     const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);
 
-    const nombrePersonaRef = useRef<HTMLInputElement>(null)
-    const idTipoDocumentoRef = useRef<HTMLSelectElement>(null)
+    const nombreEmpresaRef = useRef<HTMLInputElement>(null)
+    const nitEmpresaRef = useRef<HTMLInputElement>(null)
+    const idRegimenContribuyenteRef = useRef<HTMLSelectElement>(null)
+    const idTipoPersonaRef = useRef<HTMLSelectElement>(null)
     const idDepartamentoRef = useRef<HTMLSelectElement>(null)
     const idMunicipioRef = useRef<HTMLSelectElement>(null)
     const estadoPersonaRef = useRef<HTMLSelectElement>(null)
@@ -58,25 +67,25 @@ const TercerosPersona = ({proveedorTerceroPersona, tipoPersonas}:{proveedorTerce
     const idEmpresa = session?.user?.idEmpresa;
 
 
-    const obtenerPersonas = async () => {
+    const obtenerEmpresas = async () => {
         if (!session || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
         try {
-            const respuestaPersonas = await axios.get(`/api/empresas/${idEmpresa}/${tipoPersonas}?tipo=persona`);
-            if (respuestaPersonas.status === 200) {
-                if(tipoPersonas === "proveedores"){
-                    setProveedoresPersona(respuestaPersonas.data)
-                    setPersonasFiltradas(respuestaPersonas.data)
+            const respuestaEmpresas = await axios.get(`/api/empresas/${idEmpresa}/${tipoEmpresas}?tipo=empresa`);
+            if (respuestaEmpresas.status === 200) {
+                if(tipoEmpresas === "proveedores"){
+                    setProveedoresEmpresa(respuestaEmpresas.data)
+                    setEmpresasFiltradas(respuestaEmpresas.data)
                 } else {
-                    setClientesPersona(respuestaPersonas.data)
-                    setPersonasFiltradas(respuestaPersonas.data)
+                    setClientesEmpresa(respuestaEmpresas.data)
+                    setEmpresasFiltradas(respuestaEmpresas.data)
                 }
 
             } else {
-                console.error(respuestaPersonas.data)
+                console.error(respuestaEmpresas.data)
             }
 
         } catch (error) {
-            console.error(`Error al obtener los ${tipoPersonas} persona:`, error)
+            console.error(`Error al obtener los ${tipoEmpresas} empresa:`, error)
         }
     }
 
@@ -92,16 +101,20 @@ const TercerosPersona = ({proveedorTerceroPersona, tipoPersonas}:{proveedorTerce
                     setDepartamentos(departamentosRes.data || [])
                 }
 
-                if (!tiposDocumento.length) {
-                    const tiposDocumentoRes = await axios.get("/api/tipos-documento")
-                    if (tiposDocumentoRes.status !== 200) {
-                        console.error(tiposDocumentoRes.data)
+                if (!tiposPersona.length) {
+                    const tiposPersonaRes = await axios.get("/api/tipos-empresa")
+                    if (tiposPersonaRes.status !== 200) {
+                        console.error(tiposPersonaRes.data)
                     }
-                    setTiposDocumento(
-                        tiposDocumentoRes.data.filter(
-                            (tipoDocumento: TipoDocumentoResponseDTO) => tipoDocumento.estadoTipoDocumento === true,
-                        ) || [],
-                    )
+                    setTiposPersona(tiposPersonaRes.data || [])
+                }
+
+                if(!regimenesContribuyente.length){
+                    const regimenesContribuyenteRes = await axios.get("/api/regimenes-contribuyente")
+                    if (regimenesContribuyenteRes.status !== 200) {
+                        console.error(regimenesContribuyenteRes.data)
+                    }
+                    setRegimenesContribuyente(regimenesContribuyenteRes.data || [])
                 }
 
                 if (!municipios.length) {
@@ -112,12 +125,12 @@ const TercerosPersona = ({proveedorTerceroPersona, tipoPersonas}:{proveedorTerce
                     setMunicipios(municipiosRes.data || [])
                 }
 
-                if (tipoPersonas === "clientes" && !clientesPersona.length) {
-                    obtenerPersonas()
+                if (tipoEmpresas === "clientes" && !clientesEmpresa.length) {
+                    obtenerEmpresas()
                 }
 
-                if (tipoPersonas === "proveedores" && !proveedoresPersona.length) {
-                    obtenerPersonas()
+                if (tipoEmpresas === "proveedores" && !proveedoresEmpresa.length) {
+                    obtenerEmpresas()
                 }
 
             } catch (error) {
@@ -125,47 +138,54 @@ const TercerosPersona = ({proveedorTerceroPersona, tipoPersonas}:{proveedorTerce
             }
         }
         fetchData()
-    }, [session, idEmpresa, setDepartamentos, setTiposDocumento, setMunicipios, setClientesPersona, setProveedoresPersona])
+    }, [session, idEmpresa, setDepartamentos, setTiposPersona, setMunicipios, setClientesEmpresa, setProveedoresEmpresa, setRegimenesContribuyente])
 
 
     const filtrarUsuarios = () => {
-        const idTipoDocumento = idTipoDocumentoRef.current?.value;
-        const nombrePersona = nombrePersonaRef.current?.value;
-        const estadoPersona = estadoPersonaRef.current?.value;
+        const idRegimenContribuyente = idRegimenContribuyenteRef.current?.value;
+        const idTipoPersona = idTipoPersonaRef.current?.value;
+        const nombreEmpresa = nombreEmpresaRef.current?.value;
+        const nitEmpresa = nitEmpresaRef.current?.value;
+        const estadoEmpresa = estadoPersonaRef.current?.value;
         const idDepartamento = idDepartamentoRef.current?.value;
         const idMunicipio = idMunicipioRef.current?.value;
 
-        let personasFiltradas = [...clientesPersona];
+        let empresasFiltradas = [...clientesEmpresa];
 
-        if (estadoPersona !== undefined && estadoPersona !== "") {
-            personasFiltradas = personasFiltradas.filter((persona) => persona.estadoTercero === (estadoPersona === "true"));
+        if (estadoEmpresa !== undefined && estadoEmpresa !== "") {
+            empresasFiltradas = empresasFiltradas.filter((empresa) => empresa.estadoTercero === (estadoEmpresa === "true"));
         }
 
-        if (idTipoDocumento && idTipoDocumento !== "0") {
-            personasFiltradas = personasFiltradas.filter((persona) => persona.idTipoDocumento === Number(idTipoDocumento));
+        if (idRegimenContribuyente && idRegimenContribuyente !== "0") {
+            empresasFiltradas = empresasFiltradas.filter((empresa) => empresa.idRegimenContribuyente === Number(idRegimenContribuyente));
+        }
+
+        if (idTipoPersona && idTipoPersona !== "0") {
+            empresasFiltradas = empresasFiltradas.filter((empresa) => empresa.idTipoPersona === Number(idTipoPersona));
         }
 
         if (idDepartamento && idDepartamento !== "0") {
-            personasFiltradas = personasFiltradas.filter((persona) => persona.idDepartamento === Number(idDepartamento));
+            empresasFiltradas = empresasFiltradas.filter((empresa) => empresa.idDepartamento === Number(idDepartamento));
         }
 
         if (idMunicipio && idMunicipio !== "0") {
-            personasFiltradas = personasFiltradas.filter((persona) => persona.idMunicipio === Number(idMunicipio));
+            empresasFiltradas = empresasFiltradas.filter((empresa) => empresa.idMunicipio === Number(idMunicipio));
         }
 
-        if (nombrePersona) {
-            personasFiltradas = personasFiltradas.filter((persona) => {
-                const nombreCompleto = `${persona.nombreTercero} ${persona.apellidoTercero}`;
-                return nombreCompleto.toLowerCase().includes(nombrePersona.toLowerCase());
-            });
+        if (nombreEmpresa) {
+            empresasFiltradas = empresasFiltradas.filter((empresa) => empresa.nombreTercero.toLowerCase().includes(nombreEmpresa.toLowerCase()));
         }
 
-        setPersonasFiltradas(personasFiltradas);
+        if (nitEmpresa) {
+            empresasFiltradas = empresasFiltradas.filter((empresa) => empresa.nitTercero.toLowerCase().includes(nitEmpresa.toLowerCase()));
+        }
+
+        setEmpresasFiltradas(empresasFiltradas);
     };
 
     useEffect(() => {
         filtrarUsuarios();
-    }, [clientesPersona]);
+    }, [clientesEmpresa]);
 
     useEffect(() => {
         if (!departamentos.length || !municipios.length) return;
@@ -196,8 +216,10 @@ const TercerosPersona = ({proveedorTerceroPersona, tipoPersonas}:{proveedorTerce
     }, [municipios, idMunicipioRef.current?.value]);
 
     const limpiarFiltros = () => {
-        if (idTipoDocumentoRef.current) idTipoDocumentoRef.current.value = "0";
-        if (nombrePersonaRef.current) nombrePersonaRef.current.value = "";
+        if (idRegimenContribuyenteRef.current) idRegimenContribuyenteRef.current.value = "0";
+        if (idTipoPersonaRef.current) idTipoPersonaRef.current.value = "0";
+        if (nombreEmpresaRef.current) nombreEmpresaRef.current.value = "";
+        if (nitEmpresaRef.current) nitEmpresaRef.current.value = "";
         if (idDepartamentoRef.current) idDepartamentoRef.current.value = "0";
         if (idMunicipioRef.current) idMunicipioRef.current.value = "0";
         filtrarUsuarios();
@@ -211,7 +233,7 @@ const TercerosPersona = ({proveedorTerceroPersona, tipoPersonas}:{proveedorTerce
                     <BotonFiltro
                         onClick={() => setModalRegistrar(true)}
                         Symbol={PlusCircle}
-                        name={proveedorTerceroPersona? "Agregar proveedor" : "Agregar cliente"} />
+                        name={proveedorTerceroEmpresa? "Agregar proveedor" : "Agregar cliente"} />
 
                     <BotonFiltro
                         onClick={limpiarFiltros}
@@ -224,21 +246,42 @@ const TercerosPersona = ({proveedorTerceroPersona, tipoPersonas}:{proveedorTerce
                 <ContenedorSelectores>
                     {/* Nombre */}
                     <InputFiltro
-                        id="nombrePersona"
+                        id="nombreEmpresa"
                         name="Nombre"
-                        ref={nombrePersonaRef}
+                        ref={nombreEmpresaRef}
                         onChange={filtrarUsuarios} />
 
-                    {/* Tipo de Documento */}
+                    {/* NIT */}
+                    <InputFiltro
+                        id="nitEmpresa"
+                        name="NIT"
+                        ref={nitEmpresaRef}
+                        onChange={filtrarUsuarios} />
+
+                    {/* Tipo de persona */}
                     <SelectFiltro
-                        id="idTipoDocumento"
+                        id="idTipoPersona"
+                        name="Tipo de persona"
+                        onChange={filtrarUsuarios}
+                        ref={idTipoPersonaRef}
+                    >
+                        {tiposPersona.map((tipo) => (
+                            <option key={tipo.idTipoPersona} value={tipo.idTipoPersona.toString()}>
+                                {tipo.nombreTipoPersona}
+                            </option>
+                        ))}
+                    </SelectFiltro>
+
+                    {/* Regimen contribuyente */}
+                    <SelectFiltro
+                        id="idRegimenContribuyente"
                         name="Tipo de documento"
                         onChange={filtrarUsuarios}
-                        ref={idTipoDocumentoRef}
+                        ref={idRegimenContribuyenteRef}
                     >
-                        {tiposDocumento.map((tipo) => (
-                            <option key={tipo.idTipoDocumento} value={tipo.idTipoDocumento.toString()}>
-                                {tipo.nombreTipoDocumento}
+                        {regimenesContribuyente.map((tipo) => (
+                            <option key={tipo.idRegimenContribuyente} value={tipo.idRegimenContribuyente.toString()}>
+                                {tipo.nombreRegimenContribuyente}
                             </option>
                         ))}
                     </SelectFiltro>
@@ -273,7 +316,7 @@ const TercerosPersona = ({proveedorTerceroPersona, tipoPersonas}:{proveedorTerce
 
                     {/* Estado */}
                     <SelectFiltro
-                        id="estadoPersona"
+                        id="estadoEmpresa"
                         name="Estado"
                         onChange={filtrarUsuarios}
                         ref={estadoPersonaRef}
@@ -285,51 +328,51 @@ const TercerosPersona = ({proveedorTerceroPersona, tipoPersonas}:{proveedorTerce
                 </ContenedorSelectores>
             </ContenedorFiltros>
 
-            {/* Grid de clientesPersona */}
+            {/* Grid de clientesEmpresa */}
             < div className="grid gap-4 md:grid-cols-3" >
                 {
-                    personasFiltradas.map((persona) => (
-                        <TerceroPersonaCard tercero={persona} key={persona.idTercero}>
+                    empresasFiltradas.map((empresa) => (
+                        <TerceroEmpresaCard tercero={empresa} key={empresa.idTercero}>
                             <ContenedorBotonesAccionCard>
                                 <BotonAccionCard
                                     Symbol={Pencil}
                                     onClick={() => {
-                                        setTerceroSeleccionado(persona);
+                                        setTerceroSeleccionado(empresa);
                                         setModalActualizar(true);
                                     }}
                                 />
                                 <BotonAccionCard
                                     Symbol={Eye}
                                     onClick={() => {
-                                        setTerceroSeleccionado(persona);
+                                        setTerceroSeleccionado(empresa);
                                         setModalInfo(true);
                                     }}
                                 />
                             </ContenedorBotonesAccionCard>
-                        </TerceroPersonaCard>
+                        </TerceroEmpresaCard>
                     ))}
 
             </div >
 
-            {/* Modal para mostrar la información de un persona*/}
+            {/* Modal para mostrar la información de una empresa*/}
             <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>
-                {terceroSeleccionado && <MostrarInfoTerceroPersona tercero={terceroSeleccionado} />}
+                {terceroSeleccionado && <MostrarInfoTerceroEmpresa tercero={terceroSeleccionado} />}
             </Modal>
 
 
-            {/* Modal para registrar un persona*/}
+            {/* Modal para registrar un empresa*/}
             <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
-                <RegistrarTerceroPersona obtenerPersonas={obtenerPersonas} setModalRegistrar={setModalRegistrar} proveedorTerceroPersona={proveedorTerceroPersona} />
+                <RegistrarTerceroEmpresa obtenerEmpresas={obtenerEmpresas} setModalRegistrar={setModalRegistrar} proveedorTerceroEmpresa={proveedorTerceroEmpresa} />
             </Modal>
 
 
-            {/* Modal para actualizar un persona*/}
+            {/* Modal para actualizar un empresa*/}
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
-                <RegistrarTerceroPersona idTercero={terceroSeleccionado?.idTercero} obtenerPersonas={obtenerPersonas} setModalActualizar={setModalActualizar} proveedorTerceroPersona={proveedorTerceroPersona} />
+                <RegistrarTerceroEmpresa idTercero={terceroSeleccionado?.idTercero} obtenerEmpresas={obtenerEmpresas} setModalActualizar={setModalActualizar} proveedorTerceroEmpresa={proveedorTerceroEmpresa} />
             </Modal>
 
         </section >
     );
 };
 
-export default TercerosPersona;
+export default TercerosEmpresa;

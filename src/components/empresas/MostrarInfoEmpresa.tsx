@@ -26,13 +26,13 @@ const MostrarInfoEmpresa = ({ empresa }: { empresa: EmpresaResponseDTO }) => {
 
             <ParrafoMostrarInfo subtitle="Correo" text={empresa.correoEmpresa} />
 
-            <ParrafoMostrarInfo subtitle="Dirección" text={empresa.direccionEmpresa} />
-
-            <ParrafoMostrarInfo subtitle="Código postal" text={empresa.codigoPostalEmpresa} />
-
             <ParrafoMostrarInfo subtitle="Departamento" text={departamentos.find(d => d.idDepartamento === empresa.idDepartamento)?.nombreDepartamento || 'N/A'} />
 
             <ParrafoMostrarInfo subtitle="Municipio" text={municipios.find(m => m.idMunicipio === empresa.idMunicipio)?.nombreMunicipio || 'N/A'} />
+
+            <ParrafoMostrarInfo subtitle="Dirección" text={empresa.direccionEmpresa} />
+
+            <ParrafoMostrarInfo subtitle="Código postal" text={empresa.codigoPostalEmpresa} />
 
             <EstadoMostrarInfo estado={empresa.estadoEmpresa} />
 

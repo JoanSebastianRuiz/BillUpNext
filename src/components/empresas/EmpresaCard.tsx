@@ -14,7 +14,6 @@ const EmpresaCard = ({ empresa, children }: { empresa: EmpresaResponseDTO, child
             <ParrafoCard subtitle="NIT" text={`${empresa.nitEmpresa} - ${empresa.digitoVerificacionEmpresa}`} />
             <ParrafoCard subtitle="Teléfono" text={empresa.telefonoEmpresa} />
             <ParrafoCard subtitle="Correo" text={empresa.correoEmpresa} />
-            <ParrafoCard subtitle="Dirección" text={empresa.direccionEmpresa} />
 
             {/* Botones de acción */}
             {children}
