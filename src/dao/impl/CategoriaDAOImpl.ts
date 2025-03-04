@@ -5,7 +5,7 @@ import { ResultadoBooleanDTO } from "@/dto/ResultadoBooleanDTO";
 
 export class CategoriaDAOImpl implements CategoriaDAO {
   private static instancia: CategoriaDAOImpl;
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): CategoriaDAOImpl {
     if (!CategoriaDAOImpl.instancia) {
@@ -17,7 +17,8 @@ export class CategoriaDAOImpl implements CategoriaDAO {
   public getAll = async (): Promise<Array<CategoriaDTO>> => {
     try {
       const categoriasDatabase: CategoriaDTO[] = await ejecutarQuery(
-        `SELECT * FROM \"Categoria\";`,
+        `SELECT c.\"idCategoria\", c.\"nombreCategoria\", c.\"estadoCategoria\"
+                FROM \"Categoria\" c;`,
         []
       );
 
@@ -32,7 +33,9 @@ export class CategoriaDAOImpl implements CategoriaDAO {
   ): Promise<CategoriaDTO | null> => {
     try {
       const respuesta: CategoriaDTO[] = await ejecutarQuery(
-        `SELECT * FROM \"Categoria\" WHERE \"idCategoria\" = $1;`,
+        `SELECT c.\"idCategoria\", c.\"nombreCategoria\", c.\"estadoCategoria\"
+                FROM \"Categoria\" c 
+                WHERE c.\"idCategoria\" = $1;`,
         [idCategoria]
       );
 
@@ -73,12 +76,13 @@ export class CategoriaDAOImpl implements CategoriaDAO {
   };
 
   public existCategoriaNombre = async (
-    nombreCategoria: string
+    nombreCategoria: string,
+    idCategoria?: number
   ): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT existeCategoriaNombre($1) as resultado;`,
-        [nombreCategoria]
+        `SELECT existeCategoriaNombre($1,$2) as resultado;`,
+        [nombreCategoria, idCategoria]
       );
 
       return respuesta.length > 0 ? respuesta[0].resultado : false;

@@ -1,7 +1,7 @@
 export interface GravamenProductoDTO {
-    idGravamenProducto: number,
+    idGravamenProducto?: number,
     idProducto: number,
     idGravamen: number,
-    indicadorCompraGravamenProducto: boolean,
-    indicadorVentaGravamenProducto: boolean
+    compraGravamenProducto: boolean,
+    ventaGravamenProducto: boolean
 }

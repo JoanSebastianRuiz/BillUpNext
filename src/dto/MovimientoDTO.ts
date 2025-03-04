@@ -1,5 +1,5 @@
 export interface MovimientoDTO {
-    idMovimiento: number,
+    idMovimiento?: number,
     idUsuario: number,
     idCaja: number,
     descripcionMovimiento: string,

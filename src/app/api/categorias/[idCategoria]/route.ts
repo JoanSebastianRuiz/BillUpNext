@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import { CategoriaServiceImpl } from "@/services/Impl/CategoriaServiceImpl";
 
-export const GET = async ({ params }: { params: { idCategoria: string } }) => {
+export const GET = async (_:Request, { params }: { params: { idCategoria: string } }) => {
   try {
     const categoriaService = CategoriaServiceImpl.getInstance();
     const { idCategoria } = await params;
+
+    if (!idCategoria) {
+      return NextResponse.json({ message: "idCategoria es requerido" }, { status: 400 });
+    }
+    
     const categoria = await categoriaService.getById(parseInt(idCategoria));
     return NextResponse.json(categoria, { status: 200 });
   } catch (error) {
