@@ -196,7 +196,7 @@ export class TerceroServiceImpl implements TerceroService {
                 return NextResponse.json({ message: 'Faltan datos' }, { status: 400 });
             }
 
-            const empresaExiste = await this.getByIdTerceroEmpresa(idTercero, idEmpresa);
+            const empresaExiste = await this.getByIdTerceroEmpresa(idTercero);
 
             if (!empresaExiste) {
                 return NextResponse.json({ message: 'Empresa no encontrada' }, { status: 404 });
@@ -279,7 +279,7 @@ export class TerceroServiceImpl implements TerceroService {
                 return NextResponse.json({ message: 'Faltan datos' }, { status: 400 });
             }
 
-            const personaExiste = await this.getByIdTerceroPersona(idTercero, idEmpresa);
+            const personaExiste = await this.getByIdTerceroPersona(idTercero);
 
             if (!personaExiste) {
                 return NextResponse.json({ message: 'Persona no encontrada' }, { status: 404 });
@@ -337,9 +337,9 @@ export class TerceroServiceImpl implements TerceroService {
         }
     }
 
-    public getAllEmpresa = async (idEmpresa: number): Promise<Array<TerceroResponseEmpresaDTO>> => {
+    public getAllEmpresa = async (idEmpresa: number, estadoProveedor: boolean): Promise<Array<TerceroResponseEmpresaDTO>> => {
         try {
-            const response = await this.terceroDAO.getAllEmpresa(idEmpresa);
+            const response = await this.terceroDAO.getAllEmpresa(idEmpresa, estadoProveedor);
 
             return response;
         } catch (error) {
@@ -347,9 +347,9 @@ export class TerceroServiceImpl implements TerceroService {
         }
     }
 
-    public getAllPersona = async (idEmpresa: number): Promise<Array<TerceroResponsePersonaDTO>> => {
+    public getAllPersona = async (idEmpresa: number, estadoProveedor: boolean): Promise<Array<TerceroResponsePersonaDTO>> => {
         try {
-            const response = await this.terceroDAO.getAllPersona(idEmpresa);
+            const response = await this.terceroDAO.getAllPersona(idEmpresa, estadoProveedor);
 
             return response;
         } catch (error) {
@@ -357,18 +357,18 @@ export class TerceroServiceImpl implements TerceroService {
         }
     }
 
-    public getByIdTerceroPersona = async (idTercero: number, idEmpresa: number): Promise<TerceroResponsePersonaDTO | null> => {
+    public getByIdTerceroPersona = async (idTercero: number): Promise<TerceroResponsePersonaDTO | null> => {
         try {
-            const response = await this.terceroDAO.getByIdTerceroPersona(idTercero, idEmpresa);
+            const response = await this.terceroDAO.getByIdTerceroPersona(idTercero);
 
             return response;
         } catch (error) {
             throw new Error(`Error en TerceroServiceImpl.getByIdTerceroPersona: ${error}`);
         }
     }
-    public getByIdTerceroEmpresa = async (idTercero: number, idEmpresa: number): Promise<TerceroResponseEmpresaDTO | null> => {
+    public getByIdTerceroEmpresa = async (idTercero: number): Promise<TerceroResponseEmpresaDTO | null> => {
         try {
-            const response = await this.terceroDAO.getByIdTerceroEmpresa(idTercero, idEmpresa);
+            const response = await this.terceroDAO.getByIdTerceroEmpresa(idTercero);
 
             return response;
         } catch (error) {

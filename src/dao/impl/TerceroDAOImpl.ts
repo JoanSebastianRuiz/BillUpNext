@@ -118,7 +118,7 @@ export class TerceroDAOImpl implements TerceroDAO {
         }
     }
 
-    public getAllEmpresa = async (idEmpresa: number): Promise<TerceroResponseEmpresaDTO[]> => {
+    public getAllEmpresa = async (idEmpresa: number, estadoProveedor: boolean): Promise<TerceroResponseEmpresaDTO[]> => {
         try {
             const respuesta: TerceroResponseEmpresaDTO[] = await ejecutarQuery<TerceroResponseEmpresaDTO>(
                 `SELECT 
@@ -139,8 +139,8 @@ export class TerceroDAOImpl implements TerceroDAO {
                     t.\"estadoTercero\"
                 FROM \"Tercero\" t 
                 JOIN \"Municipio\" m ON m.\"idMunicipio\" = t.\"idMunicipio\"
-                WHERE \"idEmpresa\"=$1;`,
-                [idEmpresa]
+                WHERE \"idEmpresa\"=$1 and \"estadoProveedor\"=$2;`,
+                [idEmpresa, estadoProveedor]
             );
 
             return respuesta;
@@ -150,7 +150,7 @@ export class TerceroDAOImpl implements TerceroDAO {
         }
     }
 
-    public getAllPersona = async (idEmpresa: number): Promise<TerceroResponsePersonaDTO[]> => {
+    public getAllPersona = async (idEmpresa: number, estadoProveedor: boolean): Promise<TerceroResponsePersonaDTO[]> => {
         try {
             const respuesta = await ejecutarQuery<TerceroResponsePersonaDTO>(
                 `SELECT 
@@ -168,8 +168,8 @@ export class TerceroDAOImpl implements TerceroDAO {
                     t.\"estadoTercero\"
                 FROM \"Tercero\" t 
                 JOIN \"Municipio\" m ON m.\"idMunicipio\" = t.\"idMunicipio\"
-                WHERE \"idEmpresa\"=$1;`,
-                [idEmpresa]
+                WHERE \"idEmpresa\"=$1 and \"estadoProveedor\"=$2;`,
+                [idEmpresa, estadoProveedor]
             );
 
             return respuesta;
@@ -178,7 +178,7 @@ export class TerceroDAOImpl implements TerceroDAO {
         }
     }
 
-    public getByIdTerceroPersona = async (idTercero: number, idEmpresa: number): Promise<TerceroResponsePersonaDTO | null> => {
+    public getByIdTerceroPersona = async (idTercero: number): Promise<TerceroResponsePersonaDTO | null> => {
         try {
             const respuesta = await ejecutarQuery<TerceroResponsePersonaDTO>(
                 `SELECT 
@@ -196,8 +196,8 @@ export class TerceroDAOImpl implements TerceroDAO {
                     t.\"estadoTercero\"
                 FROM \"Tercero\" t 
                 JOIN \"Municipio\" m ON m.\"idMunicipio\" = t.\"idMunicipio\"
-                WHERE \"idTercero\"=$1 AND \"idEmpresa\"=$2;`,
-                [idTercero, idEmpresa]
+                WHERE \"idTercero\"=$1;`,
+                [idTercero]
             );
 
             return respuesta.length > 0 ? respuesta[0] : null;
@@ -206,7 +206,7 @@ export class TerceroDAOImpl implements TerceroDAO {
         }
     }
 
-    public getByIdTerceroEmpresa = async (idTercero: number, idEmpresa: number): Promise<TerceroResponseEmpresaDTO | null> => {
+    public getByIdTerceroEmpresa = async (idTercero: number): Promise<TerceroResponseEmpresaDTO | null> => {
         try {
             const respuesta = await ejecutarQuery<TerceroResponseEmpresaDTO>(
                 `SELECT 
@@ -227,8 +227,8 @@ export class TerceroDAOImpl implements TerceroDAO {
                     t.\"estadoTercero\"
                 FROM \"Tercero\" t 
                 JOIN \"Municipio\" m ON m.\"idMunicipio\" = t.\"idMunicipio\"
-                WHERE \"idTercero\"=$1 AND \"idEmpresa\"=$2;`,
-                [idTercero, idEmpresa]
+                WHERE \"idTercero\"=$1;`,
+                [idTercero]
             );
 
             return respuesta.length > 0 ? respuesta[0] : null;
