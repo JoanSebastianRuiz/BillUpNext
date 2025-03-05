@@ -12,7 +12,7 @@ BEGIN
     VALUES (_nombreGravamen, _estadoGravamen, _negativoGravamen, _porcentajeGravamen);
 
     IF FOUND THEN
-        RAISE NOTICE 'Se insertó correctamente el gravamen'
+        RAISE NOTICE 'Se insertó correctamente el gravamen';
         RETURN TRUE;
     ELSE
         RAISE EXCEPTION 'Ocurrió un error';

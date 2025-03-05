@@ -51,7 +51,7 @@ CREATE OR REPLACE FUNCTION validarRelacionTerceroProducto(
     _idTercero "TerceroProducto"."idTercero"%TYPE,
     _idTerceroProducto "TerceroProducto"."idTerceroProducto"%TYPE DEFAULT NULL
 )
-RETURN BOOLEAN AS
+RETURNS BOOLEAN AS
 $$
 BEGIN
     RETURN EXISTS (
@@ -62,13 +62,14 @@ BEGIN
             AND (_idTerceroProducto IS NULL OR "idTerceroProducto" != _idTerceroProducto)
     );
 END;
-$$ LANGUAGE PLPGSQL
+$$ 
+LANGUAGE PLPGSQL;
 
 
 CREATE OR REPLACE FUNCTION validarPrecioTerceroProducto(
-    _precioCompraTerceroProducto "TerceroProducto"."precioCompraTercero"%TYPE
+    _precioCompraTerceroProducto "TerceroProducto"."precioCompraTerceroProducto"%TYPE
 )
-RETURN BOOLEAN AS
+RETURNS BOOLEAN AS
 $$
 BEGIN
     RETURN _precioCompraTerceroProducto > 0;   

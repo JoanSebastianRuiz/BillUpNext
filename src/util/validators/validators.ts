@@ -32,6 +32,12 @@ const isValidCodigoPostal = (codigoPostal: string): boolean => {
   return regex.test(codigoPostal);
 }
 
+// Verifica que sea un número positivo, con o sin decimales
+const isValidDinero = (Dinero: string): boolean => {
+  const regex = /^\d+(\.\d+)?$/; 
+  return regex.test(Dinero);
+}
+
 const isValidPassword = (password: string): boolean => {
   const minLength = 8;
 
@@ -58,4 +64,4 @@ const isValidPassword = (password: string): boolean => {
   return hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar && hasNoSpaces;
 };
 
-export { isValidEmail, isValidPhoneNumber, isValidDocument, isValidPassword, isValidNit, isValidDigitoVerificacion, isValidCodigoPostal, isValidLength };
+export { isValidEmail, isValidPhoneNumber, isValidDocument, isValidPassword, isValidNit, isValidDigitoVerificacion, isValidCodigoPostal, isValidLength, isValidDinero };

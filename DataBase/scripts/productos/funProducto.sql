@@ -82,7 +82,8 @@ BEGIN
             AND (_idProducto IS NULL OR "idProducto" != _idProducto)
     );
 END;
-$$ LANGUAGE PLPGSQL
+$$ 
+LANGUAGE PLPGSQL;
 
 
 CREATE OR REPLACE FUNCTION validarStockProducto(
