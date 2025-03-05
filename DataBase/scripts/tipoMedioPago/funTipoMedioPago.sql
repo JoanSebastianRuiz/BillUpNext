@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION actualizarTipoMedioPago(
     _nombreTipoMedioPago "TipoMedioPago"."nombreTipoMedioPago"%TYPE,
     _estadoTipoMedioPago "TipoMedioPago"."estadoTipoMedioPago"%TYPE
 )
-RETURN BOOLEAN AS
+RETURNS BOOLEAN AS
 $$
 BEGIN
     UPDATE "TipoMedioPago" SET
@@ -26,7 +26,7 @@ LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION eliminarTipoMedioPago(
     _idTipoMedioPago "TipoMedioPago"."idTipoMedioPago"%TYPE)
-RETURN BOOLEAN AS
+RETURNS BOOLEAN AS
 $$
 BEGIN
     DELETE FROM "TipoMedioPago" WHERE "idTipoMedioPago" = _idTipoMedioPago;
@@ -48,7 +48,7 @@ CREATE OR REPLACE FUNCTION insertarTipoMedioPago(
     _nombreTipoMedioPago "TipoMedioPago"."nombreTipoMedioPago"%TYPE,
     _estadoTipoMedioPago "TipoMedioPago"."estadoTipoMedioPago"%TYPE
 )
-RETURN BOOLEAN AS
+RETURNS BOOLEAN AS
 $$
 DECLARE
     id INTEGER;

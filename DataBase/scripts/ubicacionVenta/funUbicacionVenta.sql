@@ -2,7 +2,7 @@ CREATE OR REPLACE FUNCTION actualizarUbicacionVenta(
     _idUbicacionVenta "UbicacionVenta"."idUbicacionVenta"%TYPE,
     _nombreUbicacionVenta "UbicacionVenta"."nombreUbicacionVenta"%TYPE,
     _estadoUbicacionVenta "UbicacionVenta"."estadoUbicacionVenta"%TYPE)
-RETURN BOOLEAN AS
+RETURNS BOOLEAN AS
 $$
 BEGIN
     UPDATE  "UbicacionVenta" SET
@@ -26,7 +26,7 @@ LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION eliminarUbicacionVenta(
     _idUbicacionVenta "UbicacionVenta"."idUbicacionVenta"%TYPE)
-RETURN BOOLEAN AS
+RETURNS BOOLEAN AS
 $$
 BEGIN
     DELETE FROM "UbicacionVenta" WHERE "idUbicacionVenta" = _idUbicacionVenta;
@@ -49,7 +49,7 @@ CREATE OR REPLACE FUNCTION insertarUbicacionVenta(
     _nombreUbicacionVenta "UbicacionVenta"."nombreUbicacionVenta"%TYPE,
     _estadoUbicacionVenta "UbicacionVenta"."estadoUbicacionVenta"%TYPE
 )
-RETURN BOOLEAN AS
+RETURNS BOOLEAN AS
 $$
 DECLARE
     id INTEGER;

@@ -7,10 +7,10 @@ CREATE OR REPLACE FUNCTION actualizarDetalleCaja(
     _dineroAperturaDetalleCaja "DetalleCaja"."dineroAperturaDetalleCaja"%TYPE,
     _dineroCierreDetalleCaja "DetalleCaja"."dineroCierreDetalleCaja"%TYPE
 )
-RETURN BOOLEAN AS
+RETURNS BOOLEAN AS
 $$
 BEGIN
-    UPDATE "DetalleCaja" SELECT
+    UPDATE "DetalleCaja" SET
         "idCaja" = COALESCE(_idCaja, "idCaja"),
         "idUsuario" = COALESCE(_idUsuario, "idUsuario"),
         "fechaAperturaDetalleCaja"= COALESCE(_fechaAperturaDetalleCaja, "fechaAperturaDetalleCaja"),
@@ -59,7 +59,7 @@ CREATE OR REPLACE FUNCTION insertarDetalleCaja(
     _dineroAperturaDetalleCaja "DetalleCaja"."dineroAperturaDetalleCaja"%TYPE,
     _dineroCierreDetalleCaja "DetalleCaja"."dineroCierreDetalleCaja"%TYPE
 )
-RETURN BOOLEAN AS
+RETURNS BOOLEAN AS
 $$
 DECLARE
     id INTEGER;
