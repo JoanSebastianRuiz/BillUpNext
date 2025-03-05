@@ -130,16 +130,16 @@ const UsuariosPage: React.FC = () => {
                     }
                 }
 
-                if(!tiposDocumento.length) {
+                if (!tiposDocumento.length) {
                     const tiposDocumentoRes = await axios.get("/api/tipos-documento")
                     if (tiposDocumentoRes.status === 200) {
                         setTiposDocumento(tiposDocumentoRes.data.filter((tipoDocumento: TipoDocumentoResponseDTO) => tipoDocumento.estadoTipoDocumento === true) || [])
                     }
                 }
 
-                if(!usuarios.length) {
+                if (!usuarios.length) {
                     let usuariosRes;
-                    if(idRol === 2) {
+                    if (idRol === 2) {
                         usuariosRes = await axios.get(`/api/empresas/${idEmpresa}/usuarios`)
                     } else {
                         usuariosRes = await axios.get("/api/usuarios")
@@ -304,7 +304,6 @@ const UsuariosPage: React.FC = () => {
                     }
 
 
-
                     {/* Rol */}
                     <SelectFiltro
                         id="idRol"
@@ -362,30 +361,34 @@ const UsuariosPage: React.FC = () => {
             </ContenedorFiltros>
 
             {/* Grid de usuarios */}
-            < div className="grid gap-4 md:grid-cols-3" >
-                {
-                    usuariosFiltrados.map((usuario) => (
-                        <UsuarioCard usuario={usuario} key={usuario.idUsuario}>
-                            <ContenedorBotonesAccionCard>
-                                <BotonAccionCard
-                                    Symbol={Pencil}
-                                    onClick={() => {
-                                        setUsuarioSeleccionado(usuario);
-                                        setModalActualizar(true);
-                                    }}
-                                />
-                                <BotonAccionCard
-                                    Symbol={Eye}
-                                    onClick={() => {
-                                        setUsuarioSeleccionado(usuario);
-                                        setModalInfo(true);
-                                    }}
-                                />
-                            </ContenedorBotonesAccionCard>
-                        </UsuarioCard>
-                    ))}
+            {usuariosFiltrados.length === 0 ?
+                (<div className="text-center text-gray-500 mt-8">
+                    No se encontraron usuarios
+                </div>) :
+                (< div className="grid gap-4 md:grid-cols-3" >
+                    {
+                        usuariosFiltrados.map((usuario) => (
+                            <UsuarioCard usuario={usuario} key={usuario.idUsuario}>
+                                <ContenedorBotonesAccionCard>
+                                    <BotonAccionCard
+                                        Symbol={Pencil}
+                                        onClick={() => {
+                                            setUsuarioSeleccionado(usuario);
+                                            setModalActualizar(true);
+                                        }}
+                                    />
+                                    <BotonAccionCard
+                                        Symbol={Eye}
+                                        onClick={() => {
+                                            setUsuarioSeleccionado(usuario);
+                                            setModalInfo(true);
+                                        }}
+                                    />
+                                </ContenedorBotonesAccionCard>
+                            </UsuarioCard>
+                        ))}
 
-            </div >
+                </div >)}
 
             {/* Modal para mostrar la información de un usuario*/}
             <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>

@@ -16,12 +16,12 @@ const ContenedorNav = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <div className="relative">
+        <div className="relative z-50">
             {/* Botón para abrir/cerrar */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 p-3 rounded-lg shadow-md 
-                           transition-all hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
+               transition-all hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
             >
                 {isOpen ? <X size={24} /> : <Menu size={24} />}
                 <span className="font-medium text-gray-700 dark:text-gray-200">Menú</span>
@@ -29,17 +29,17 @@ const ContenedorNav = ({ children }: { children: ReactNode }) => {
 
             {/* Navbar Expandible */}
             <nav
-                className={`absolute left-0 mt-2 w-48 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-all
-                            ${isOpen ? "max-h-60 opacity-100 scale-100" : "max-h-0 opacity-0 scale-95"}
-                          `}
+                className={`absolute left-0 mt-2 w-48 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg 
+                dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] border border-gray-300 dark:border-gray-700 
+                overflow-hidden transition-all
+                ${isOpen ? "opacity-100 scale-100" : "max-h-0 opacity-0 scale-95"}`}
             >
                 <ul className="p-4 space-y-2">
                     {children}
-                    <li>
+                    <li className="block text-red-600 dark:text-red-500 font-medium px-4 py-2 rounded-lg transition-all 
+                                       hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-red-700 dark:hover:text-red-400">
                         <button
                             onClick={handleLogout}
-                            className="block text-red-500 dark:text-red-400 font-medium px-4 py-2 rounded-lg transition-all 
-                                       hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-300"
                         >
                             <span>Cerrar sesión</span>
                         </button>
@@ -47,6 +47,7 @@ const ContenedorNav = ({ children }: { children: ReactNode }) => {
                 </ul>
             </nav>
         </div>
+
     );
 };
 

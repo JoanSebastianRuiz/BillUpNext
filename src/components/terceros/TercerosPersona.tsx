@@ -28,7 +28,7 @@ import MostrarInfoTerceroPersona from "@/components/terceros/MostrarInfoTerceroP
 import RegistrarTerceroPersona from "@/components/terceros/RegistrarTerceroPersona";
 
 
-const TercerosPersona = ({proveedorTerceroPersona, tipoPersonas}:{proveedorTerceroPersona:boolean, tipoPersonas: "clientes" | "proveedores"}) => {
+const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorTerceroPersona: boolean, tipoPersonas: "clientes" | "proveedores" }) => {
     const [modalInfo, setModalInfo] = useState(false)
     const [modalRegistrar, setModalRegistrar] = useState(false)
     const [modalActualizar, setModalActualizar] = useState(false)
@@ -63,7 +63,7 @@ const TercerosPersona = ({proveedorTerceroPersona, tipoPersonas}:{proveedorTerce
         try {
             const respuestaPersonas = await axios.get(`/api/empresas/${idEmpresa}/${tipoPersonas}?tipo=persona`);
             if (respuestaPersonas.status === 200) {
-                if(tipoPersonas === "proveedores"){
+                if (tipoPersonas === "proveedores") {
                     setProveedoresPersona(respuestaPersonas.data)
                     setPersonasFiltradas(respuestaPersonas.data)
                 } else {
@@ -205,13 +205,13 @@ const TercerosPersona = ({proveedorTerceroPersona, tipoPersonas}:{proveedorTerce
 
     return (
         <section>
-            <ContenedorFiltros title="Personas">
+            <ContenedorFiltros title="">
                 {/* Botones de filtros */}
                 <ContenedorBotonesFiltros>
                     <BotonFiltro
                         onClick={() => setModalRegistrar(true)}
                         Symbol={PlusCircle}
-                        name={proveedorTerceroPersona? "Agregar proveedor" : "Agregar cliente"} />
+                        name={proveedorTerceroPersona ? "Agregar proveedor" : "Agregar cliente"} />
 
                     <BotonFiltro
                         onClick={limpiarFiltros}
@@ -285,31 +285,35 @@ const TercerosPersona = ({proveedorTerceroPersona, tipoPersonas}:{proveedorTerce
                 </ContenedorSelectores>
             </ContenedorFiltros>
 
-            {/* Grid de clientesPersona */}
-            < div className="grid gap-4 md:grid-cols-3" >
-                {
-                    personasFiltradas.map((persona) => (
-                        <TerceroPersonaCard tercero={persona} key={persona.idTercero}>
-                            <ContenedorBotonesAccionCard>
-                                <BotonAccionCard
-                                    Symbol={Pencil}
-                                    onClick={() => {
-                                        setTerceroSeleccionado(persona);
-                                        setModalActualizar(true);
-                                    }}
-                                />
-                                <BotonAccionCard
-                                    Symbol={Eye}
-                                    onClick={() => {
-                                        setTerceroSeleccionado(persona);
-                                        setModalInfo(true);
-                                    }}
-                                />
-                            </ContenedorBotonesAccionCard>
-                        </TerceroPersonaCard>
-                    ))}
+            {/* Grid de personas */}
+            {personasFiltradas.length === 0 ?
+                (<div className="text-center text-gray-500 mt-8">
+                    No se encontraron personas
+                </div>) :
+                (< div className="grid gap-4 md:grid-cols-3" >
+                    {
+                        personasFiltradas.map((persona) => (
+                            <TerceroPersonaCard tercero={persona} key={persona.idTercero}>
+                                <ContenedorBotonesAccionCard>
+                                    <BotonAccionCard
+                                        Symbol={Pencil}
+                                        onClick={() => {
+                                            setTerceroSeleccionado(persona);
+                                            setModalActualizar(true);
+                                        }}
+                                    />
+                                    <BotonAccionCard
+                                        Symbol={Eye}
+                                        onClick={() => {
+                                            setTerceroSeleccionado(persona);
+                                            setModalInfo(true);
+                                        }}
+                                    />
+                                </ContenedorBotonesAccionCard>
+                            </TerceroPersonaCard>
+                        ))}
 
-            </div >
+                </div >)}
 
             {/* Modal para mostrar la información de un persona*/}
             <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>

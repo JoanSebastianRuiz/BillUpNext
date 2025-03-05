@@ -13,11 +13,11 @@ export const GET = async (request : NextRequest, {params} : {params : {idEmpresa
     }
 
     if(tipo === "persona"){
-        const tercero = await terceroService.getAllPersona(parseInt(idEmpresa), false);
-        return NextResponse.json(tercero, {status: 200});
+        const terceros = await terceroService.getAllPersona(parseInt(idEmpresa), false);
+        return NextResponse.json(terceros, {status: 200});
     } else if(tipo === "empresa"){
-        const tercero = await terceroService.getAllEmpresa(parseInt(idEmpresa), false);
-        return NextResponse.json(tercero, {status: 200});
+        const terceros = await terceroService.getAllEmpresa(parseInt(idEmpresa), false);
+        return NextResponse.json(terceros, {status: 200});
     } else {
         return NextResponse.json({message: "Tipo inválido"}, {status: 400});
     }

@@ -61,7 +61,7 @@ const EmpresasPage: React.FC = () => {
     const estadoEmpresaRef = useRef<HTMLSelectElement>(null)
 
     const obtenerEmpresas = async () => {
-        try { 
+        try {
             const respuesta = await axios.get<EmpresaResponseDTO[]>("/api/empresas")
             if (respuesta.status === 200) {
                 setEmpresas(respuesta.data)
@@ -309,30 +309,34 @@ const EmpresasPage: React.FC = () => {
             </ContenedorFiltros>
 
             {/* Grid de empresas */}
-            < div className="grid gap-4 md:grid-cols-3" >
-                {
-                    empresasFiltradas.map((empresa) => (
-                        <EmpresaCard empresa={empresa} key={empresa.idEmpresa}>
-                            <ContenedorBotonesAccionCard>
-                                <BotonAccionCard
-                                    Symbol={Pencil}
-                                    onClick={() => {
-                                        setempresaSeleccionada(empresa);
-                                        setModalActualizar(true);
-                                    }}
-                                />
-                                <BotonAccionCard
-                                    Symbol={Eye}
-                                    onClick={() => {
-                                        setempresaSeleccionada(empresa);
-                                        setModalInfo(true);
-                                    }}
-                                />
-                            </ContenedorBotonesAccionCard>
-                        </EmpresaCard>
-                    ))}
+            {empresasFiltradas.length === 0 ?
+                (<div className="text-center text-gray-500 mt-8">
+                    No se encontraron empresas
+                </div>) :
+                (< div className="grid gap-4 md:grid-cols-3" >
+                    {
+                        empresasFiltradas.map((empresa) => (
+                            <EmpresaCard empresa={empresa} key={empresa.idEmpresa}>
+                                <ContenedorBotonesAccionCard>
+                                    <BotonAccionCard
+                                        Symbol={Pencil}
+                                        onClick={() => {
+                                            setempresaSeleccionada(empresa);
+                                            setModalActualizar(true);
+                                        }}
+                                    />
+                                    <BotonAccionCard
+                                        Symbol={Eye}
+                                        onClick={() => {
+                                            setempresaSeleccionada(empresa);
+                                            setModalInfo(true);
+                                        }}
+                                    />
+                                </ContenedorBotonesAccionCard>
+                            </EmpresaCard>
+                        ))}
 
-            </div >
+                </div >)}
 
             {/* Modal para mostrar la información de una empresa*/}
             <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>

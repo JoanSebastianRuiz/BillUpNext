@@ -14,9 +14,11 @@ export const GET = async (request : NextRequest, {params} : {params : {idEmpresa
 
     if(tipo === "persona"){
         const terceros = await terceroService.getAllPersona(parseInt(idEmpresa), true);
+        console.log(terceros);
         return NextResponse.json(terceros, {status: 200});
     } else if(tipo === "empresa"){
         const terceros = await terceroService.getAllEmpresa(parseInt(idEmpresa), true);
+        console.log(terceros);
         return NextResponse.json(terceros, {status: 200});
     } else {
         return NextResponse.json({message: "Tipo de tercero no válido"}, {status: 400});

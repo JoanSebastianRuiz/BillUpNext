@@ -139,7 +139,7 @@ export class TerceroDAOImpl implements TerceroDAO {
                     t.\"estadoTercero\"
                 FROM \"Tercero\" t 
                 JOIN \"Municipio\" m ON m.\"idMunicipio\" = t.\"idMunicipio\"
-                WHERE t.\"idEmpresa\"=$1 and t.\"proveedorTercero\"=$2;`,
+                WHERE t.\"idEmpresa\"=$1 and t.\"proveedorTercero\"=$2 and t.\"idTipoDocumento\" is null;`,
                 [idEmpresa, proveedorTercero]
             );
 
@@ -168,7 +168,7 @@ export class TerceroDAOImpl implements TerceroDAO {
                     t.\"estadoTercero\"
                 FROM \"Tercero\" t 
                 JOIN \"Municipio\" m ON m.\"idMunicipio\" = t.\"idMunicipio\"
-                WHERE t.\"idEmpresa\"=$1 and t.\"proveedorTercero\"=$2;`,
+                WHERE t.\"idEmpresa\"=$1 and t.\"proveedorTercero\"=$2 and t.\"nitTercero\" is null;`,
                 [idEmpresa, proveedorTercero]
             );
 

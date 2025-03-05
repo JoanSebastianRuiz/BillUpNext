@@ -30,7 +30,7 @@ import RegistrarTerceroEmpresa from "@/components/terceros/RegistrarTerceroEmpre
 import { TipoPersonaDTO } from "@/dto/TipoPersonaDTO";
 
 
-const TercerosEmpresa = ({proveedorTerceroEmpresa, tipoEmpresas}:{proveedorTerceroEmpresa:boolean, tipoEmpresas: "clientes" | "proveedores"}) => {
+const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorTerceroEmpresa: boolean, tipoEmpresas: "clientes" | "proveedores" }) => {
     const [modalInfo, setModalInfo] = useState(false)
     const [modalRegistrar, setModalRegistrar] = useState(false)
     const [modalActualizar, setModalActualizar] = useState(false)
@@ -46,7 +46,7 @@ const TercerosEmpresa = ({proveedorTerceroEmpresa, tipoEmpresas}:{proveedorTerce
         setTiposPersona,
         regimenesContribuyente,
         setRegimenesContribuyente,
-        
+
     } = useEmpresaContext()
 
     const { clientesEmpresa, setClientesEmpresa, proveedoresEmpresa, setProveedoresEmpresa } = useTerceroContext()
@@ -72,7 +72,7 @@ const TercerosEmpresa = ({proveedorTerceroEmpresa, tipoEmpresas}:{proveedorTerce
         try {
             const respuestaEmpresas = await axios.get(`/api/empresas/${idEmpresa}/${tipoEmpresas}?tipo=empresa`);
             if (respuestaEmpresas.status === 200) {
-                if(tipoEmpresas === "proveedores"){
+                if (tipoEmpresas === "proveedores") {
                     setProveedoresEmpresa(respuestaEmpresas.data)
                     setEmpresasFiltradas(respuestaEmpresas.data)
                 } else {
@@ -102,14 +102,14 @@ const TercerosEmpresa = ({proveedorTerceroEmpresa, tipoEmpresas}:{proveedorTerce
                 }
 
                 if (!tiposPersona.length) {
-                    const tiposPersonaRes = await axios.get("/api/tipos-empresa")
+                    const tiposPersonaRes = await axios.get("/api/tipos-persona")
                     if (tiposPersonaRes.status !== 200) {
                         console.error(tiposPersonaRes.data)
                     }
                     setTiposPersona(tiposPersonaRes.data || [])
                 }
 
-                if(!regimenesContribuyente.length){
+                if (!regimenesContribuyente.length) {
                     const regimenesContribuyenteRes = await axios.get("/api/regimenes-contribuyente")
                     if (regimenesContribuyenteRes.status !== 200) {
                         console.error(regimenesContribuyenteRes.data)
@@ -227,13 +227,13 @@ const TercerosEmpresa = ({proveedorTerceroEmpresa, tipoEmpresas}:{proveedorTerce
 
     return (
         <section>
-            <ContenedorFiltros title="Personas">
+            <ContenedorFiltros title="">
                 {/* Botones de filtros */}
                 <ContenedorBotonesFiltros>
                     <BotonFiltro
                         onClick={() => setModalRegistrar(true)}
                         Symbol={PlusCircle}
-                        name={proveedorTerceroEmpresa? "Agregar proveedor" : "Agregar cliente"} />
+                        name={proveedorTerceroEmpresa ? "Agregar proveedor" : "Agregar cliente"} />
 
                     <BotonFiltro
                         onClick={limpiarFiltros}
@@ -328,31 +328,35 @@ const TercerosEmpresa = ({proveedorTerceroEmpresa, tipoEmpresas}:{proveedorTerce
                 </ContenedorSelectores>
             </ContenedorFiltros>
 
-            {/* Grid de clientesEmpresa */}
-            < div className="grid gap-4 md:grid-cols-3" >
-                {
-                    empresasFiltradas.map((empresa) => (
-                        <TerceroEmpresaCard tercero={empresa} key={empresa.idTercero}>
-                            <ContenedorBotonesAccionCard>
-                                <BotonAccionCard
-                                    Symbol={Pencil}
-                                    onClick={() => {
-                                        setTerceroSeleccionado(empresa);
-                                        setModalActualizar(true);
-                                    }}
-                                />
-                                <BotonAccionCard
-                                    Symbol={Eye}
-                                    onClick={() => {
-                                        setTerceroSeleccionado(empresa);
-                                        setModalInfo(true);
-                                    }}
-                                />
-                            </ContenedorBotonesAccionCard>
-                        </TerceroEmpresaCard>
-                    ))}
+            {/* Grid de empresas */}
+            {empresasFiltradas.length === 0 ?
+                (<div className="text-center text-gray-500 mt-8">
+                    No se encontraron empresas
+                </div>) :
+                (< div className="grid gap-4 md:grid-cols-3" >
+                    {
+                        empresasFiltradas.map((empresa) => (
+                            <TerceroEmpresaCard tercero={empresa} key={empresa.idTercero}>
+                                <ContenedorBotonesAccionCard>
+                                    <BotonAccionCard
+                                        Symbol={Pencil}
+                                        onClick={() => {
+                                            setTerceroSeleccionado(empresa);
+                                            setModalActualizar(true);
+                                        }}
+                                    />
+                                    <BotonAccionCard
+                                        Symbol={Eye}
+                                        onClick={() => {
+                                            setTerceroSeleccionado(empresa);
+                                            setModalInfo(true);
+                                        }}
+                                    />
+                                </ContenedorBotonesAccionCard>
+                            </TerceroEmpresaCard>
+                        ))}
 
-            </div >
+                </div >)}
 
             {/* Modal para mostrar la información de una empresa*/}
             <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>

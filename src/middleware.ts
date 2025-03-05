@@ -17,13 +17,18 @@ export default withAuth(
     const userRole = token.idRol; // Extraer el rol del token
 
     // Definir rutas según el rol
-    const adminRoutes = ["/dashboard", "/usuarios", "/empresas"];
-    if (adminRoutes.some((route) => req.nextUrl.pathname.startsWith(route)) && userRole !== 1 && userRole !== 2) {
+    const adminRoutes = ["/empresas"];
+    if (adminRoutes.some((route) => req.nextUrl.pathname.startsWith(route)) && userRole !== 1) {
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
-    const supervisorRoutes = ["/productos"];
+    const supervisorRoutes = ["/productos", "/proveedores", "/clientes"];
     if (supervisorRoutes.some((route) => req.nextUrl.pathname.startsWith(route)) && userRole !== 2) {
+      return NextResponse.redirect(new URL("/unauthorized", req.url));
+    }
+
+    const adminSupervisorRoutes = ["/dashboard", "/usuarios"];
+    if (adminSupervisorRoutes.some((route) => req.nextUrl.pathname.startsWith(route)) && userRole !== 1 && userRole !== 2) {
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
