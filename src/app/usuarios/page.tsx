@@ -29,6 +29,7 @@ import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
 import MostrarInfoUsuario from "@/components/usuarios/MostrarInfoUsuario";
 import RegistrarUsuario from "@/components/usuarios/RegistrarUsuario";
+import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 
 
 const UsuariosPage: React.FC = () => {
@@ -66,6 +67,14 @@ const UsuariosPage: React.FC = () => {
     const { data: session } = useSession()
     const idRol = session?.user?.idRol;
     const idEmpresa = session?.user?.idEmpresa;
+
+    // Paginacion
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(12); // Número de empresas por página
+    const indexOfLastUsuario = currentPage * itemsPerPage;
+    const indexOfFirstUsuario = indexOfLastUsuario - itemsPerPage;
+    const usuariosActuales = usuariosFiltrados.slice(indexOfFirstUsuario, indexOfLastUsuario);
+    const totalPages = Math.ceil(usuariosFiltrados.length / itemsPerPage);
 
 
     const obtenerUsuarios = async () => {
@@ -361,13 +370,13 @@ const UsuariosPage: React.FC = () => {
             </ContenedorFiltros>
 
             {/* Grid de usuarios */}
-            {usuariosFiltrados.length === 0 ?
+            {usuariosActuales.length === 0 ?
                 (<div className="text-center text-gray-500 mt-8">
                     No se encontraron usuarios
                 </div>) :
                 (< div className="grid gap-4 md:grid-cols-3" >
                     {
-                        usuariosFiltrados.map((usuario) => (
+                        usuariosActuales.map((usuario) => (
                             <UsuarioCard usuario={usuario} key={usuario.idUsuario}>
                                 <ContenedorBotonesAccionCard>
                                     <BotonAccionCard
@@ -389,6 +398,13 @@ const UsuariosPage: React.FC = () => {
                         ))}
 
                 </div >)}
+
+            {/* Controles de paginación */}
+            <ControlesPaginacion
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+            />
 
             {/* Modal para mostrar la información de un usuario*/}
             <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>

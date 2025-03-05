@@ -26,6 +26,7 @@ import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import MostrarInfoTerceroPersona from "@/components/terceros/MostrarInfoTerceroPersona";
 import RegistrarTerceroPersona from "@/components/terceros/RegistrarTerceroPersona";
+import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 
 
 const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorTerceroPersona: boolean, tipoPersonas: "clientes" | "proveedores" }) => {
@@ -56,6 +57,14 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
 
     const { data: session } = useSession()
     const idEmpresa = session?.user?.idEmpresa;
+
+    // Paginacion
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(12); // Número de empresas por página
+    const indexOfLastPersona = currentPage * itemsPerPage;
+    const indexOfFirstPersona = indexOfLastPersona - itemsPerPage;
+    const personasActuales = personasFiltradas.slice(indexOfFirstPersona, indexOfLastPersona);
+    const totalPages = Math.ceil(personasFiltradas.length / itemsPerPage);
 
 
     const obtenerPersonas = async () => {
@@ -286,13 +295,13 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
             </ContenedorFiltros>
 
             {/* Grid de personas */}
-            {personasFiltradas.length === 0 ?
+            {personasActuales.length === 0 ?
                 (<div className="text-center text-gray-500 mt-8">
                     No se encontraron personas
                 </div>) :
                 (< div className="grid gap-4 md:grid-cols-3" >
                     {
-                        personasFiltradas.map((persona) => (
+                        personasActuales.map((persona) => (
                             <TerceroPersonaCard tercero={persona} key={persona.idTercero}>
                                 <ContenedorBotonesAccionCard>
                                     <BotonAccionCard
@@ -314,6 +323,13 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
                         ))}
 
                 </div >)}
+
+            {/* Controles de paginación */}
+            <ControlesPaginacion
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+            />
 
             {/* Modal para mostrar la información de un persona*/}
             <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>

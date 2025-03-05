@@ -27,7 +27,7 @@ import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import MostrarInfoTerceroEmpresa from "@/components/terceros/MostrarInfoTerceroEmpresa";
 import RegistrarTerceroEmpresa from "@/components/terceros/RegistrarTerceroEmpresa";
-import { TipoPersonaDTO } from "@/dto/TipoPersonaDTO";
+import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 
 
 const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorTerceroEmpresa: boolean, tipoEmpresas: "clientes" | "proveedores" }) => {
@@ -65,6 +65,14 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
 
     const { data: session } = useSession()
     const idEmpresa = session?.user?.idEmpresa;
+
+    // Paginacion
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(12); // Número de empresas por página
+    const indexOfLastEmpresa = currentPage * itemsPerPage;
+    const indexOfFirstEmpresa = indexOfLastEmpresa - itemsPerPage;
+    const empresasActuales = empresasFiltradas.slice(indexOfFirstEmpresa, indexOfLastEmpresa);
+    const totalPages = Math.ceil(empresasFiltradas.length / itemsPerPage);
 
 
     const obtenerEmpresas = async () => {
@@ -329,13 +337,13 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
             </ContenedorFiltros>
 
             {/* Grid de empresas */}
-            {empresasFiltradas.length === 0 ?
+            {empresasActuales.length === 0 ?
                 (<div className="text-center text-gray-500 mt-8">
                     No se encontraron empresas
                 </div>) :
                 (< div className="grid gap-4 md:grid-cols-3" >
                     {
-                        empresasFiltradas.map((empresa) => (
+                        empresasActuales.map((empresa) => (
                             <TerceroEmpresaCard tercero={empresa} key={empresa.idTercero}>
                                 <ContenedorBotonesAccionCard>
                                     <BotonAccionCard
@@ -357,6 +365,13 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
                         ))}
 
                 </div >)}
+
+            {/* Controles de paginación */}
+            <ControlesPaginacion
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+            />
 
             {/* Modal para mostrar la información de una empresa*/}
             <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>
