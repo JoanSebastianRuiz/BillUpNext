@@ -25,6 +25,7 @@ import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAcc
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
+import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 
 
 const EmpresasPage: React.FC = () => {
@@ -59,6 +60,14 @@ const EmpresasPage: React.FC = () => {
     const idDepartamentoRef = useRef<HTMLSelectElement>(null)
     const nitEmpresaRef = useRef<HTMLInputElement>(null)
     const estadoEmpresaRef = useRef<HTMLSelectElement>(null)
+
+    // Paginacion
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(12); // Número de empresas por página
+    const indexOfLastEmpresa = currentPage * itemsPerPage;
+    const indexOfFirstEmpresa = indexOfLastEmpresa - itemsPerPage;
+    const empresasActuales = empresasFiltradas.slice(indexOfFirstEmpresa, indexOfLastEmpresa);
+    const totalPages = Math.ceil(empresasFiltradas.length / itemsPerPage);
 
     const obtenerEmpresas = async () => {
         try {
@@ -309,13 +318,13 @@ const EmpresasPage: React.FC = () => {
             </ContenedorFiltros>
 
             {/* Grid de empresas */}
-            {empresasFiltradas.length === 0 ?
+            {empresasActuales.length === 0 ?
                 (<div className="text-center text-gray-500 mt-8">
                     No se encontraron empresas
                 </div>) :
                 (< div className="grid gap-4 md:grid-cols-3" >
                     {
-                        empresasFiltradas.map((empresa) => (
+                        empresasActuales.map((empresa) => (
                             <EmpresaCard empresa={empresa} key={empresa.idEmpresa}>
                                 <ContenedorBotonesAccionCard>
                                     <BotonAccionCard
@@ -337,6 +346,13 @@ const EmpresasPage: React.FC = () => {
                         ))}
 
                 </div >)}
+
+            {/* Controles de paginación */}
+            <ControlesPaginacion
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+            />
 
             {/* Modal para mostrar la información de una empresa*/}
             <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>
