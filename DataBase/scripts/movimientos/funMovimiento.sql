@@ -2,8 +2,8 @@ CREATE OR REPLACE FUNCTION insertarMovimiento(
     _idUsuario "Movimiento"."idUsuario"%TYPE,
     _idCaja "Movimiento"."idCaja"%TYPE,
     _descripcionMovimiento "Movimiento"."descripcionMovimiento"%TYPE,
-    _valorMovimiento "Movimiento"."valorMovimiento")
-    RETURN BOOLEAN AS
+    _valorMovimiento "Movimiento"."valorMovimiento"%TYPE)
+    RETURNS BOOLEAN AS
 $$
 DECLARE
     _idMovimiento "Movimiento"."idMovimiento"%TYPE;
@@ -12,7 +12,7 @@ BEGIN
     VALUES (_idUsuario, _idCaja, _descripcionMovimiento, _valorMovimiento);
 
     IF FOUND THEN
-        RAISE NOTICE 'Se insertó correctamente el movimiento'
+        RAISE NOTICE 'Se insertó correctamente el movimiento';
         RETURN TRUE;
     ELSE
         RAISE EXCEPTION 'Ocurrió un error';
@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION actualizarMovimiento(
     _idCaja "Movimiento"."idCaja"%TYPE,
     _descripcionMovimiento "Movimiento"."descripcionMovimiento"%TYPE,
     _valorMovimiento "Movimiento"."valorMovimiento"%TYPE)
-    RETURN BOOLEAN AS
+    RETURNS BOOLEAN AS
 $$
 BEGIN
     UPDATE "Movimiento"
