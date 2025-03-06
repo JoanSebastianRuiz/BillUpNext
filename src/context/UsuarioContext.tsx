@@ -6,11 +6,10 @@ import { MunicipioResponseDTO } from "@/dto/MunicipioResponseDTO";
 import { TipoDocumentoResponseDTO } from "@/dto/TipoDocumentoResponseDTO";
 import { RolDTO } from "@/dto/RolDTO";
 import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
-import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
 
 interface UserContextType {
-    documentoUsuario: string
-    setDocumentoUsuario: (documento: string) => void
+    usuario: UsuarioResponseDTO
+    setUsuario: (usuario: UsuarioResponseDTO) => void
     departamentos: DepartamentoResponseDTO[]
     setDepartamentos: (departamentos: DepartamentoResponseDTO[]) => void
     municipios: MunicipioResponseDTO[]
@@ -31,7 +30,7 @@ interface UserProviderProps {
 }
 
 export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }) => {
-    const [documentoUsuario, setDocumentoUsuario] = useState("");
+    const [usuario, setUsuario] = useState<UsuarioResponseDTO>({} as UsuarioResponseDTO);
     const [departamentos, setDepartamentos] = useState<DepartamentoResponseDTO[]>([]);
     const [municipios, setMunicipios] = useState<MunicipioResponseDTO[]>([]);
     const [tiposDocumento, setTiposDocumento] = useState<TipoDocumentoResponseDTO[]>([]);
@@ -40,8 +39,8 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
 
     return (
         <UsuarioContext.Provider value={{
-            documentoUsuario,
-            setDocumentoUsuario,
+            usuario,
+            setUsuario,
             departamentos,
             setDepartamentos,
             municipios,

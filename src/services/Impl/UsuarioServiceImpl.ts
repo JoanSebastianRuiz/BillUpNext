@@ -212,11 +212,11 @@ export class UsuarioServiceImpl implements UsuarioService {
             }
 
             const usuarioAutenticacionDTO = await this.getClaveAutenticacion(numeroDocumentoUsuario);
-            if (!usuarioAutenticacionDTO) {
+            if (!usuarioAutenticacionDTO || !usuarioAutenticacionDTO.estadoUsuario) {
                 return null;
             }
 
-            // Para pruebas
+            // Para usuarios registrados antes de la encriptación de la clave
             if (usuarioAutenticacionDTO.claveUsuario == claveUsuario) {
                 return usuarioAutenticacionDTO;
             }
@@ -236,11 +236,11 @@ export class UsuarioServiceImpl implements UsuarioService {
 
     private getClaveAutenticacion = async (numeroDocumentoUsuario: string): Promise<UsuarioAutenticacionDTO | null> => {
         try {
-            const UsuarioAutenticacionDTO = await this.usuarioDAOImpl.getClaveAutenticacion(numeroDocumentoUsuario);
-            if (!UsuarioAutenticacionDTO) {
+            const usuarioAutenticacionDTO = await this.usuarioDAOImpl.getClaveAutenticacion(numeroDocumentoUsuario);
+            if (!usuarioAutenticacionDTO) {
                 return null;
             }
-            return UsuarioAutenticacionDTO;
+            return usuarioAutenticacionDTO;
 
         } catch (error) {
             console.error("Error al obtener el usuario por documento:", error);

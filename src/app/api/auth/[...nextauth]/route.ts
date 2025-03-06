@@ -6,6 +6,7 @@ import { UsuarioAutenticacionDTO } from "@/dto/UsuarioAutenticacionDTO";
 
 declare module "next-auth" {
     interface User {
+        idUsuario: number;
         idRol: number;
         idEmpresa: number;
         numeroDocumentoUsuario: string;
@@ -13,6 +14,7 @@ declare module "next-auth" {
 
     interface Session {
         user: {
+            idUsuario: number;
             idRol: number;
             idEmpresa: number;
             numeroDocumentoUsuario: string;
@@ -22,6 +24,7 @@ declare module "next-auth" {
 
 declare module "next-auth/jwt" {
     interface JWT {
+        idUsuario: number;
         idRol: number;
         idEmpresa: number;
         numeroDocumentoUsuario: string;
@@ -51,7 +54,8 @@ const handler = NextAuth({
                             throw new Error("Usuario o contraseña incorrectos");
                         }
                         return {
-                            id: usuario.idUsuario ? usuario.idUsuario.toString() : "",
+                            id:usuario.idUsuario.toString(),
+                            idUsuario: usuario.idUsuario,
                             idRol: usuario.idRol,
                             idEmpresa: usuario.idEmpresa,
                             numeroDocumentoUsuario: usuario.numeroDocumentoUsuario
@@ -69,6 +73,7 @@ const handler = NextAuth({
     callbacks: {
         jwt({ token, user }) {
             if (user) {
+                token.idUsuario = user.idUsuario;
                 token.idRol = user.idRol;
                 token.idEmpresa = user.idEmpresa;
                 token.numeroDocumentoUsuario = user.numeroDocumentoUsuario;
@@ -78,6 +83,7 @@ const handler = NextAuth({
 
         session({ session, token }) {
             if (token) {
+                session.user.idUsuario = token.idUsuario as number;
                 session.user.idRol = token.idRol as number;
                 session.user.idEmpresa = token.idEmpresa as number;
                 session.user.numeroDocumentoUsuario = token.numeroDocumentoUsuario as string;

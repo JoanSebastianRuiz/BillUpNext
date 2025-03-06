@@ -144,7 +144,7 @@ export class UsuarioDAOImpl implements UsuarioDAO {
     public getClaveAutenticacion = async (numeroDocumentoUsuario: string): Promise<UsuarioAutenticacionDTO | null> => {
         try {
             const respuesta = await ejecutarQuery<UsuarioAutenticacionDTO>(
-                `SELECT \"claveUsuario\", \"numeroDocumentoUsuario\", \"idRol\", \"idUsuario\", \"idEmpresa\" FROM \"Usuario\" WHERE \"numeroDocumentoUsuario\" = $1;`,
+                `SELECT \"claveUsuario\", \"numeroDocumentoUsuario\", \"idRol\", \"idUsuario\", \"idEmpresa\", \"estadoUsuario\" FROM \"Usuario\" WHERE \"numeroDocumentoUsuario\" = $1;`,
                 [numeroDocumentoUsuario]
             );
 

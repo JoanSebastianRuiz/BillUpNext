@@ -4,4 +4,5 @@ export interface UsuarioAutenticacionDTO{
     idRol: number;
     idEmpresa: number;
     numeroDocumentoUsuario: string;
+    estadoUsuario: boolean;
 }
