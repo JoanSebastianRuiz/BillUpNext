@@ -7,15 +7,15 @@ import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
 
 import { UbicacionVentaDTO } from "@/dto/UbicacionVentaDTO";
 
-import MostrarInfoUbicacionVenta from "@/components/ubicacion-venta/MostrarInfoUbicacionVenta";  
-import RegistrarUbicacionVenta from "@/components/ubicacion-venta/RegistrarUbicacionVenta";
+import MostrarInfoUbicacionVenta from "@/components/ubicacionVenta/MostrarInfoUbicacionVenta";  
+import RegistrarUbicacionVenta from "@/components/ubicacionVenta/RegistrarUbicacionVenta";
 import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
 import ContenedorBotonesFiltros from "@/components/filtros/ContenedorBotonesFiltros";
 import BotonFiltro from "@/components/filtros/BotonFiltro";
 import ContenedorSelectores from "@/components/filtros/ContenedorSelectores";
 import InputFiltro from "@/components/filtros/InputFiltro";
 import SelectFiltro from "@/components/filtros/SelectFiltro";
-import UbicacionVentaCard from "@/components/ubicacion-venta/UbicacionVentaCard";
+import UbicacionVentaCard from "@/components/ubicacionVenta/UbicacionVentaCard";
 import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAccionCard";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
