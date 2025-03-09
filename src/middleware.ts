@@ -49,5 +49,6 @@ export const config = {
     "/api/:path*",
     "/productos/:path*",
     "/empresas/:path*",
+    "/categorias/:path*",
   ], // Protege estas rutas
 };
