@@ -6,9 +6,7 @@ import ContenedorMostrarInfo from "../modal/ContenedorMostrarInfo";
 import ParrafoMostrarInfo from "../modal/ParrafoMostrarInfo";
 import EstadoMostrarInfo from "../modal/EstadoMostrarInfo";
 
-const MostrarInfoProducto = ({
-  producto,
-}: {
+const MostrarInfoProducto = ({ producto }: {
   producto: ProductoResponseDTO;
 }) => {
   const { categorias } = useProductoContext();
