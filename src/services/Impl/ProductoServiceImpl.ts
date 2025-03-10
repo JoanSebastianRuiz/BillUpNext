@@ -26,11 +26,16 @@ export class ProductoServiceImpl implements ProductoService {
         nombreProducto,
         descripcionProducto,
         precioVentaProducto,
-        porcentajeDescuentoProducto,
         stockMinimoProducto,
         stockMaximoProducto,
         estadoProducto,
       } = producto;
+
+      const porcentajeDescuentoProducto =
+      producto.porcentajeDescuentoProducto !== undefined &&
+      producto.porcentajeDescuentoProducto !== null 
+        ? parseFloat(producto.porcentajeDescuentoProducto as any)
+        : 0;
 
       if (
         !idEmpresa ||
@@ -38,7 +43,6 @@ export class ProductoServiceImpl implements ProductoService {
         !nombreProducto ||
         !descripcionProducto ||
         !precioVentaProducto ||
-        !porcentajeDescuentoProducto ||
         !stockMinimoProducto ||
         !stockMaximoProducto ||
         !estadoProducto
@@ -49,17 +53,24 @@ export class ProductoServiceImpl implements ProductoService {
         );
       }
 
-      if (await this.productoDAOImpl.existProductoNombre(nombreProducto,idCategoria)) {
-        return NextResponse.json({
-          message: "El nombre del producto ya existe",
-        });
+      if (
+        await this.productoDAOImpl.existProductoNombre(
+          nombreProducto,
+          idEmpresa,
+          idCategoria
+        )
+      ) {
+        return NextResponse.json(
+          { message: "El nombre del producto ya existe" },
+          { status: 400 }
+        );
       }
 
       if (
-        await this.productoDAOImpl.validarStock(
+        !(await this.productoDAOImpl.validarStock(
           stockMinimoProducto,
           stockMaximoProducto
-        )
+        ))
       ) {
         return NextResponse.json(
           { message: "Los valores del stock no son validos" },
@@ -67,7 +78,17 @@ export class ProductoServiceImpl implements ProductoService {
         );
       }
 
-      const respuesta = await this.productoDAOImpl.create(producto);
+      const respuesta = await this.productoDAOImpl.create({
+        idEmpresa,
+        idCategoria,
+        nombreProducto,
+        descripcionProducto,
+        precioVentaProducto,
+        porcentajeDescuentoProducto,
+        stockMinimoProducto,
+        stockMaximoProducto,
+        estadoProducto,
+      });
 
       if (respuesta) {
         return NextResponse.json(
@@ -96,11 +117,16 @@ export class ProductoServiceImpl implements ProductoService {
         nombreProducto,
         descripcionProducto,
         precioVentaProducto,
-        porcentajeDescuentoProducto,
         stockMinimoProducto,
         stockMaximoProducto,
         estadoProducto,
       } = producto;
+
+      const porcentajeDescuentoProducto =
+  producto.porcentajeDescuentoProducto !== undefined &&
+  producto.porcentajeDescuentoProducto !== null 
+    ? parseFloat(producto.porcentajeDescuentoProducto as any)
+    : 0;
 
       if (
         !idProducto ||
@@ -109,7 +135,6 @@ export class ProductoServiceImpl implements ProductoService {
         !nombreProducto ||
         !descripcionProducto ||
         !precioVentaProducto ||
-        !porcentajeDescuentoProducto ||
         !stockMinimoProducto ||
         !stockMaximoProducto ||
         !estadoProducto
@@ -120,17 +145,23 @@ export class ProductoServiceImpl implements ProductoService {
         );
       }
 
-      if (await this.productoDAOImpl.existProductoNombre(nombreProducto,idCategoria,idProducto)) {
+      if (
+        await this.productoDAOImpl.existProductoNombre(
+          nombreProducto,
+          idCategoria,
+          idProducto
+        )
+      ) {
         return NextResponse.json({
           message: "El nombre del producto ya existe",
         });
       }
 
       if (
-        await this.productoDAOImpl.validarStock(
+        !(await this.productoDAOImpl.validarStock(
           stockMinimoProducto,
           stockMaximoProducto
-        )
+        ))
       ) {
         return NextResponse.json(
           { message: "Los valores del stock no son validos" },
@@ -138,7 +169,18 @@ export class ProductoServiceImpl implements ProductoService {
         );
       }
 
-      const respuesta = await this.productoDAOImpl.update(producto);
+      const respuesta = await this.productoDAOImpl.update({
+        idProducto,
+        idEmpresa,
+        idCategoria,
+        nombreProducto,
+        descripcionProducto,
+        precioVentaProducto,
+        porcentajeDescuentoProducto,
+        stockMinimoProducto,
+        stockMaximoProducto,
+        estadoProducto,
+      });
 
       if (respuesta) {
         return NextResponse.json(

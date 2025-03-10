@@ -13,14 +13,14 @@ $$
 DECLARE
     _idProducto "Producto"."idProducto"%TYPE;
 BEGIN
-        INSERT INTO "Producto" ("idEmpresa","idCategoria","nombreProducto","descripcionProducto","precioVentaProducto","porcentajeDescuentoProducto","stockMinimoProducto","stockMaximoProducto","stockProducto","estadoProducto")
-        VALUES (_idEmpresa,_idCategoria,_nombreProducto,_descripcionProducto,_precioVentaProducto,_porcentajeDescuentoProducto,_stockMinimoProducto,_stockMaximoProducto,0,_estadoProducto);
+        INSERT INTO "Producto" ("idEmpresa","idCategoria","nombreProducto","descripcionProducto","precioVentaProducto", "porcentajeDescuentoProducto","stockMinimoProducto","stockMaximoProducto","stockProducto","estadoProducto")
+        VALUES (_idEmpresa,_idCategoria,_nombreProducto,_descripcionProducto,_precioVentaProducto, COALESCE (_porcentajeDescuentoProducto, 0),_stockMinimoProducto,_stockMaximoProducto,0,_estadoProducto);
 
         IF FOUND THEN
             RAISE NOTICE 'Se insertó correctamente el producto';
             RETURN TRUE;
 		ELSE
-            RAISE EXCEPTION 'Ocurrió un error';
+            RAISE NOTICE 'Ocurrió un error';
             RETURN FALSE;
         END IF;
 END;
@@ -67,7 +67,8 @@ LANGUAGE PLPGSQL;
 
 
 CREATE OR REPLACE FUNCTION existeProductoNombre(
-    _nombreProducto "Producto"."nombreProducto"%TYPE,    
+    _nombreProducto "Producto"."nombreProducto"%TYPE,
+    _idEmpresa "Producto"."idEmpresa"%TYPE,    
     _idCategoria "Producto"."idCategoria"%TYPE,
     _idProducto "Producto"."idProducto"%TYPE DEFAULT NULL
 )
@@ -79,6 +80,7 @@ BEGIN
         FROM "Producto"
         WHERE LOWER("nombreProducto") = LOWER(_nombreProducto)
             AND "idCategoria" = _idCategoria
+            AND "idEmpresa" = _idEmpresa
             AND (_idProducto IS NULL OR "idProducto" != _idProducto)
     );
 END;
@@ -94,8 +96,8 @@ RETURNS BOOLEAN AS
 $$
 BEGIN
     RETURN NOT (
-        _stockMinimoProducto < 0
-        OR _stockMaximoProducto < 0
+        _stockMinimoProducto <= 0
+        OR _stockMaximoProducto <= 0
         OR _stockMinimoProducto > _stockMaximoProducto
     );
 END;

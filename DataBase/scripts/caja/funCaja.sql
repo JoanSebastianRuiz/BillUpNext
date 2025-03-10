@@ -1,13 +1,13 @@
 CREATE OR REPLACE FUNCTION actualizarCaja(
-    _idCaja "Caja"."idCaja"$TYPE,
+    _idCaja "Caja"."idCaja"%TYPE,
     _idEmpresa "Caja"."idEmpresa"%TYPE,
     _nombreCaja "Caja"."nombreCaja"%TYPE,
     _estadoCaja "Caja"."estadoCaja"%TYPE
 )
-RETURN BOOLEAN AS
+RETURNS BOOLEAN AS
 $$
 BEGIN
-    UPDATE "Caja" SELECT
+    UPDATE "Caja" SET
         "idEmpresa" = COALESCE(_idEmpresa, "idEmpresa"),
         "nombreCaja" = COALESCE(_nombreCaja, "nombreCaja"),
         "estadoCaja" = COALESCE(_estadoCaja, "estadoCaja")
@@ -36,7 +36,7 @@ BEGIN
     IF FOUND THEN
         RAISE NOTICE 'Se eliminó correctamente La caja';
     ELSE
-        RAISE NOTICE 'Ocurrió un error al eliminar la CAJA'
+        RAISE NOTICE 'Ocurrió un error al eliminar la CAJA';
     END IF;
 END;
 $$
@@ -47,9 +47,9 @@ LANGUAGE PLPGSQL;
 CREATE OR REPLACE FUNCTION insertarCaja(
     _idEmpresa "Caja"."idEmpresa"%TYPE,
     _nombreCaja "Caja"."nombreCaja"%TYPE,
-    _estadoCaja "Caja"."estadoCaja"$TYPE
+    _estadoCaja "Caja"."estadoCaja"%TYPE
 )
-RETURN BOOLEAN AS
+RETURNS BOOLEAN AS
 $$
 DECLARE
     id INTEGER;
@@ -90,6 +90,7 @@ BEGIN
         WHERE "nombreCaja" = _nombreCajas
     );
 END;
+$$
 LANGUAGE PLPGSQL;
 
 

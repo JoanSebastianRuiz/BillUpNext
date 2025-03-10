@@ -38,7 +38,9 @@ export class ProductoDAOImpl implements ProductoDAO {
       const respuesta: ProductoResponseDTO[] = await ejecutarQuery(
         `SELECT p.\"idProducto\", p.\"idEmpresa\", p.\"idCategoria\", p.\"nombreProducto\",
                 p.\"descripcionProducto\", p.\"precioVentaProducto\", p.\"porcentajeDescuentoProducto\", p.\"stockMinimoProducto\", p.\"stockMaximoProducto\",
-                p.\"stockProducto\", p.\"estadoProducto\" WHERE p.\"idProducto\" = $1;`,
+                p.\"stockProducto\", p.\"estadoProducto\" 
+                FROM \"Producto\" p
+                WHERE p.\"idProducto\" = $1;`,
         [idProducto]
       );
 
@@ -50,8 +52,9 @@ export class ProductoDAOImpl implements ProductoDAO {
 
   public create = async (producto: ProductoRequestDTO): Promise<boolean> => {
     try {
+      
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT insertarProducto($1,$2,$3,$4,$5,$6,$7,$8,$9) as ressultado;`,
+        `SELECT insertarProducto($1,$2,$3,$4,$5,$6,$7,$8,$9) as resultado;`,
         [
           producto.idEmpresa,
           producto.idCategoria,
@@ -96,13 +99,14 @@ export class ProductoDAOImpl implements ProductoDAO {
 
   public existProductoNombre = async (
     nombreProducto: string,
+    idEmpresa: number,
     idCategoria: number,
     idProducto?: number
   ): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery(
-        `SELECT existeProductoNombre ($1,$2,$3) as resultado;`,
-        [nombreProducto, idCategoria, idProducto]
+        `SELECT existeProductoNombre ($1,$2,$3,$4) as resultado;`,
+        [nombreProducto, idEmpresa, idCategoria, idProducto]
       );
       return respuesta.length > 0 ? respuesta[0].resultado : false;
     } catch (error) {
