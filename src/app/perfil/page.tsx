@@ -13,6 +13,10 @@ import { TipoDocumentoResponseDTO } from "@/dto/TipoDocumentoResponseDTO";
 
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
 import ProfileItem from "@/components/perfil/ProfileItem";
+import Modal from "@/components/modal/Modal";
+import ActualizarPerfil from "@/components/perfil/ActualizarPerfil";
+import ActualizarClave from "@/components/perfil/ActualizarClave";
+import BotonFiltro from "@/components/filtros/BotonFiltro";
 
 const PerfilPage = () => {
     const {
@@ -34,6 +38,8 @@ const PerfilPage = () => {
     const idUsuario = session?.user?.idUsuario;
 
     const [isLoading, setIsLoading] = useState(true);
+    const [modalActualizarClave, setModalActualizarClave] = useState(false)
+    const [modalActualizarPerfil, setModalActualizarPerfil] = useState(false)
 
     useEffect(() => {
         if (!session || idUsuario === undefined) return;
@@ -125,10 +131,34 @@ const PerfilPage = () => {
                                     value={municipios.find(m => m.idMunicipio === usuario.idMunicipio)?.nombreMunicipio || 'N/A'}
                                 />
                             </div>
+
+                            <div>
+                                <BotonFiltro
+                                    Symbol={User}
+                                    onClick={() => setModalActualizarPerfil(true)}
+                                    name="Actualizar perfil"
+                                />
+                                <BotonFiltro
+                                    Symbol={User}
+                                    onClick={() => setModalActualizarClave(true)}
+                                    name="Actualizar clave"
+                                />
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
+
+            {/* Modal para actualizar la clave*/}
+            <Modal isOpen={modalActualizarClave} setIsOpen={() => setModalActualizarClave(false)}>
+                <ActualizarClave setModalActualizarClave={setModalActualizarClave} />
+            </Modal>
+
+
+            {/* Modal para actualizar el perfil*/}
+            <Modal isOpen={modalActualizarPerfil} setIsOpen={() => setModalActualizarPerfil(false)}>
+                <ActualizarPerfil setModalActualizarPerfil={setModalActualizarPerfil} />
+            </Modal>
         </ContenedorPrincipal>
     );
 };
