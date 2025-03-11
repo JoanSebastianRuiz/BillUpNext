@@ -17,7 +17,7 @@ export class GravamenDAOImpl implements GravamenDAO {
   public getAll = async (): Promise<Array<GravamenDTO>> => {
     try {
       const gravamenDatabase: GravamenDTO[] = await ejecutarQuery(
-        `SELECT g.\idGravamen\", g.\"nombreGravamen\", g.\"estadoGravamen\", g.\"negativoGravamen\", g.\"porcentajeGravamen\"
+        `SELECT g.\"idGravamen\", g.\"nombreGravamen\", g.\"estadoGravamen\", g.\"negativoGravamen\", g.\"porcentajeGravamen\"
                 FROM \"Gravamen\" g;`,
         []
       );
