@@ -14,7 +14,7 @@ interface ProductoContextType {
 
 const ProductoContext = createContext<ProductoContextType | undefined>(undefined);
 
-// Proveedor del contexto
+
 interface ProductoProviderProps {
     children: ReactNode;
 }
@@ -24,20 +24,36 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
     const [categorias, setCategorias] = useState<CategoriaDTO[]>([]);
 
     useEffect(() => {
-        console.log("🔄 useEffect ejecutándose para obtener categorías...");
+        const fetchCategorias = async () => {
+            try {
+                const response = await axios.get('/api/categorias'); 
+                
+                if (response.status === 200) {
+                    setCategorias(response.data);
+                } else {
+                    console.error("Error al obtener categorías:", response.data.message);
+                }
+            } catch (error) {
+                console.error("Error al obtener categorías:", error);
+            }
+        };
 
-        axios.get("/api/categorias")
-            .then(response => {
-                console.log("Categorías obtenidas de la API:", response.data);  
-                setCategorias(Array.isArray(response.data) ? response.data : []);
-            })
-            .catch(error => console.error(" Error al obtener categorías:", error));
+        const fetchProductos = async () => {
+            try {
+                const response = await axios.get('/api/productos');
+                if (response.status === 200) {
+                    setProductos(response.data);
+                } else {
+                    console.error("Error al obtener productos:", response.data.message);
+                }
+            } catch (error) {
+                console.error("Error al obtener productos:", error);
+            }
+        };
 
+        fetchCategorias();
+        fetchProductos();
     }, []);
-
-    useEffect(() => {
-        console.log(" Estado actualizado de categorías:", categorias);
-    }, [categorias]);
 
     return (
         <ProductoContext.Provider value={{ productos, setProductos, categorias, setCategorias }}>

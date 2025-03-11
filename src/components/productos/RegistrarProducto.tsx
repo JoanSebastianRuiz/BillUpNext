@@ -17,9 +17,6 @@ import ButtonForm from '../form/ButtonForm';
 const RegistrarProducto = ({ idProducto, obtenerProductos, setModalActualizar, setModalRegistrar }: { idProducto?: number, obtenerProductos: () => void, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
     const { categorias } = useProductoContext();
-    useEffect(() => {
-        console.log("Categorías cargadas:", categorias);
-    }, [categorias]);
     
     const [empresas, setEmpresas] = useState<{ idEmpresa: number; nombreEmpresa: string }[]>([]);
     const [error, setError] = useState<string | null>(null);

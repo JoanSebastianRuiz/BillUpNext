@@ -148,13 +148,15 @@ export class ProductoServiceImpl implements ProductoService {
       if (
         await this.productoDAOImpl.existProductoNombre(
           nombreProducto,
+          idEmpresa,
           idCategoria,
           idProducto
         )
       ) {
-        return NextResponse.json({
-          message: "El nombre del producto ya existe",
-        });
+        return NextResponse.json(
+          { message: "El nombre del producto ya existe"},
+          { status: 400 }
+        );
       }
 
       if (
