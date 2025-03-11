@@ -96,7 +96,7 @@ const RegistrarEmpresa = ({ idEmpresa, obtenerEmpresas, setModalActualizar, setM
             if (idEmpresa) {
                 let { idDepartamento, ...datosModificados } = data;
 
-                datosModificados = { ...data, idTipoPersona: parseInt(data.idTipoPersona.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idRegimenContribuyente: parseInt(data.idRegimenContribuyente.toString()), estadoEmpresa: Boolean(data.estadoEmpresa) };
+                datosModificados = { ...data, idTipoPersona: parseInt(data.idTipoPersona.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idRegimenContribuyente: parseInt(data.idRegimenContribuyente.toString()), estadoEmpresa:  String(data.estadoEmpresa) === "true" };
 
                 const respuesta = await axios.put(`/api/empresas/${idEmpresa}`, datosModificados);
                 setError(null);

@@ -7,9 +7,10 @@ interface SelectFiltroProps {
     onChange: ChangeEventHandler<HTMLSelectElement>;
     children: ReactNode;
     defaultValue?: string;
+    selectEstado?: boolean;
 }
 
-const SelectFiltro = ({ id, name, ref, onChange, children, defaultValue }: SelectFiltroProps) => {
+const SelectFiltro = ({ id, name, ref, onChange, children, defaultValue, selectEstado=false }: SelectFiltroProps) => {
     return (
         <div>
             <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -22,7 +23,7 @@ const SelectFiltro = ({ id, name, ref, onChange, children, defaultValue }: Selec
                 onChange={onChange}
                 defaultValue={defaultValue}
             >
-                <option value="0">Sin aplicar</option>
+                {!selectEstado && <option value="0">Sin aplicar</option>}
                 {children}
             </select>
         </div>

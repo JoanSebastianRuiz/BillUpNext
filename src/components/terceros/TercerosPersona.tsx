@@ -1,9 +1,6 @@
 "use client";
 
-import axios from "axios";
-
 import { useEffect, useState, useRef } from "react";
-import { useSession } from "next-auth/react";
 import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
 
 import { useUsuarioContext } from '@/context/UsuarioContext';
@@ -11,7 +8,6 @@ import { useTerceroContext } from "@/context/TerceroContext";
 
 import { DepartamentoResponseDTO } from '@/dto/DepartamentoResponseDTO';
 import { MunicipioResponseDTO } from '@/dto/MunicipioResponseDTO';
-import { TipoDocumentoResponseDTO } from '@/dto/TipoDocumentoResponseDTO';
 import { TerceroResponsePersonaDTO } from "@/dto/TerceroResponsePersonaDTO";
 
 import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
@@ -34,29 +30,22 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
     const [modalRegistrar, setModalRegistrar] = useState(false)
     const [modalActualizar, setModalActualizar] = useState(false)
     const [terceroSeleccionado, setTerceroSeleccionado] = useState<TerceroResponsePersonaDTO | null>(null)
-    const {
-        departamentos,
-        setDepartamentos,
-        municipios,
-        setMunicipios,
-        tiposDocumento,
-        setTiposDocumento,
-    } = useUsuarioContext()
+    const { departamentos, municipios, tiposDocumento } = useUsuarioContext()
 
-    const { clientesPersona, setClientesPersona, proveedoresPersona, setProveedoresPersona } = useTerceroContext()
+    const { clientesPersona, proveedoresPersona, obtenerPersonas } = useTerceroContext()
 
+    const personas = tipoPersonas === "clientes" ? clientesPersona : proveedoresPersona;
     const [personasFiltradas, setPersonasFiltradas] = useState<TerceroResponsePersonaDTO[]>([]);
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
     const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);
 
     const nombrePersonaRef = useRef<HTMLInputElement>(null)
     const idTipoDocumentoRef = useRef<HTMLSelectElement>(null)
+    const numeroDocumentoPersonaRef = useRef<HTMLInputElement>(null)
     const idDepartamentoRef = useRef<HTMLSelectElement>(null)
     const idMunicipioRef = useRef<HTMLSelectElement>(null)
     const estadoPersonaRef = useRef<HTMLSelectElement>(null)
 
-    const { data: session } = useSession()
-    const idEmpresa = session?.user?.idEmpresa;
 
     // Paginacion
     const [currentPage, setCurrentPage] = useState(1);
@@ -67,84 +56,15 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
     const totalPages = Math.ceil(personasFiltradas.length / itemsPerPage);
 
 
-    const obtenerPersonas = async () => {
-        if (!session || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
-        try {
-            const respuestaPersonas = await axios.get(`/api/empresas/${idEmpresa}/${tipoPersonas}?tipo=persona`);
-            if (respuestaPersonas.status === 200) {
-                if (tipoPersonas === "proveedores") {
-                    setProveedoresPersona(respuestaPersonas.data)
-                    setPersonasFiltradas(respuestaPersonas.data)
-                } else {
-                    setClientesPersona(respuestaPersonas.data)
-                    setPersonasFiltradas(respuestaPersonas.data)
-                }
-
-            } else {
-                console.error(respuestaPersonas.data)
-            }
-
-        } catch (error) {
-            console.error(`Error al obtener los ${tipoPersonas} persona:`, error)
-        }
-    }
-
-    useEffect(() => {
-        const fetchData = async () => {
-            if (!session || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
-            try {
-                if (!departamentos.length) {
-                    const departamentosRes = await axios.get("/api/departamentos")
-                    if (departamentosRes.status !== 200) {
-                        console.error(departamentosRes.data)
-                    }
-                    setDepartamentos(departamentosRes.data || [])
-                }
-
-                if (!tiposDocumento.length) {
-                    const tiposDocumentoRes = await axios.get("/api/tipos-documento")
-                    if (tiposDocumentoRes.status !== 200) {
-                        console.error(tiposDocumentoRes.data)
-                    }
-                    setTiposDocumento(
-                        tiposDocumentoRes.data.filter(
-                            (tipoDocumento: TipoDocumentoResponseDTO) => tipoDocumento.estadoTipoDocumento === true,
-                        ) || [],
-                    )
-                }
-
-                if (!municipios.length) {
-                    const municipiosRes = await axios.get("/api/municipios")
-                    if (municipiosRes.status !== 200) {
-                        console.error(municipiosRes.data)
-                    }
-                    setMunicipios(municipiosRes.data || [])
-                }
-
-                if (tipoPersonas === "clientes" && !clientesPersona.length) {
-                    obtenerPersonas()
-                }
-
-                if (tipoPersonas === "proveedores" && !proveedoresPersona.length) {
-                    obtenerPersonas()
-                }
-
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        fetchData()
-    }, [session, idEmpresa, setDepartamentos, setTiposDocumento, setMunicipios, setClientesPersona, setProveedoresPersona])
-
-
     const filtrarUsuarios = () => {
         const idTipoDocumento = idTipoDocumentoRef.current?.value;
         const nombrePersona = nombrePersonaRef.current?.value;
+        const numeroDocumentoPersona = numeroDocumentoPersonaRef.current?.value;
         const estadoPersona = estadoPersonaRef.current?.value;
         const idDepartamento = idDepartamentoRef.current?.value;
         const idMunicipio = idMunicipioRef.current?.value;
 
-        let personasFiltradas = [...clientesPersona];
+        let personasFiltradas = [...personas];
 
         if (estadoPersona !== undefined && estadoPersona !== "") {
             personasFiltradas = personasFiltradas.filter((persona) => persona.estadoTercero === (estadoPersona === "true"));
@@ -167,6 +87,10 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
                 const nombreCompleto = `${persona.nombreTercero} ${persona.apellidoTercero}`;
                 return nombreCompleto.toLowerCase().includes(nombrePersona.toLowerCase());
             });
+        }
+
+        if (numeroDocumentoPersona) {
+            personasFiltradas = personasFiltradas.filter((persona) => persona.numeroDocumentoTercero.includes(numeroDocumentoPersona));
         }
 
         setPersonasFiltradas(personasFiltradas);
@@ -252,6 +176,13 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
                         ))}
                     </SelectFiltro>
 
+                    {/* Número de documento */}
+                    <InputFiltro
+                        id="numeroDocumentoPersona"
+                        name="Número de documento"
+                        ref={numeroDocumentoPersonaRef}
+                        onChange={filtrarUsuarios} />
+
                     {/* Departamento */}
                     <SelectFiltro
                         id="idDepartamento"
@@ -286,6 +217,7 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
                         name="Estado"
                         onChange={filtrarUsuarios}
                         ref={estadoPersonaRef}
+                        selectEstado={true}
                         defaultValue="true"
                     >
                         <option value="true">Activo</option>

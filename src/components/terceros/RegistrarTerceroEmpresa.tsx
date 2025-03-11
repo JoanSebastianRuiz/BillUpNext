@@ -20,7 +20,7 @@ import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';
 
 
-const RegistrarTerceroEmpresa = ({ idTercero, obtenerEmpresas, setModalActualizar, setModalRegistrar, proveedorTerceroEmpresa }: { idTercero?: number, proveedorTerceroEmpresa: boolean, obtenerEmpresas: () => void, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+const RegistrarTerceroEmpresa = ({ idTercero, obtenerEmpresas, setModalActualizar, setModalRegistrar, proveedorTerceroEmpresa }: { idTercero?: number, proveedorTerceroEmpresa: boolean, obtenerEmpresas: (tipoEmpresas: string) => void, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
     const { departamentos, municipios } = useUsuarioContext();
     const { tiposPersona, regimenesContribuyente } = useEmpresaContext();
@@ -108,12 +108,12 @@ const RegistrarTerceroEmpresa = ({ idTercero, obtenerEmpresas, setModalActualiza
             if (idTercero) {
                 let { idDepartamento, ...datosModificados } = data;
 
-                datosModificados = { ...datosModificados, idTipoPersona: parseInt(data.idTipoPersona.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idRegimenContribuyente: parseInt(data.idRegimenContribuyente.toString()), estadoTercero: Boolean(data.estadoTercero) };
+                datosModificados = { ...datosModificados, idTipoPersona: parseInt(data.idTipoPersona.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idRegimenContribuyente: parseInt(data.idRegimenContribuyente.toString()), estadoTercero: String(data.estadoTercero) === "true" };
 
                 const respuesta = await axios.put(`/api/terceros/${idTercero}?tipo=empresa`, datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
-                obtenerEmpresas();
+                obtenerEmpresas(proveedorTerceroEmpresa ? "proveedores" : "clientes");
                 setModalActualizar?.(false);
             } else {
                 let { idDepartamento, ...datosModificados } = data;
@@ -122,7 +122,7 @@ const RegistrarTerceroEmpresa = ({ idTercero, obtenerEmpresas, setModalActualiza
                 const respuesta = await axios.post("/api/terceros?tipo=empresa", datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
-                obtenerEmpresas();
+                obtenerEmpresas(proveedorTerceroEmpresa ? "proveedores" : "clientes");
                 setModalRegistrar?.(false);
             }
         } catch (error: unknown) {

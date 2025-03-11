@@ -1,6 +1,10 @@
 "use client"
 
-import { createContext, useState, useContext, ReactNode } from "react";
+import axios from "axios";
+
+import { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import { useSession } from "next-auth/react";
+
 import { TerceroResponseEmpresaDTO } from "@/dto/TerceroResponseEmpresaDTO";
 import { TerceroResponsePersonaDTO } from "@/dto/TerceroResponsePersonaDTO";
 
@@ -13,6 +17,8 @@ interface TerceroContextType {
     setProveedoresPersona: (proveedoresPersona: TerceroResponsePersonaDTO[]) => void
     proveedoresEmpresa: TerceroResponseEmpresaDTO[]
     setProveedoresEmpresa: (proveedoresEmpresa: TerceroResponseEmpresaDTO[]) => void
+    obtenerPersonas: (tipoPersonas: string) => void
+    obtenerEmpresas: (tipoEmpresas: string) => void
 }
 
 const TerceroContext = createContext<TerceroContextType | undefined>(undefined);
@@ -27,6 +33,89 @@ export const TerceroContextProvider: React.FC<TerceroProviderProps> = ({ childre
     const [clientesEmpresa, setClientesEmpresa] = useState<TerceroResponseEmpresaDTO[]>([]);
     const [proveedoresPersona, setProveedoresPersona] = useState<TerceroResponsePersonaDTO[]>([]);
     const [proveedoresEmpresa, setProveedoresEmpresa] = useState<TerceroResponseEmpresaDTO[]>([]);
+    const [loading, setLoading] = useState(true); // Estado de carga
+
+    const { data: session, status } = useSession();
+    const idRol = session?.user?.idRol;
+    const idEmpresa = session?.user?.idEmpresa;
+
+    const obtenerPersonas = async (tipoPersonas: string) => {
+        if (!session || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
+        try {
+            const respuestaPersonas = await axios.get(`/api/empresas/${idEmpresa}/${tipoPersonas}?tipo=persona`);
+            if (respuestaPersonas.status === 200) {
+                if (tipoPersonas === "proveedores") {
+                    setProveedoresPersona(respuestaPersonas.data)
+                } else {
+                    setClientesPersona(respuestaPersonas.data)
+                }
+
+            } else {
+                console.error(respuestaPersonas.data)
+            }
+
+        } catch (error) {
+            console.error(`Error al obtener los ${tipoPersonas} persona:`, error)
+        }
+    }
+
+    const obtenerEmpresas = async (tipoEmpresas: string) => {
+        if (!session || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
+        try {
+            const respuestaEmpresas = await axios.get(`/api/empresas/${idEmpresa}/${tipoEmpresas}?tipo=empresa`);
+            if (respuestaEmpresas.status === 200) {
+                if (tipoEmpresas === "proveedores") {
+                    setProveedoresEmpresa(respuestaEmpresas.data)
+                } else {
+                    setClientesEmpresa(respuestaEmpresas.data)
+                }
+
+            } else {
+                console.error(respuestaEmpresas.data)
+            }
+
+        } catch (error) {
+            console.error(`Error al obtener los ${tipoEmpresas} empresa:`, error)
+        }
+    }
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (!session || idRol === undefined || idEmpresa === undefined) return;
+
+            setLoading(true); // Iniciar carga antes de la petición
+            try {
+                if (idRol === 2) {
+                    const [clientesPersonaRes, clientesEmpresaRes, proveedoresPersonaRes, proveedoresEmpresaRes] = await Promise.all([
+                        axios.get<TerceroResponsePersonaDTO[]>(`/api/empresas/${idEmpresa}/clientes?tipo=persona`),
+                        axios.get<TerceroResponseEmpresaDTO[]>(`/api/empresas/${idEmpresa}/clientes?tipo=empresa`),
+                        axios.get<TerceroResponsePersonaDTO[]>(`/api/empresas/${idEmpresa}/proveedores?tipo=persona`),
+                        axios.get<TerceroResponseEmpresaDTO[]>(`/api/empresas/${idEmpresa}/proveedores?tipo=empresa`)
+                    ]); // Obtener los datos de los clientes y proveedores de la empresa
+
+                    if (clientesPersonaRes.status === 200) setClientesPersona(clientesPersonaRes.data);
+                    if (clientesEmpresaRes.status === 200) setClientesEmpresa(clientesEmpresaRes.data);
+                    if (proveedoresPersonaRes.status === 200) setProveedoresPersona(proveedoresPersonaRes.data);
+                    if (proveedoresEmpresaRes.status === 200) setProveedoresEmpresa(proveedoresEmpresaRes.data);
+                } else {
+                    const [clientesPersonaRes, clientesEmpresaRes] = await Promise.all([
+                        axios.get<TerceroResponsePersonaDTO[]>(`/api/empresas/${idEmpresa}/clientes?tipo=persona`),
+                        axios.get<TerceroResponseEmpresaDTO[]>(`/api/empresas/${idEmpresa}/clientes?tipo=empresa`)
+                    ]); // Obtener los datos de los clientes y proveedores de la empresa
+
+                    if (clientesPersonaRes.status === 200) setClientesPersona(clientesPersonaRes.data);
+                    if (clientesEmpresaRes.status === 200) setClientesEmpresa(clientesEmpresaRes.data);
+                }
+
+            } catch (error) {
+                console.error("Error al obtener los datos de Tercero Context:", error);
+            } finally {
+                setLoading(false); // Finalizar carga después de obtener los datos
+            }
+        };
+
+        fetchData();
+    }, [session, idRol, idEmpresa]);
 
     return (
         <TerceroContext.Provider value={{
@@ -37,7 +126,9 @@ export const TerceroContextProvider: React.FC<TerceroProviderProps> = ({ childre
             proveedoresPersona,
             setProveedoresPersona,
             proveedoresEmpresa,
-            setProveedoresEmpresa
+            setProveedoresEmpresa,
+            obtenerPersonas,
+            obtenerEmpresas
         }}>
             {children}
         </TerceroContext.Provider>

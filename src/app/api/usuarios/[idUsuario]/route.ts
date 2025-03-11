@@ -3,7 +3,7 @@ import { UsuarioServiceImpl } from "@/services/Impl/UsuarioServiceImpl"
 
 export const PUT = async (request: Request, { params }: { params: { idUsuario: string } }) => {
     const usuarioService = UsuarioServiceImpl.getInstance();
-    const { idUsuario } = params;
+    const { idUsuario } = await params;
     const data = await request.json();
 
     if (!idUsuario) {

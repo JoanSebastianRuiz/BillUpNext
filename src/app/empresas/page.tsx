@@ -1,7 +1,5 @@
 "use client";
 
-import axios from "axios";
-
 import { useEffect, useState, useRef } from "react";
 import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
 
@@ -35,19 +33,12 @@ const EmpresasPage: React.FC = () => {
     const [empresaSeleccionada, setempresaSeleccionada] = useState<EmpresaResponseDTO | null>(null)
     const {
         tiposPersona,
-        setTiposPersona,
         regimenesContribuyente,
-        setRegimenesContribuyente,
         empresas,
-        setEmpresas
+        obtenerEmpresas
     } = useEmpresaContext()
 
-    const {
-        departamentos,
-        setDepartamentos,
-        municipios,
-        setMunicipios
-    } = useUsuarioContext()
+    const {departamentos, municipios } = useUsuarioContext()
 
     const [empresasFiltradas, setEmpresasFiltradas] = useState<EmpresaResponseDTO[]>([]);
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
@@ -69,62 +60,6 @@ const EmpresasPage: React.FC = () => {
     const empresasActuales = empresasFiltradas.slice(indexOfFirstEmpresa, indexOfLastEmpresa);
     const totalPages = Math.ceil(empresasFiltradas.length / itemsPerPage);
 
-    const obtenerEmpresas = async () => {
-        try {
-            const respuesta = await axios.get<EmpresaResponseDTO[]>("/api/empresas")
-            if (respuesta.status === 200) {
-                setEmpresas(respuesta.data)
-                setEmpresasFiltradas(respuesta.data)
-            }
-        } catch (error) {
-            console.error("Error obteniendo empresas", error)
-        }
-    }
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                if (!tiposPersona.length) {
-                    const tiposPersonaRes = await axios.get("/api/tipos-persona")
-                    if (tiposPersonaRes.status === 200) {
-                        setTiposPersona(tiposPersonaRes.data)
-                    }
-                }
-
-                if (!regimenesContribuyente.length) {
-                    const regimenesContribuyenteRes = await axios.get("/api/regimenes-contribuyente")
-                    if (regimenesContribuyenteRes.status === 200) {
-                        setRegimenesContribuyente(regimenesContribuyenteRes.data)
-                    }
-                }
-
-                if (!empresas.length) {
-                    obtenerEmpresas()
-                }
-
-                if (!departamentos.length) {
-                    const departamentosRes = await axios.get("/api/departamentos")
-                    if (departamentosRes.status === 200) {
-                        setDepartamentos(departamentosRes.data)
-                        setDepartamentosFiltrados(departamentosRes.data)
-                    }
-                }
-
-                if (!municipios.length) {
-                    const municipiosRes = await axios.get("/api/municipios")
-                    if (municipiosRes.status === 200) {
-                        setMunicipios(municipiosRes.data)
-                        setMunicipiosFiltrados(municipiosRes.data)
-                    }
-                }
-
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        fetchData()
-    }, [setDepartamentos, setEmpresas, setMunicipios, setRegimenesContribuyente, setTiposPersona])
-
 
     const filtrarEmpresas = () => {
         const nombreEmpresa = nombreEmpresaRef.current?.value;
@@ -141,7 +76,7 @@ const EmpresasPage: React.FC = () => {
             empresasFiltradas = empresasFiltradas.filter((empresa) => empresa.idTipoPersona === Number(idTipoPersona));
         }
 
-        if (estadoEmpresa && estadoEmpresa !== "true") {
+        if (estadoEmpresa !== undefined && estadoEmpresa !== "") {
             empresasFiltradas = empresasFiltradas.filter((empresa) => empresa.estadoEmpresa === (estadoEmpresa === "true"));
         }
 
@@ -309,6 +244,7 @@ const EmpresasPage: React.FC = () => {
                         name="Estado"
                         onChange={filtrarEmpresas}
                         ref={estadoEmpresaRef}
+                        selectEstado={true}
                         defaultValue="true"
                     >
                         <option value="true">Activo</option>

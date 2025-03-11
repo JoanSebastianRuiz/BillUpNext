@@ -1,7 +1,5 @@
 "use client";
 
-import axios from "axios";
-
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
@@ -9,12 +7,9 @@ import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
 import { useUsuarioContext } from '@/context/UsuarioContext';
 import { useEmpresaContext } from "@/context/EmpresaContext";
 
-import { RolDTO } from '@/dto/RolDTO';
 import { DepartamentoResponseDTO } from '@/dto/DepartamentoResponseDTO';
 import { MunicipioResponseDTO } from '@/dto/MunicipioResponseDTO';
-import { TipoDocumentoResponseDTO } from '@/dto/TipoDocumentoResponseDTO';
 import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
-import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
 
 import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
 import ContenedorBotonesFiltros from "@/components/filtros/ContenedorBotonesFiltros";
@@ -39,18 +34,14 @@ const UsuariosPage: React.FC = () => {
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<UsuarioResponseDTO | null>(null)
     const {
         departamentos,
-        setDepartamentos,
         municipios,
-        setMunicipios,
         roles,
-        setRoles,
         tiposDocumento,
-        setTiposDocumento,
         usuarios,
-        setUsuarios,
+        obtenerUsuarios
     } = useUsuarioContext()
 
-    const { empresas, setEmpresas } = useEmpresaContext()
+    const { empresas } = useEmpresaContext()
 
     const [usuariosFiltrados, setUsuariosFiltrados] = useState<UsuarioResponseDTO[]>([]);
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
@@ -58,6 +49,7 @@ const UsuariosPage: React.FC = () => {
 
     const nombreUsuarioRef = useRef<HTMLInputElement>(null)
     const idTipoDocumentoRef = useRef<HTMLSelectElement>(null)
+    const numeroDocumentoUsuarioRef = useRef<HTMLInputElement>(null)
     const idDepartamentoRef = useRef<HTMLSelectElement>(null)
     const idMunicipioRef = useRef<HTMLSelectElement>(null)
     const idEmpresaRef = useRef<HTMLSelectElement>(null)
@@ -66,7 +58,6 @@ const UsuariosPage: React.FC = () => {
 
     const { data: session } = useSession()
     const idRol = session?.user?.idRol;
-    const idEmpresa = session?.user?.idEmpresa;
 
     // Paginacion
     const [currentPage, setCurrentPage] = useState(1);
@@ -77,100 +68,10 @@ const UsuariosPage: React.FC = () => {
     const totalPages = Math.ceil(usuariosFiltrados.length / itemsPerPage);
 
 
-    const obtenerUsuarios = async () => {
-        if (!session || idRol === undefined || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
-        try {
-            if (idRol === 2) {
-                const respuesta = await axios.get<UsuarioResponseDTO[]>(`/api/empresas/${idEmpresa}/usuarios`)
-                if (respuesta.status === 200) {
-                    setUsuarios(respuesta.data)
-                    setUsuariosFiltrados(respuesta.data)
-                } else {
-                    console.error(respuesta.data)
-                }
-                return
-            }
-
-            const respuesta = await axios.get<UsuarioResponseDTO[]>("/api/usuarios")
-            if (respuesta.status === 200) {
-                setUsuarios(respuesta.data)
-                setUsuariosFiltrados(respuesta.data)
-            } else {
-                console.error(respuesta.data)
-            }
-        } catch (error) {
-            console.error("Error al obtener los usuarios:", error)
-        }
-    }
-
-    useEffect(() => {
-        const fetchData = async () => {
-            if (!session || idRol === undefined || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
-            try {
-                if (!departamentos.length) {
-                    const departamentosRes = await axios.get("/api/departamentos")
-                    if (departamentosRes.status === 200) {
-                        setDepartamentos(departamentosRes.data)
-                    }
-                }
-
-                if (!municipios.length) {
-                    const municipiosRes = await axios.get("/api/municipios")
-                    if (municipiosRes.status === 200) {
-                        setMunicipios(municipiosRes.data)
-                    }
-                }
-
-                if (!empresas.length) {
-                    const empresasRes = await axios.get("/api/empresas")
-                    if (empresasRes.status === 200) {
-                        setEmpresas(empresasRes.data.filter((empresa: EmpresaResponseDTO) => empresa.estadoEmpresa === true) || [])
-                    }
-                }
-
-                if (!roles.length) {
-                    const rolesRes = await axios.get("/api/roles")
-                    if (rolesRes.status === 200) {
-                        setRoles(
-                            rolesRes.data.filter((rol: RolDTO) =>
-                                rol.estadoRol === true && !(idRol === 2 && rol.idRol === 1)
-                            )
-                        );
-                    }
-                }
-
-                if (!tiposDocumento.length) {
-                    const tiposDocumentoRes = await axios.get("/api/tipos-documento")
-                    if (tiposDocumentoRes.status === 200) {
-                        setTiposDocumento(tiposDocumentoRes.data.filter((tipoDocumento: TipoDocumentoResponseDTO) => tipoDocumento.estadoTipoDocumento === true) || [])
-                    }
-                }
-
-                if (!usuarios.length) {
-                    let usuariosRes;
-                    if (idRol === 2) {
-                        usuariosRes = await axios.get(`/api/empresas/${idEmpresa}/usuarios`)
-                    } else {
-                        usuariosRes = await axios.get("/api/usuarios")
-                    }
-
-                    if (usuariosRes.status === 200) {
-                        setUsuarios(usuariosRes.data || [])
-                        setUsuariosFiltrados(usuariosRes.data || [])
-                    }
-                }
-
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        fetchData()
-    }, [session, idRol, idEmpresa, setDepartamentos, setEmpresas, setRoles, setTiposDocumento, setMunicipios, setUsuarios])
-
-
     const filtrarUsuarios = () => {
         const idTipoDocumento = idTipoDocumentoRef.current?.value;
         const nombreUsuario = nombreUsuarioRef.current?.value;
+        const numeroDocumentoUsuario = numeroDocumentoUsuarioRef.current?.value;
         const idEmpresa = idEmpresaRef.current?.value;
         const idRol = idRolRef.current?.value;
         const estadoUsuario = estadoUsuarioRef.current?.value;
@@ -210,12 +111,27 @@ const UsuariosPage: React.FC = () => {
             });
         }
 
+        if (numeroDocumentoUsuario) {
+            usuariosFiltrados = usuariosFiltrados.filter((usuario) => usuario.numeroDocumentoUsuario.includes(numeroDocumentoUsuario));
+        }
+
         setUsuariosFiltrados(usuariosFiltrados);
     };
+
+    const limpiarFiltros = () => {
+        if (idTipoDocumentoRef.current) idTipoDocumentoRef.current.value = "0";
+        if (nombreUsuarioRef.current) nombreUsuarioRef.current.value = "";
+        if (idEmpresaRef.current) idEmpresaRef.current.value = "0";
+        if (idRolRef.current) idRolRef.current.value = "0";
+        if (idDepartamentoRef.current) idDepartamentoRef.current.value = "0";
+        if (idMunicipioRef.current) idMunicipioRef.current.value = "0";
+        filtrarUsuarios();
+    }
 
     useEffect(() => {
         filtrarUsuarios();
     }, [usuarios]);
+
 
     useEffect(() => {
         if (!departamentos.length || !municipios.length) return;
@@ -245,15 +161,6 @@ const UsuariosPage: React.FC = () => {
         }
     }, [municipios, idMunicipioRef.current?.value]);
 
-    const limpiarFiltros = () => {
-        if (idTipoDocumentoRef.current) idTipoDocumentoRef.current.value = "0";
-        if (nombreUsuarioRef.current) nombreUsuarioRef.current.value = "";
-        if (idEmpresaRef.current) idEmpresaRef.current.value = "0";
-        if (idRolRef.current) idRolRef.current.value = "0";
-        if (idDepartamentoRef.current) idDepartamentoRef.current.value = "0";
-        if (idMunicipioRef.current) idMunicipioRef.current.value = "0";
-        filtrarUsuarios();
-    }
 
     return (
         <ContenedorPrincipal>
@@ -294,6 +201,13 @@ const UsuariosPage: React.FC = () => {
                             </option>
                         ))}
                     </SelectFiltro>
+
+                    {/* Numero de documento */}
+                    <InputFiltro
+                        id="numeroDocumentoUsuario"
+                        name="Numero de documento"
+                        ref={numeroDocumentoUsuarioRef}
+                        onChange={filtrarUsuarios} />
 
                     {/* Empresa */}
                     {idRol === 1 && (
@@ -361,6 +275,7 @@ const UsuariosPage: React.FC = () => {
                         name="Estado"
                         onChange={filtrarUsuarios}
                         ref={estadoUsuarioRef}
+                        selectEstado={true}
                         defaultValue="true"
                     >
                         <option value="true">Activo</option>

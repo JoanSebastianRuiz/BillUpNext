@@ -1,9 +1,12 @@
 "use client"
 
-import { createContext, useState, useContext, ReactNode } from "react";
+import axios from "axios";
+
+import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
 import { TipoPersonaDTO } from "@/dto/TipoPersonaDTO";
 import { RegimenContribuyenteResponseDTO } from "@/dto/RegimenContribuyenteResponseDTO";
+import { useSession } from "next-auth/react";
 
 interface EmpresaContextType {
     tiposPersona: TipoPersonaDTO[]
@@ -12,6 +15,7 @@ interface EmpresaContextType {
     setRegimenesContribuyente: (regimenesContribuyente: RegimenContribuyenteResponseDTO[]) => void
     empresas: EmpresaResponseDTO[]
     setEmpresas: (empresas: EmpresaResponseDTO[]) => void
+    obtenerEmpresas: () => void
 }
 
 const EmpresaContext = createContext<EmpresaContextType | undefined>(undefined);
@@ -25,6 +29,39 @@ export const EmpresaContextProvider: React.FC<EmpresaProviderProps> = ({ childre
     const [tiposPersona, setTiposPersona] = useState<TipoPersonaDTO[]>([]);
     const [regimenesContribuyente, setRegimenesContribuyente] = useState<RegimenContribuyenteResponseDTO[]>([]);
     const [empresas, setEmpresas] = useState<EmpresaResponseDTO[]>([]);
+    const { data: session, status } = useSession();
+
+    const obtenerEmpresas = async () => {
+        try {
+            const respuesta = await axios.get<EmpresaResponseDTO[]>("/api/empresas")
+            if (respuesta.status === 200) {
+                setEmpresas(respuesta.data)
+            }
+        } catch (error) {
+            console.error("Error obteniendo empresas", error)
+        }
+    }
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (!session) return;
+            try {
+                const [tiposPersonaRes, regimenesContribuyenteRes, empresasRes] = await Promise.all([
+                    axios.get<TipoPersonaDTO[]>("/api/tipos-persona"),
+                    axios.get<RegimenContribuyenteResponseDTO[]>("/api/regimenes-contribuyente"),
+                    axios.get<EmpresaResponseDTO[]>("/api/empresas")
+                ])
+
+                if (tiposPersonaRes.status === 200) setTiposPersona(tiposPersonaRes.data)
+                if (regimenesContribuyenteRes.status === 200) setRegimenesContribuyente(regimenesContribuyenteRes.data)
+                if (empresasRes.status === 200) setEmpresas(empresasRes.data)
+            } catch (error) {
+                console.error("Error al obtener los datos de Empresa Context:", error);
+            }
+        }
+        fetchData();
+    }, [session])
+
 
     return (
         <EmpresaContext.Provider value={{
@@ -33,7 +70,8 @@ export const EmpresaContextProvider: React.FC<EmpresaProviderProps> = ({ childre
             regimenesContribuyente,
             setRegimenesContribuyente,
             empresas,
-            setEmpresas
+            setEmpresas,
+            obtenerEmpresas
         }}>
             {children}
         </EmpresaContext.Provider>

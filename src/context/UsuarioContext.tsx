@@ -1,6 +1,9 @@
-"use client"
+"use client";
 
-import { createContext, useState, useContext, ReactNode } from "react";
+import axios from "axios";
+import { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import { useSession } from "next-auth/react";
+
 import { DepartamentoResponseDTO } from "@/dto/DepartamentoResponseDTO";
 import { MunicipioResponseDTO } from "@/dto/MunicipioResponseDTO";
 import { TipoDocumentoResponseDTO } from "@/dto/TipoDocumentoResponseDTO";
@@ -8,23 +11,24 @@ import { RolDTO } from "@/dto/RolDTO";
 import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 
 interface UserContextType {
-    usuario: UsuarioResponseDTO
-    setUsuario: (usuario: UsuarioResponseDTO) => void
-    departamentos: DepartamentoResponseDTO[]
-    setDepartamentos: (departamentos: DepartamentoResponseDTO[]) => void
-    municipios: MunicipioResponseDTO[]
-    setMunicipios: (municipios: MunicipioResponseDTO[]) => void
-    tiposDocumento: TipoDocumentoResponseDTO[]
-    setTiposDocumento: (tiposDocumento: TipoDocumentoResponseDTO[]) => void
-    roles: RolDTO[]
-    setRoles: (roles: RolDTO[]) => void
-    usuarios: UsuarioResponseDTO[]
-    setUsuarios: (usuarios: UsuarioResponseDTO[]) => void
+    usuario: UsuarioResponseDTO;
+    setUsuario: (usuario: UsuarioResponseDTO) => void;
+    departamentos: DepartamentoResponseDTO[];
+    setDepartamentos: (departamentos: DepartamentoResponseDTO[]) => void;
+    municipios: MunicipioResponseDTO[];
+    setMunicipios: (municipios: MunicipioResponseDTO[]) => void;
+    tiposDocumento: TipoDocumentoResponseDTO[];
+    setTiposDocumento: (tiposDocumento: TipoDocumentoResponseDTO[]) => void;
+    roles: RolDTO[];
+    setRoles: (roles: RolDTO[]) => void;
+    usuarios: UsuarioResponseDTO[]; 
+    setUsuarios: (usuarios: UsuarioResponseDTO[]) => void;
+    obtenerUsuarios: () => void;
+    loading: boolean; // Estado de carga
 }
 
 const UsuarioContext = createContext<UserContextType | undefined>(undefined);
 
-// Proveedor del contexto
 interface UserProviderProps {
     children: ReactNode;
 }
@@ -35,7 +39,68 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
     const [municipios, setMunicipios] = useState<MunicipioResponseDTO[]>([]);
     const [tiposDocumento, setTiposDocumento] = useState<TipoDocumentoResponseDTO[]>([]);
     const [roles, setRoles] = useState<RolDTO[]>([]);
-    const [usuarios, setUsuarios] = useState<UsuarioResponseDTO[]>([]);
+    const [usuarios, setUsuarios] = useState<UsuarioResponseDTO[]>([]); 
+    const [loading, setLoading] = useState(true); // Estado de carga
+
+    const { data: session, status } = useSession();
+    const idRol = session?.user?.idRol;
+    const idEmpresa = session?.user?.idEmpresa;
+    const idUsuario = session?.user?.idUsuario;
+
+    const obtenerUsuarios = async () => {
+        if (!session || idRol === undefined || idEmpresa === undefined) return;
+        setLoading(true);
+        try {
+            const endpoint = idRol === 2 ? `/api/empresas/${idEmpresa}/usuarios` : "/api/usuarios";
+            const respuesta = await axios.get<UsuarioResponseDTO[]>(endpoint);
+
+            if (respuesta.status === 200) {
+                setUsuarios(respuesta.data.filter(usuario => usuario.idUsuario !== session.user.idUsuario));
+            } else {
+                console.error(respuesta.data);
+            }
+        } catch (error) {
+            console.error("Error al obtener los usuarios:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (!session || idRol === undefined || idEmpresa === undefined) return;
+
+            setLoading(true); // Iniciar carga antes de la petición
+            try {
+                const [departamentosRes, municipiosRes, rolesRes, tiposDocumentoRes, usuariosRes] = await Promise.all([
+                    axios.get("/api/departamentos"),
+                    axios.get("/api/municipios"),
+                    axios.get("/api/roles"),
+                    axios.get("/api/tipos-documento"),
+                    idRol === 2 ? axios.get(`/api/empresas/${idEmpresa}/usuarios`) : axios.get("/api/usuarios")
+                ]);
+
+                if (departamentosRes.status === 200) setDepartamentos(departamentosRes.data);
+                if (municipiosRes.status === 200) setMunicipios(municipiosRes.data);
+                if (rolesRes.status === 200) {
+                    setRoles(rolesRes.data.filter((rol: RolDTO) => rol.estadoRol === true && !(idRol === 2 && rol.idRol === 1)));
+                }
+                if (tiposDocumentoRes.status === 200) {
+                    setTiposDocumento(tiposDocumentoRes.data.filter((tipo: TipoDocumentoResponseDTO) => tipo.estadoTipoDocumento === true) || []);
+                }
+                if (usuariosRes.status === 200) {
+                    setUsuarios(usuariosRes.data.filter((usuario: UsuarioResponseDTO) => usuario.idUsuario !== session.user.idUsuario) || []);
+                    setUsuario(usuariosRes.data.find((usuario: UsuarioResponseDTO) => usuario.idUsuario === idUsuario) || {} as UsuarioResponseDTO);
+                }
+            } catch (error) {
+                console.error("Error al obtener los datos de Usuario Context:", error);
+            } finally {
+                setLoading(false); // Finalizar carga después de obtener los datos
+            }
+        };
+
+        fetchData();
+    }, [session, idRol, idEmpresa]);
 
     return (
         <UsuarioContext.Provider value={{
@@ -50,14 +115,15 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
             roles,
             setRoles,
             usuarios,
-            setUsuarios
+            setUsuarios,
+            obtenerUsuarios,
+            loading
         }}>
             {children}
         </UsuarioContext.Provider>
-    )
-}
+    );
+};
 
-// Hook personalizado para usar el contexto
 export const useUsuarioContext = (): UserContextType => {
     const context = useContext(UsuarioContext);
     if (!context) {
@@ -65,4 +131,3 @@ export const useUsuarioContext = (): UserContextType => {
     }
     return context;
 };
-

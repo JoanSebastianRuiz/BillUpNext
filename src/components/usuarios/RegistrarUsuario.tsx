@@ -106,8 +106,11 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
         try {
             if (idUsuario) {
                 let { idDepartamento, ...datosModificados } = data;
+                console.log(data);
 
-                datosModificados = { ...data, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idEmpresa: parseInt(data.idEmpresa.toString()), idRol: parseInt(data.idRol.toString()), estadoUsuario: Boolean(data.estadoUsuario), claveUsuario: watch('numeroDocumentoUsuario') };
+                datosModificados = { ...data, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idEmpresa: parseInt(data.idEmpresa.toString()), idRol: parseInt(data.idRol.toString()), estadoUsuario: String(data.estadoUsuario) === "true", claveUsuario: watch('numeroDocumentoUsuario') };
+
+                console.log(datosModificados);
 
                 const respuesta = await axios.put(`/api/usuarios/${idUsuario}`, datosModificados);
                 setError(null);

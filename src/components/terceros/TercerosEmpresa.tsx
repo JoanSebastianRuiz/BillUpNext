@@ -1,9 +1,6 @@
 "use client";
 
-import axios from "axios";
-
 import { useEffect, useState, useRef } from "react";
-import { useSession } from "next-auth/react";
 import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
 
 import { useUsuarioContext } from '@/context/UsuarioContext';
@@ -12,7 +9,6 @@ import { useTerceroContext } from "@/context/TerceroContext";
 
 import { DepartamentoResponseDTO } from '@/dto/DepartamentoResponseDTO';
 import { MunicipioResponseDTO } from '@/dto/MunicipioResponseDTO';
-import { TipoDocumentoResponseDTO } from '@/dto/TipoDocumentoResponseDTO';
 import { TerceroResponseEmpresaDTO } from "@/dto/TerceroResponseEmpresaDTO";
 
 import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
@@ -35,21 +31,11 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
     const [modalRegistrar, setModalRegistrar] = useState(false)
     const [modalActualizar, setModalActualizar] = useState(false)
     const [terceroSeleccionado, setTerceroSeleccionado] = useState<TerceroResponseEmpresaDTO | null>(null)
-    const {
-        departamentos,
-        setDepartamentos,
-        municipios,
-        setMunicipios,
-    } = useUsuarioContext()
-    const {
-        tiposPersona,
-        setTiposPersona,
-        regimenesContribuyente,
-        setRegimenesContribuyente,
+    const { departamentos, municipios } = useUsuarioContext()
+    const { tiposPersona, regimenesContribuyente } = useEmpresaContext()
 
-    } = useEmpresaContext()
-
-    const { clientesEmpresa, setClientesEmpresa, proveedoresEmpresa, setProveedoresEmpresa } = useTerceroContext()
+    const { clientesEmpresa, proveedoresEmpresa, obtenerEmpresas } = useTerceroContext()
+    const empresas = proveedorTerceroEmpresa ? proveedoresEmpresa : clientesEmpresa;
 
     const [empresasFiltradas, setEmpresasFiltradas] = useState<TerceroResponseEmpresaDTO[]>([]);
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
@@ -63,8 +49,6 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
     const idMunicipioRef = useRef<HTMLSelectElement>(null)
     const estadoPersonaRef = useRef<HTMLSelectElement>(null)
 
-    const { data: session } = useSession()
-    const idEmpresa = session?.user?.idEmpresa;
 
     // Paginacion
     const [currentPage, setCurrentPage] = useState(1);
@@ -75,81 +59,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
     const totalPages = Math.ceil(empresasFiltradas.length / itemsPerPage);
 
 
-    const obtenerEmpresas = async () => {
-        if (!session || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
-        try {
-            const respuestaEmpresas = await axios.get(`/api/empresas/${idEmpresa}/${tipoEmpresas}?tipo=empresa`);
-            if (respuestaEmpresas.status === 200) {
-                if (tipoEmpresas === "proveedores") {
-                    setProveedoresEmpresa(respuestaEmpresas.data)
-                    setEmpresasFiltradas(respuestaEmpresas.data)
-                } else {
-                    setClientesEmpresa(respuestaEmpresas.data)
-                    setEmpresasFiltradas(respuestaEmpresas.data)
-                }
-
-            } else {
-                console.error(respuestaEmpresas.data)
-            }
-
-        } catch (error) {
-            console.error(`Error al obtener los ${tipoEmpresas} empresa:`, error)
-        }
-    }
-
-    useEffect(() => {
-        const fetchData = async () => {
-            if (!session || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
-            try {
-                if (!departamentos.length) {
-                    const departamentosRes = await axios.get("/api/departamentos")
-                    if (departamentosRes.status !== 200) {
-                        console.error(departamentosRes.data)
-                    }
-                    setDepartamentos(departamentosRes.data || [])
-                }
-
-                if (!tiposPersona.length) {
-                    const tiposPersonaRes = await axios.get("/api/tipos-persona")
-                    if (tiposPersonaRes.status !== 200) {
-                        console.error(tiposPersonaRes.data)
-                    }
-                    setTiposPersona(tiposPersonaRes.data || [])
-                }
-
-                if (!regimenesContribuyente.length) {
-                    const regimenesContribuyenteRes = await axios.get("/api/regimenes-contribuyente")
-                    if (regimenesContribuyenteRes.status !== 200) {
-                        console.error(regimenesContribuyenteRes.data)
-                    }
-                    setRegimenesContribuyente(regimenesContribuyenteRes.data || [])
-                }
-
-                if (!municipios.length) {
-                    const municipiosRes = await axios.get("/api/municipios")
-                    if (municipiosRes.status !== 200) {
-                        console.error(municipiosRes.data)
-                    }
-                    setMunicipios(municipiosRes.data || [])
-                }
-
-                if (tipoEmpresas === "clientes" && !clientesEmpresa.length) {
-                    obtenerEmpresas()
-                }
-
-                if (tipoEmpresas === "proveedores" && !proveedoresEmpresa.length) {
-                    obtenerEmpresas()
-                }
-
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        fetchData()
-    }, [session, idEmpresa, setDepartamentos, setTiposPersona, setMunicipios, setClientesEmpresa, setProveedoresEmpresa, setRegimenesContribuyente])
-
-
-    const filtrarUsuarios = () => {
+    const filtrarEmpresas = () => {
         const idRegimenContribuyente = idRegimenContribuyenteRef.current?.value;
         const idTipoPersona = idTipoPersonaRef.current?.value;
         const nombreEmpresa = nombreEmpresaRef.current?.value;
@@ -158,7 +68,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
         const idDepartamento = idDepartamentoRef.current?.value;
         const idMunicipio = idMunicipioRef.current?.value;
 
-        let empresasFiltradas = [...clientesEmpresa];
+        let empresasFiltradas = [...empresas];
 
         if (estadoEmpresa !== undefined && estadoEmpresa !== "") {
             empresasFiltradas = empresasFiltradas.filter((empresa) => empresa.estadoTercero === (estadoEmpresa === "true"));
@@ -192,7 +102,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
     };
 
     useEffect(() => {
-        filtrarUsuarios();
+        filtrarEmpresas();
     }, [clientesEmpresa]);
 
     useEffect(() => {
@@ -230,7 +140,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
         if (nitEmpresaRef.current) nitEmpresaRef.current.value = "";
         if (idDepartamentoRef.current) idDepartamentoRef.current.value = "0";
         if (idMunicipioRef.current) idMunicipioRef.current.value = "0";
-        filtrarUsuarios();
+        filtrarEmpresas();
     }
 
     return (
@@ -257,20 +167,20 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
                         id="nombreEmpresa"
                         name="Nombre"
                         ref={nombreEmpresaRef}
-                        onChange={filtrarUsuarios} />
+                        onChange={filtrarEmpresas} />
 
                     {/* NIT */}
                     <InputFiltro
                         id="nitEmpresa"
                         name="NIT"
                         ref={nitEmpresaRef}
-                        onChange={filtrarUsuarios} />
+                        onChange={filtrarEmpresas} />
 
                     {/* Tipo de persona */}
                     <SelectFiltro
                         id="idTipoPersona"
                         name="Tipo de persona"
-                        onChange={filtrarUsuarios}
+                        onChange={filtrarEmpresas}
                         ref={idTipoPersonaRef}
                     >
                         {tiposPersona.map((tipo) => (
@@ -284,7 +194,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
                     <SelectFiltro
                         id="idRegimenContribuyente"
                         name="Tipo de documento"
-                        onChange={filtrarUsuarios}
+                        onChange={filtrarEmpresas}
                         ref={idRegimenContribuyenteRef}
                     >
                         {regimenesContribuyente.map((tipo) => (
@@ -298,7 +208,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
                     <SelectFiltro
                         id="idDepartamento"
                         name="Departamento"
-                        onChange={filtrarUsuarios}
+                        onChange={filtrarEmpresas}
                         ref={idDepartamentoRef}
                     >
                         {departamentosFiltrados.map((departamento) => (
@@ -312,7 +222,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
                     <SelectFiltro
                         id="idMunicipio"
                         name="Municipio"
-                        onChange={filtrarUsuarios}
+                        onChange={filtrarEmpresas}
                         ref={idMunicipioRef}
                     >
                         {municipiosFiltrados.map((municipio) => (
@@ -326,8 +236,9 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
                     <SelectFiltro
                         id="estadoEmpresa"
                         name="Estado"
-                        onChange={filtrarUsuarios}
+                        onChange={filtrarEmpresas}
                         ref={estadoPersonaRef}
+                        selectEstado={true}
                         defaultValue="true"
                     >
                         <option value="true">Activo</option>
