@@ -19,7 +19,8 @@ import CategoriaCard from "@/components/categorias/CategoriaCard";
 import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAccionCard";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
-import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
+import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";  
+import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 
 const CategoriasPage: React.FC = () => {
     const [modalInfo, setModalInfo] = useState(false);
@@ -31,6 +32,14 @@ const CategoriasPage: React.FC = () => {
 
     const nombreCategoriaRef = useRef<HTMLInputElement>(null);
     const estadoCategoriaRef = useRef<HTMLSelectElement>(null);
+
+    // Paginacion
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(12); // Número de categorias por página
+    const indexOfLastCategoria = currentPage * itemsPerPage;
+    const indexOfFirstCategoria = indexOfLastCategoria - itemsPerPage;
+    const categoriasActuales = categoriasFiltradas.slice(indexOfFirstCategoria, indexOfLastCategoria);
+    const totalPages = Math.ceil(categoriasFiltradas.length / itemsPerPage);
 
     const obtenerCategorias = async () => {
         try {
@@ -114,8 +123,13 @@ const CategoriasPage: React.FC = () => {
                 </ContenedorSelectores>
             </ContenedorFiltros>
 
+            {categoriasActuales.length === 0 ? (
+                <div className="text-center text-gray-500 mt-8">
+                    No se encontraron categorías
+                </div>
+            ) : (
             <div className="grid gap-4 md:grid-cols-3">
-                {categoriasFiltradas.map((categoria) => (
+                {categoriasActuales.map((categoria) => (
                     <CategoriaCard categoria={categoria} key={categoria.idCategoria}>
                         <ContenedorBotonesAccionCard>
                             <BotonAccionCard
@@ -136,6 +150,12 @@ const CategoriasPage: React.FC = () => {
                     </CategoriaCard>
                 ))}
             </div>
+            )}
+            <ControlesPaginacion
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+            />
 
             <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>
                 {categoriaSeleccionada && <MostrarInfoCategoria categoria={categoriaSeleccionada} />}
