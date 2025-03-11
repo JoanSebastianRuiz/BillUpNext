@@ -4,6 +4,7 @@ import { createContext, useState, useEffect, useContext, ReactNode } from "react
 import { ProductoResponseDTO } from "@/dto/ProductoResponseDTO";
 import { CategoriaDTO } from "@/dto/CategoriaDTO";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 
 interface ProductoContextType {
     productos: ProductoResponseDTO[];
@@ -23,37 +24,47 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
     const [productos, setProductos] = useState<ProductoResponseDTO[]>([]);
     const [categorias, setCategorias] = useState<CategoriaDTO[]>([]);
 
-    useEffect(() => {
-        const fetchCategorias = async () => {
-            try {
-                const response = await axios.get('/api/categorias'); 
-                
-                if (response.status === 200) {
-                    setCategorias(response.data);
-                } else {
-                    console.error("Error al obtener categorías:", response.data.message);
-                }
-            } catch (error) {
-                console.error("Error al obtener categorías:", error);
-            }
-        };
+    const { data: session, status } = useSession();
+    const idRol = session?.user?.idRol;
+    const idEmpresa = session?.user?.idEmpresa;
 
-        const fetchProductos = async () => {
+    useEffect(() => {
+        const fetchData = async () => {
             try {
-                const response = await axios.get('/api/productos');
-                if (response.status === 200) {
-                    setProductos(response.data);
-                } else {
-                    console.error("Error al obtener productos:", response.data.message);
+                if (!session || idRol === undefined || idEmpresa === undefined) return;
+
+                if (idRol === 2) {
+                    const [categoriasRes, productosRes] = await Promise.all([
+                        axios.get('/api/categorias'),
+                        axios.get('/api/productos')
+                    ]);
+
+                    if (categoriasRes.status === 200) {
+                        setCategorias(categoriasRes.data);
+                    } else {
+                        console.error("Error al obtener categorías:", categoriasRes.data.message);
+                    }
+
+                    if (productosRes.status === 200) {
+                        setProductos(productosRes.data);
+                    } else {
+                        console.error("Error al obtener productos:", productosRes.data.message);
+                    }
+                } else if (idRol === 3 || idRol === 4) {
+                    const productosRes = await axios.get('/api/productos');
+                    if (productosRes.status === 200) {
+                        setProductos(productosRes.data);
+                    } else {
+                        console.error("Error al obtener productos:", productosRes.data.message);
+                    }
                 }
             } catch (error) {
                 console.error("Error al obtener productos:", error);
             }
         };
 
-        fetchCategorias();
-        fetchProductos();
-    }, []);
+        fetchData();
+    }, [session, idRol, idEmpresa]);
 
     return (
         <ProductoContext.Provider value={{ productos, setProductos, categorias, setCategorias }}>

@@ -121,6 +121,7 @@ const UsuariosPage: React.FC = () => {
     const limpiarFiltros = () => {
         if (idTipoDocumentoRef.current) idTipoDocumentoRef.current.value = "0";
         if (nombreUsuarioRef.current) nombreUsuarioRef.current.value = "";
+        if (numeroDocumentoUsuarioRef.current) numeroDocumentoUsuarioRef.current.value = "";
         if (idEmpresaRef.current) idEmpresaRef.current.value = "0";
         if (idRolRef.current) idRolRef.current.value = "0";
         if (idDepartamentoRef.current) idDepartamentoRef.current.value = "0";

@@ -94,22 +94,6 @@ CREATE TABLE IF NOT EXISTS "TipoMedioPago" (
     primary key ("idTipoMedioPago")
 );
 
-CREATE TABLE IF NOT EXISTS "Gravamen" (
-    "idGravamen" serial,
-    "nombreGravamen" varchar(50) not null,
-    "estadoGravamen" boolean not null,
-    "negativoGravamen" boolean not null,
-    "porcentajeGravamen" float not null,
-    primary key ("idGravamen")
-);
-
-CREATE TABLE IF NOT EXISTS "Categoria" (
-    "idCategoria" serial,
-    "nombreCategoria" varchar(50) not null,
-    "estadoCategoria" boolean not null,
-    primary key ("idCategoria")
-);
-
 CREATE TABLE IF NOT EXISTS "Empresa" (
     "idEmpresa" serial,
     "idTipoPersona" int not null,
@@ -128,6 +112,26 @@ CREATE TABLE IF NOT EXISTS "Empresa" (
     foreign key ("idTipoPersona") references "TipoPersona" ("idTipoPersona"),
     foreign key ("idRegimenContribuyente") references "RegimenContribuyente" ("idRegimenContribuyente"),
     foreign key ("idMunicipio") references "Municipio" ("idMunicipio")
+);
+
+CREATE TABLE IF NOT EXISTS "Gravamen" (
+    "idGravamen" serial,
+    "idEmpresa" int null,
+    "nombreGravamen" varchar(50) not null,
+    "estadoGravamen" boolean not null,
+    "negativoGravamen" boolean not null,
+    "porcentajeGravamen" float not null,
+    primary key ("idGravamen"),
+    foreign key ("idEmpresa") references "Empresa" ("idEmpresa")
+);
+
+CREATE TABLE IF NOT EXISTS "Categoria" (
+    "idCategoria" serial,
+    "idEmpresa" int not null,
+    "nombreCategoria" varchar(50) not null,
+    "estadoCategoria" boolean not null,
+    primary key ("idCategoria"),
+    foreign key ("idEmpresa") references "Empresa" ("idEmpresa")
 );
 
 CREATE TABLE IF NOT EXISTS "Caja" (
