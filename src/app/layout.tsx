@@ -4,8 +4,10 @@ import { UsuarioContextProvider } from "@/context/UsuarioContext";
 import { EmpresaContextProvider } from "@/context/EmpresaContext";
 import { TerceroContextProvider } from "@/context/TerceroContext";
 import { ProductoContextProvider } from "@/context/ProductoContext";
+import { GravamenContextProvider } from "@/context/GravamenContext";
 import AuthProvider from "@/context/AuthProvider";
 import { ThemeProvider } from "next-themes";
+
 
 export const metadata: Metadata = {
   title: "Billup",
@@ -26,7 +28,9 @@ export default function RootLayout({
               <EmpresaContextProvider>
                 <ProductoContextProvider>
                   <TerceroContextProvider>
+                    <GravamenContextProvider>
                     {children}
+                    </GravamenContextProvider>
                   </TerceroContextProvider>
                 </ProductoContextProvider>
               </EmpresaContextProvider>
