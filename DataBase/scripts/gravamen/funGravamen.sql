@@ -1,15 +1,13 @@
 CREATE OR REPLACE FUNCTION insertarGravamen(
     _nombreGravamen "Gravamen"."nombreGravamen"%TYPE,
     _estadoGravamen "Gravamen"."estadoGravamen"%TYPE,
-    _negativoGravamen "Gravamen"."negativoGravamen"%TYPE,
-    _porcentajeGravamen "Gravamen"."porcentajeGravamen"%TYPE)
     RETURNS BOOLEAN AS
 $$
 DECLARE
     _idGravamen "Gravamen"."idGravamen"%TYPE;
 BEGIN
-    INSERT INTO "Gravamen" ("nombreGravamen", "estadoGravamen", "negativoGravamen", "porcentajeGravamen")
-    VALUES (_nombreGravamen, _estadoGravamen, _negativoGravamen, _porcentajeGravamen);
+    INSERT INTO "Gravamen" ("nombreGravamen", "estadoGravamen")
+    VALUES (_nombreGravamen, _estadoGravamen);
 
     IF FOUND THEN
         RAISE NOTICE 'Se insertó correctamente el gravamen';
@@ -26,17 +24,13 @@ LANGUAGE PLPGSQL;
 CREATE OR REPLACE FUNCTION actualizarGravamen(
     _idGravamen "Gravamen"."idGravamen"%TYPE,
     _nombreGravamen "Gravamen"."nombreGravamen"%TYPE,
-    _estadoGravamen "Gravamen"."estadoGravamen"%TYPE,
-    _negativoGravamen "Gravamen"."negativoGravamen"%TYPE,
-    _porcentajeGravamen "Gravamen"."porcentajeGravamen"%TYPE)
+    _estadoGravamen "Gravamen"."estadoGravamen"%TYPE)
     RETURNS BOOLEAN AS
 $$
 BEGIN
     UPDATE "Gravamen"
     SET "nombreGravamen" = _nombreGravamen,
-        "estadoGravamen" = _estadoGravamen,
-        "negativoGravamen" = _negativoGravamen,
-        "porcentajeGravamen" = _porcentajeGravamen
+        "estadoGravamen" = _estadoGravamen
     WHERE "idGravamen" = _idGravamen;
 
     IF FOUND THEN
