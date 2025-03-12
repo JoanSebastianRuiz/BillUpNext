@@ -17,16 +17,16 @@ export class CategoriaServiceImpl implements CategoriaService {
 
   public create = async (categoria: CategoriaDTO): Promise<NextResponse> => {
     try {
-      const { nombreCategoria, estadoCategoria } = categoria;
+      const { idEmpresa, nombreCategoria, estadoCategoria } = categoria;
 
-      if (!nombreCategoria || !estadoCategoria) {
+      if (!idEmpresa || !nombreCategoria || !estadoCategoria) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
           { status: 400 }
         );
       }
 
-      if (await this.categoriaDAOImpl.existCategoriaNombre(nombreCategoria)) {
+      if (await this.categoriaDAOImpl.existCategoriaNombre(nombreCategoria, idEmpresa)) {
         return NextResponse.json(
           { message: "El nombre de la categoría ya existe" },
           { status: 400 }
@@ -52,16 +52,16 @@ export class CategoriaServiceImpl implements CategoriaService {
 
   public update = async (categoria: CategoriaDTO): Promise<NextResponse> => {
     try {
-      const { idCategoria, nombreCategoria, estadoCategoria } = categoria;
+      const { idCategoria, idEmpresa, nombreCategoria, estadoCategoria } = categoria;
 
-      if (!idCategoria || !nombreCategoria || !estadoCategoria) {
+      if (!idCategoria || !idEmpresa || !nombreCategoria || !estadoCategoria) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
           { status: 400 }
         );
       }
 
-      if (await this.categoriaDAOImpl.existCategoriaNombre(nombreCategoria, idCategoria)) {
+      if (await this.categoriaDAOImpl.existCategoriaNombre(nombreCategoria, idEmpresa, idCategoria)) {
         return NextResponse.json(
           { message: "El nombre de la categoría ya existe" },
           { status: 400 }
