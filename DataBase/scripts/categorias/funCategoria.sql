@@ -6,10 +6,6 @@ $BODY$
 DECLARE
     _idCategoria "Categoria"."idCategoria"%TYPE;
 BEGIN
-    IF EXISTS (SELECT 1 FROM "Categoria" WHERE LOWER("nombreCategoria") = LOWER(_nombreCategoria)) THEN
-        RAISE EXCEPTION 'El nombre de la categoria % ya existe. Inserción cancelada.',_nombreCategoria;
-    END IF;
-
         INSERT INTO "Categoria" ("idEmpresa","nombreCategoria", "estadoCategoria")
         VALUES (_idEmpresa,_nombreCategoria,_estadoCategoria);
 
