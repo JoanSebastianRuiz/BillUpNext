@@ -15,14 +15,15 @@ export class ProductoDAOImpl implements ProductoDAO {
     return ProductoDAOImpl.instancia;
   }
 
-  public getAll = async (): Promise<Array<ProductoResponseDTO>> => {
+  public getAll = async (idEmpresa: number): Promise<Array<ProductoResponseDTO>> => {
     try {
       const productoDatabase: ProductoResponseDTO[] = await ejecutarQuery(
         `SELECT p.\"idProducto\", p.\"idEmpresa\", p.\"idCategoria\", p.\"nombreProducto\",
                 p.\"descripcionProducto\", p.\"precioVentaProducto\", p.\"porcentajeDescuentoProducto\", p.\"stockMinimoProducto\",
                 p.\"stockMaximoProducto\", p.\"stockProducto\", p.\"estadoProducto\"
-                FROM \"Producto\" p;`,
-        []
+                FROM \"Producto\" p
+                WHERE p.\"idEmpresa\" = $1;`,
+        [idEmpresa]
       );
 
       return productoDatabase;

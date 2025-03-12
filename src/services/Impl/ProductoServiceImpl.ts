@@ -200,10 +200,10 @@ export class ProductoServiceImpl implements ProductoService {
     }
   };
 
-  public getAll = async (): Promise<Array<ProductoResponseDTO>> => {
+  public getAll = async (idEmpresa: number): Promise<Array<ProductoResponseDTO>> => {
     try {
       const respuesta: ProductoResponseDTO[] =
-        await this.productoDAOImpl.getAll();
+        await this.productoDAOImpl.getAll(idEmpresa);
       return respuesta;
     } catch (error) {
       throw new Error(`Error en ProdcutoService.getAll: ${error}`);

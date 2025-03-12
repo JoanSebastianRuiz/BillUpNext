@@ -35,8 +35,8 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
 
                 if (idRol === 2) {
                     const [categoriasRes, productosRes] = await Promise.all([
-                        axios.get('/api/categorias'),
-                        axios.get('/api/productos')
+                        axios.get(`/api/empresas/${idEmpresa}/categorias`),
+                        axios.get(`/api/empresas/${idEmpresa}/productos`)
                     ]);
 
                     if (categoriasRes.status === 200) {
@@ -51,7 +51,7 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
                         console.error("Error al obtener productos:", productosRes.data.message);
                     }
                 } else if (idRol === 3 || idRol === 4) {
-                    const productosRes = await axios.get('/api/productos');
+                    const productosRes = await axios.get(`/api/empresas/${idEmpresa}/productos`);
                     if (productosRes.status === 200) {
                         setProductos(productosRes.data);
                     } else {

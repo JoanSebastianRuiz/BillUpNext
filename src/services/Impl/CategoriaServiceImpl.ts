@@ -85,9 +85,9 @@ export class CategoriaServiceImpl implements CategoriaService {
     }
   };
 
-  public getAll = async (): Promise<Array<CategoriaDTO>> => {
+  public getAll = async (idEmpresa: number): Promise<Array<CategoriaDTO>> => {
     try {
-      const respuesta: CategoriaDTO[] = await this.categoriaDAOImpl.getAll();
+      const respuesta: CategoriaDTO[] = await this.categoriaDAOImpl.getAll(idEmpresa);
       return respuesta;
     } catch (error) {
       throw new Error(`Error en CategoríaService.getAll: ${error}`);

@@ -116,13 +116,9 @@ CREATE TABLE IF NOT EXISTS "Empresa" (
 
 CREATE TABLE IF NOT EXISTS "Gravamen" (
     "idGravamen" serial,
-    "idEmpresa" int null,
     "nombreGravamen" varchar(50) not null,
     "estadoGravamen" boolean not null,
-    "negativoGravamen" boolean not null,
-    "porcentajeGravamen" float not null,
-    primary key ("idGravamen"),
-    foreign key ("idEmpresa") references "Empresa" ("idEmpresa")
+    primary key ("idGravamen")
 );
 
 CREATE TABLE IF NOT EXISTS "Categoria" (
@@ -289,22 +285,19 @@ CREATE TABLE IF NOT EXISTS "DetalleVenta" (
     "idDetalleVenta" serial,
     "idVenta" int not null,
     "idProducto" int not null,
-    "idGravamen" int not null,
     "cantidadDetalleVenta" int not null,
     "valorDescuentoDetalleVenta" double precision not null,
     "valorTotalDetalleVenta" double precision not null,
     primary key ("idDetalleVenta"),
     foreign key ("idVenta") references "Venta" ("idVenta"),
-    foreign key ("idProducto") references "Producto" ("idProducto"),
-    foreign key ("idGravamen") references "Gravamen" ("idGravamen")
+    foreign key ("idProducto") references "Producto" ("idProducto")
 );
 
 CREATE TABLE IF NOT EXISTS "GravamenProducto" (
     "idGravamenProducto" serial,
     "idProducto" int not null,
     "idGravamen" int not null,
-    "compraGravamenProducto" boolean not null,
-    "ventaGravamenProducto" boolean not null,
+    "porcentajeGravamen" float not null
     primary key ("idGravamenProducto"),
     foreign key ("idProducto") references "Producto" ("idProducto"),
     foreign key ("idGravamen") references "Gravamen" ("idGravamen")

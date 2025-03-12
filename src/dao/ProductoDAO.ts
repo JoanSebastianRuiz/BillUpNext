@@ -2,7 +2,7 @@ import { ProductoResponseDTO } from "@/dto/ProductoResponseDTO";
 import { ProductoRequestDTO } from "@/dto/ProductoRequestDTO";
 
 export interface ProductoDAO{
-    getAll(): Promise<Array<ProductoResponseDTO>>;
+    getAll(idEmpresa: number): Promise<Array<ProductoResponseDTO>>;
     getById(idProducto: number): Promise<ProductoResponseDTO | null>;
     create(producto: ProductoRequestDTO): Promise<boolean>;
     update(producto: ProductoRequestDTO): Promise<boolean>;
