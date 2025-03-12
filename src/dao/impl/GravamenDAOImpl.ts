@@ -17,7 +17,7 @@ export class GravamenDAOImpl implements GravamenDAO {
   public getAll = async (): Promise<Array<GravamenDTO>> => {
     try {
       const gravamenDatabase: GravamenDTO[] = await ejecutarQuery(
-        `SELECT g.\"idGravamen\", g.\"nombreGravamen\", g.\"estadoGravamen\", g.\"negativoGravamen\", g.\"porcentajeGravamen\"
+        `SELECT g.\"idGravamen\", g.\"nombreGravamen\", g.\"estadoGravamen\"
                 FROM \"Gravamen\" g;`,
         []
       );
@@ -31,7 +31,7 @@ export class GravamenDAOImpl implements GravamenDAO {
   public getById = async (idGravamen: number): Promise<GravamenDTO | null> => {
     try {
       const respuesta: GravamenDTO[] = await ejecutarQuery(
-        `SELECT g.\"idGravamen\", g.\"nombreGravamen\", g.\"estadoGravamen\", g.\"negativoGravamen\", g.\"porcentajeGravamen\"
+        `SELECT g.\"idGravamen\", g.\"nombreGravamen\", g.\"estadoGravamen\"
                 FROM  \"Gravamen\" g
                 WHERE g.\"idGravamen\" = $1;`,
         [idGravamen]
@@ -46,12 +46,10 @@ export class GravamenDAOImpl implements GravamenDAO {
   public create = async (gravamen: GravamenDTO): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT insertarGravamen($1,$2,$3,$4) as resultado;`,
+        `SELECT insertarGravamen($1,$2) as resultado;`,
         [
           gravamen.nombreGravamen,
-          gravamen.estadoGravamen,
-          gravamen.negativoGravamen,
-          gravamen.porcentajeGravamen,
+          gravamen.estadoGravamen
         ]
       );
 
@@ -64,13 +62,11 @@ export class GravamenDAOImpl implements GravamenDAO {
   public update = async (gravamen: GravamenDTO): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT actualizarGravamen($1,$2,$3,$4,$5) as resultado;`,
+        `SELECT actualizarGravamen($1,$2,$3) as resultado;`,
         [
           gravamen.idGravamen,
           gravamen.nombreGravamen,
-          gravamen.estadoGravamen,
-          gravamen.negativoGravamen,
-          gravamen.porcentajeGravamen,
+          gravamen.estadoGravamen
         ]
       );
 
