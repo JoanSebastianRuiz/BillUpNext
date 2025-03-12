@@ -16,7 +16,8 @@ import BotonFiltro from "@/components/filtros/BotonFiltro";
 import ContenedorSelectores from "@/components/filtros/ContenedorSelectores";
 import InputFiltro from "@/components/filtros/InputFiltro";
 import SelectFiltro from "@/components/filtros/SelectFiltro";
-import TerceroPersonaCard from "@/components/terceros/TerceroPersonaCard";
+import ClientePersonaCard from "@/components/terceros/ClientePersonaCard";
+import ProveedorPersonaCard from "@/components/terceros/ProveedorPersonaCard";
 import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAccionCard";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
@@ -32,7 +33,7 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
     const [terceroSeleccionado, setTerceroSeleccionado] = useState<TerceroResponsePersonaDTO | null>(null)
     const { departamentos, municipios, tiposDocumento } = useUsuarioContext()
 
-    const { clientesPersona, proveedoresPersona, obtenerPersonas } = useTerceroContext()
+    const { clientesPersona, proveedoresPersona } = useTerceroContext()
 
     const personas = tipoPersonas === "clientes" ? clientesPersona : proveedoresPersona;
     const [personasFiltradas, setPersonasFiltradas] = useState<TerceroResponsePersonaDTO[]>([]);
@@ -233,9 +234,30 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
                     No se encontraron personas
                 </div>) :
                 (< div className="grid gap-4 md:grid-cols-3" >
-                    {
-                        personasActuales.map((persona) => (
-                            <TerceroPersonaCard tercero={persona} key={persona.idTercero}>
+                    {personasActuales.map((persona) =>
+                        proveedorTerceroPersona ? (
+                            <ProveedorPersonaCard tercero={persona} key={persona.idTercero}>
+                                
+                                    <BotonAccionCard
+                                        Symbol={Pencil}
+                                        onClick={() => {
+                                            setTerceroSeleccionado(persona);
+                                            setModalActualizar(true);
+                                        }}
+                                        h={3}
+                                    />
+                                    <BotonAccionCard
+                                        Symbol={Eye}
+                                        onClick={() => {
+                                            setTerceroSeleccionado(persona);
+                                            setModalInfo(true);
+                                        }}
+                                        h={3}
+                                    />
+                                
+                            </ProveedorPersonaCard>
+                        ) : (
+                            <ClientePersonaCard tercero={persona} key={persona.idTercero}>
                                 <ContenedorBotonesAccionCard>
                                     <BotonAccionCard
                                         Symbol={Pencil}
@@ -252,8 +274,9 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
                                         }}
                                     />
                                 </ContenedorBotonesAccionCard>
-                            </TerceroPersonaCard>
-                        ))}
+                            </ClientePersonaCard>
+                        )
+                    )}
 
                 </div >)}
 
@@ -272,13 +295,13 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
 
             {/* Modal para registrar un persona*/}
             <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
-                <RegistrarTerceroPersona obtenerPersonas={obtenerPersonas} setModalRegistrar={setModalRegistrar} proveedorTerceroPersona={proveedorTerceroPersona} />
+                <RegistrarTerceroPersona setModalRegistrar={setModalRegistrar} proveedorTerceroPersona={proveedorTerceroPersona} />
             </Modal>
 
 
             {/* Modal para actualizar un persona*/}
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
-                <RegistrarTerceroPersona idTercero={terceroSeleccionado?.idTercero} obtenerPersonas={obtenerPersonas} setModalActualizar={setModalActualizar} proveedorTerceroPersona={proveedorTerceroPersona} />
+                <RegistrarTerceroPersona idTercero={terceroSeleccionado?.idTercero} setModalActualizar={setModalActualizar} proveedorTerceroPersona={proveedorTerceroPersona} />
             </Modal>
 
         </section >

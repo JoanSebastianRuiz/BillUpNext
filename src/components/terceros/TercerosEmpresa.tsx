@@ -17,7 +17,7 @@ import BotonFiltro from "@/components/filtros/BotonFiltro";
 import ContenedorSelectores from "@/components/filtros/ContenedorSelectores";
 import InputFiltro from "@/components/filtros/InputFiltro";
 import SelectFiltro from "@/components/filtros/SelectFiltro";
-import TerceroEmpresaCard from "@/components/terceros/TerceroEmpresaCard";
+import ClienteEmpresaCard from "@/components/terceros/ClienteEmpresaCard";
 import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAccionCard";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
@@ -34,7 +34,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
     const { departamentos, municipios } = useUsuarioContext()
     const { tiposPersona, regimenesContribuyente } = useEmpresaContext()
 
-    const { clientesEmpresa, proveedoresEmpresa, obtenerEmpresas } = useTerceroContext()
+    const { clientesEmpresa, proveedoresEmpresa } = useTerceroContext()
     const empresas = proveedorTerceroEmpresa ? proveedoresEmpresa : clientesEmpresa;
 
     const [empresasFiltradas, setEmpresasFiltradas] = useState<TerceroResponseEmpresaDTO[]>([]);
@@ -255,7 +255,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
                 (< div className="grid gap-4 md:grid-cols-3" >
                     {
                         empresasActuales.map((empresa) => (
-                            <TerceroEmpresaCard tercero={empresa} key={empresa.idTercero}>
+                            <ClienteEmpresaCard tercero={empresa} key={empresa.idTercero}>
                                 <ContenedorBotonesAccionCard>
                                     <BotonAccionCard
                                         Symbol={Pencil}
@@ -272,7 +272,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
                                         }}
                                     />
                                 </ContenedorBotonesAccionCard>
-                            </TerceroEmpresaCard>
+                            </ClienteEmpresaCard>
                         ))}
 
                 </div >)}
@@ -292,13 +292,13 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
 
             {/* Modal para registrar un empresa*/}
             <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
-                <RegistrarTerceroEmpresa obtenerEmpresas={obtenerEmpresas} setModalRegistrar={setModalRegistrar} proveedorTerceroEmpresa={proveedorTerceroEmpresa} />
+                <RegistrarTerceroEmpresa  setModalRegistrar={setModalRegistrar} proveedorTerceroEmpresa={proveedorTerceroEmpresa} />
             </Modal>
 
 
             {/* Modal para actualizar un empresa*/}
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
-                <RegistrarTerceroEmpresa idTercero={terceroSeleccionado?.idTercero} obtenerEmpresas={obtenerEmpresas} setModalActualizar={setModalActualizar} proveedorTerceroEmpresa={proveedorTerceroEmpresa} />
+                <RegistrarTerceroEmpresa idTercero={terceroSeleccionado?.idTercero} setModalActualizar={setModalActualizar} proveedorTerceroEmpresa={proveedorTerceroEmpresa} />
             </Modal>
 
         </section >

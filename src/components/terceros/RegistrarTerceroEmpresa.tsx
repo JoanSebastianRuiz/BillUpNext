@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { useUsuarioContext } from '@/context/UsuarioContext';
 import { useEmpresaContext } from '@/context/EmpresaContext';
+import { useTerceroContext } from '@/context/TerceroContext';
 import { useSession } from 'next-auth/react';
 
 import { DepartamentoResponseDTO } from '@/dto/DepartamentoResponseDTO';
@@ -20,10 +21,11 @@ import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';
 
 
-const RegistrarTerceroEmpresa = ({ idTercero, obtenerEmpresas, setModalActualizar, setModalRegistrar, proveedorTerceroEmpresa }: { idTercero?: number, proveedorTerceroEmpresa: boolean, obtenerEmpresas: (tipoEmpresas: string) => void, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+const RegistrarTerceroEmpresa = ({ idTercero, setModalActualizar, setModalRegistrar, proveedorTerceroEmpresa }: { idTercero?: number, proveedorTerceroEmpresa: boolean, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
     const { departamentos, municipios } = useUsuarioContext();
     const { tiposPersona, regimenesContribuyente } = useEmpresaContext();
+    const { obtenerEmpresas } = useTerceroContext();
 
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
     const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);

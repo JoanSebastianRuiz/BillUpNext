@@ -8,7 +8,7 @@ import ParrafoCard from "../modal/ParrafoCard";
 
 
 
-const TerceroPersonaCard = ({ tercero, children }: { tercero: TerceroResponsePersonaDTO, children: ReactNode }) => {
+const ClientePersonaCard = ({ tercero, children }: { tercero: TerceroResponsePersonaDTO, children: ReactNode }) => {
     const { tiposDocumento } = useUsuarioContext();
 
     return (
@@ -27,4 +27,4 @@ const TerceroPersonaCard = ({ tercero, children }: { tercero: TerceroResponsePer
     );
 };
 
-export default TerceroPersonaCard;
+export default ClientePersonaCard;

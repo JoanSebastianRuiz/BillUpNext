@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { useUsuarioContext } from '@/context/UsuarioContext';
 import { useSession } from 'next-auth/react';
+import { useTerceroContext } from '@/context/TerceroContext';
 
 import { DepartamentoResponseDTO } from '@/dto/DepartamentoResponseDTO';
 import { MunicipioResponseDTO } from '@/dto/MunicipioResponseDTO';
@@ -19,7 +20,7 @@ import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';
 
 
-const RegistrarTerceroPersona = ({ idTercero, obtenerPersonas, setModalActualizar, setModalRegistrar, proveedorTerceroPersona }: { idTercero?: number, proveedorTerceroPersona: boolean, obtenerPersonas: (tipoPersonas: string) => void, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+const RegistrarTerceroPersona = ({ idTercero, setModalActualizar, setModalRegistrar, proveedorTerceroPersona }: { idTercero?: number, proveedorTerceroPersona: boolean, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
     const { departamentos, municipios, tiposDocumento } = useUsuarioContext();
 
@@ -32,6 +33,8 @@ const RegistrarTerceroPersona = ({ idTercero, obtenerPersonas, setModalActualiza
 
     const idDepartamento = watch("idDepartamento");
     const idMunicipio = watch("idMunicipio");
+
+    const {obtenerPersonas} =useTerceroContext()
 
     const { data: session } = useSession()
     const idEmpresa = session?.user?.idEmpresa ?? 0;

@@ -14,12 +14,14 @@ export class TerceroProductoDAOImpl implements TerceroProductoDAO {
     return TerceroProductoDAOImpl.instancia;
   }
 
-  public getAll = async (): Promise<Array<TerceroProductoDTO>> => {
+  public getAll = async (idEmpresa: number): Promise<Array<TerceroProductoDTO>> => {
     try {
       const terceroProductoDatabase: TerceroProductoDTO[] = await ejecutarQuery(
         `SELECT t.\"idTerceroProducto\", t.\"idTercero\", t.\"idProducto\", t.\"precioCompraTerceroProducto\"
-                FROM \"TerceroProducto\" t;`,
-        []
+                FROM \"TerceroProducto\" t
+                JOIN \"Producto\" p ON p.\"idProducto\" = t.\"idProducto\"
+                WHERE p.\"idEmpresa\" = $1;`,
+        [idEmpresa]
       );
 
       return terceroProductoDatabase;
