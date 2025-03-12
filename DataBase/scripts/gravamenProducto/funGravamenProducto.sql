@@ -1,15 +1,14 @@
 CREATE OR REPLACE FUNCTION insertarGravamenProducto(
     _idProducto "GravamenProducto"."idProducto"%TYPE,
     _idGravamen "GravamenProducto"."idGravamen"%TYPE,
-    _compraGravamenProducto "GravamenProducto"."compraGravamenProducto"%TYPE,
-    _ventaGravamenProducto "GravamenProducto"."ventaGravamenProducto"%TYPE)
+    _porcentajeGravamenProducto "GravamenProducto"."porcentajeGravamenProducto"%TYPE)
     RETURNS BOOLEAN AS
 $$
 DECLARE
     _idGravamenProducto "GravamenProducto"."idGravamenProducto"%TYPE;
 BEGIN
-    INSERT INTO "GravamenProducto" ("idProducto", "idGravamen", "compraGravamenProducto", "ventaGravamenProducto")
-    VALUES (_idProducto, _idGravamen, _compraGravamenProducto, _ventaGravamenProducto);
+    INSERT INTO "GravamenProducto" ("idProducto", "idGravamen", "porcentajeGravamenProducto")
+    VALUES (_idProducto, _idGravamen, _porcentajeGravamenProducto);
 
     IF FOUND THEN
         RAISE NOTICE 'Se insertó correctamente el gravamen del producto';
@@ -27,16 +26,14 @@ CREATE OR REPLACE FUNCTION actualizarGravamenProducto(
     _idGravamenProducto "GravamenProducto"."idGravamenProducto"%TYPE,
     _idProducto "GravamenProducto"."idProducto"%TYPE,
     _idGravamen "GravamenProducto"."idGravamen"%TYPE,
-    _compraGravamenProducto "GravamenProducto"."compraGravamenProducto"%TYPE,
-    _ventaGravamenProducto "GravamenProducto"."ventaGravamenProducto"%TYPE)
+    _porcentajeGravamenProducto "GravamenProducto"."porcentajeGravamenProducto"%TYPE)
     RETURNS BOOLEAN AS
 $$
 BEGIN
     UPDATE "GravamenProducto"
     SET "idProducto" = _idProducto,
         "idGravamen" = _idGravamen,
-        "compraGravamenProducto" = _compraGravamenProducto,
-        "ventaGravamenProducto" = _ventaGravamenProducto
+        "porcentajeGravamenProducto" = _porcentajeGravamenProducto
     WHERE "idGravamenProducto" = _idGravamenProducto;
 
     IF FOUND THEN
