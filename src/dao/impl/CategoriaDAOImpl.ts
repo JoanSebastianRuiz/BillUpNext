@@ -14,12 +14,13 @@ export class CategoriaDAOImpl implements CategoriaDAO {
     return CategoriaDAOImpl.instancia;
   }
 
-  public getAll = async (): Promise<Array<CategoriaDTO>> => {
+  public getAll = async (idEmpresa: number): Promise<Array<CategoriaDTO>> => {
     try {
       const categoriasDatabase: CategoriaDTO[] = await ejecutarQuery(
         `SELECT c.\"idCategoria\", c.\"nombreCategoria\", c.\"estadoCategoria\"
-                FROM \"Categoria\" c;`,
-        []
+                FROM \"Categoria\" c
+                WHERE c.\"idEmpresa\" = $1;`,
+        [idEmpresa]
       );
 
       return categoriasDatabase;
