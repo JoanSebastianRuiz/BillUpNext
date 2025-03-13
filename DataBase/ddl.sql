@@ -297,7 +297,7 @@ CREATE TABLE IF NOT EXISTS "GravamenProducto" (
     "idGravamenProducto" serial,
     "idProducto" int not null,
     "idGravamen" int not null,
-    "porcentajeGravamenProducto" float not null
+    "porcentajeGravamenProducto" float not null,
     primary key ("idGravamenProducto"),
     foreign key ("idProducto") references "Producto" ("idProducto"),
     foreign key ("idGravamen") references "Gravamen" ("idGravamen")

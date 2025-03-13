@@ -1,6 +1,6 @@
 CREATE OR REPLACE FUNCTION insertarGravamen(
     _nombreGravamen "Gravamen"."nombreGravamen"%TYPE,
-    _estadoGravamen "Gravamen"."estadoGravamen"%TYPE,
+    _estadoGravamen "Gravamen"."estadoGravamen"%TYPE)
     RETURNS BOOLEAN AS
 $$
 DECLARE
