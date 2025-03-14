@@ -12,10 +12,6 @@ import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
     private static instancia: CajaServiceImpl;
     private cajaDAOImpl: CajaDAOImpl = CajaDAOImpl.getInstance();
     private constructor() { }
-    create(caja: CajaDTO): Promise<NextResponse> {
-       throw new Error("Method not implemented.");
-    }
-
 
    public static getInstance(): CajaServiceImpl {
       if (!CajaServiceImpl.instancia) {
@@ -25,14 +21,14 @@ import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
    }
 
 
-   public cretate = async (caja: CajaDTO): Promise<NextResponse> => {
+   public create = async (caja: CajaDTO): Promise<NextResponse> => {
       try {
          const { idEmpresa,
             nombreCaja,
-            estadoCaja
+            estadoCaja = true
          } = caja;
 
-         if(!idEmpresa || nombreCaja || estadoCaja){
+         if(!idEmpresa || !nombreCaja || estadoCaja === undefined ){
             return NextResponse.json({message: 'Faltan comapos por llenar'}, {status: 400});
          }
 
@@ -40,7 +36,7 @@ import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
             return NextResponse.json({"message": "El nombre la caja ya se encuentra registrado"}, {status: 400});
          }
 
-         const respuesta = await this.cajaDAOImpl.create(caja);
+         const respuesta = await this.cajaDAOImpl.create({...caja, estadoCaja});
 
          if(respuesta){
             return NextResponse.json({message: 'Caja creada correctamente'}, {status:200});
@@ -62,7 +58,7 @@ import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
             estadoCaja
          } = caja;
 
-         if(!idCaja || idEmpresa || nombreCaja || estadoCaja){
+         if(!idCaja || !idEmpresa || !nombreCaja || estadoCaja === undefined){
             return NextResponse.json({message: 'Faltan campos por llenar'}, {status: 400});
          }
 
