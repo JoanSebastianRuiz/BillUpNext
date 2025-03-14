@@ -4,6 +4,8 @@ import axios from "axios";
 import { useEffect, useState, useRef } from "react";
 import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
 
+import { useGravamenContext } from "@/context/GravamenContext";
+
 import { GravamenDTO } from "@/dto/GravamenDTO";
 
 import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
@@ -17,7 +19,6 @@ import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAcc
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
-import MostrarInfoGravamen from "@/components/gravamenes/MostrarInfoGravamen";
 import RegistrarGravamen from "@/components/gravamenes/RegistrarGravamen";
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 
@@ -27,7 +28,7 @@ const GravamenesPage: React.FC = () => {
   const [modalActualizar, setModalActualizar] = useState(false);
   const [gravamenSeleccionado, setGravamenSeleccionado] =
     useState<GravamenDTO | null>(null);
-  const [gravamenes, setGravamenes] = useState<GravamenDTO[]>([]);
+  const { gravamenes, obtenerGravamenes } = useGravamenContext();
   const [gravamenesFiltrados, setGravamenesFiltrados] = useState<GravamenDTO[]>(
     []
   );
@@ -45,24 +46,6 @@ const GravamenesPage: React.FC = () => {
     indexOfLastGravamen
   );
   const totalPages = Math.ceil(gravamenesFiltrados.length / itemsPerPage);
-
-  const obtenerGravamenes = async () => {
-    try {
-      const respuesta = await axios.get<GravamenDTO[]>("/api/gravamen");
-      if (respuesta.status === 200) {
-        setGravamenes(respuesta.data);
-        setGravamenesFiltrados(respuesta.data);
-      }
-    } catch (error) {
-      console.error("Error obteniendo gravamenes", error);
-    }
-  };
-
-  useEffect(() => {
-    if (!gravamenes.length) {
-      obtenerGravamenes();
-    }
-  }, [gravamenes.length]);
 
   const filtrarGravamenes = () => {
     const nombreGravamen = nombreGravamenRef.current?.value;
@@ -150,13 +133,6 @@ const GravamenesPage: React.FC = () => {
                     setModalActualizar(true);
                   }}
                 />
-                <BotonAccionCard
-                  Symbol={Eye}
-                  onClick={() => {
-                    setGravamenSeleccionado(gravamen);
-                    setModalInfo(true);
-                  }}
-                />
               </ContenedorBotonesAccionCard>
             </GravamenCard>
           ))}
@@ -169,15 +145,8 @@ const GravamenesPage: React.FC = () => {
         setCurrentPage={setCurrentPage}
       />
 
-      <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>
-        {gravamenSeleccionado && (
-          <MostrarInfoGravamen gravamen={gravamenSeleccionado} />
-        )}
-      </Modal>
-
       <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
         <RegistrarGravamen
-          obtenerGravamenes={obtenerGravamenes}
           setModalRegistrar={setModalRegistrar}
         />
       </Modal>
@@ -187,8 +156,7 @@ const GravamenesPage: React.FC = () => {
         setIsOpen={() => setModalActualizar(false)}
       >
         <RegistrarGravamen
-          idGravamen={gravamenSeleccionado?.idGravamen}
-          obtenerGravamenes={obtenerGravamenes}
+          gravamenSeleccionado={gravamenSeleccionado}
           setModalActualizar={setModalActualizar}
         />
       </Modal>

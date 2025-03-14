@@ -24,7 +24,7 @@ export class GravamenServiceImpl implements GravamenService {
 
       if (
         !nombreGravamen ||
-        !estadoGravamen 
+        estadoGravamen === undefined
       ) {
         return NextResponse.json(
             { message: "Faltan campos por llenar" },

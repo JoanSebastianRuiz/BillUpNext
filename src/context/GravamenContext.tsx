@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 interface GravamenContextType {
     gravamenes: GravamenDTO[];
     setGravamenes: (gravamenes: GravamenDTO[]) => void;
+    obtenerGravamenes: () => void;
 }
 
 const GravamenContext = createContext<GravamenContextType | undefined>(undefined);
@@ -22,6 +23,18 @@ export const GravamenContextProvider: React.FC<GravamenProviderProps> = ({ child
     const { data: session, status } = useSession();
     const idRol = session?.user?.idRol;
     const idEmpresa = session?.user?.idEmpresa;
+
+    const obtenerGravamenes = async () => {
+        try {
+            const respuesta = await axios.get<GravamenDTO[]>(`/api/gravamen`);
+            if (respuesta.status === 200) {
+                setGravamenes(respuesta.data);
+            }
+        }
+        catch (error) {
+            console.error("Error obteniendo gravamenes", error);
+        }
+    };
 
     useEffect(() => {
         const fetchGravamenes = async () => {
@@ -42,7 +55,7 @@ export const GravamenContextProvider: React.FC<GravamenProviderProps> = ({ child
     }, []);
 
     return (
-        <GravamenContext.Provider value={{ gravamenes, setGravamenes }}>
+        <GravamenContext.Provider value={{ gravamenes, setGravamenes, obtenerGravamenes }}>
             {children}
         </GravamenContext.Provider>
     );
