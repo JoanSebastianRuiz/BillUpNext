@@ -19,16 +19,12 @@ export class GravamenServiceImpl implements GravamenService {
     try {
       const {
         nombreGravamen,
-        estadoGravamen,
-        negativoGravamen,
-        porcentajeGravamen,
+        estadoGravamen
       } = gravamen;
 
       if (
         !nombreGravamen ||
-        !estadoGravamen ||
-        !negativoGravamen ||
-        !porcentajeGravamen
+        !estadoGravamen 
       ) {
         return NextResponse.json(
             { message: "Faltan campos por llenar" },
@@ -62,9 +58,9 @@ export class GravamenServiceImpl implements GravamenService {
 
   public update = async (gravamen: GravamenDTO): Promise<NextResponse> => {
     try {
-        const { idGravamen, nombreGravamen, estadoGravamen, negativoGravamen, porcentajeGravamen } = gravamen;
+        const { idGravamen, nombreGravamen, estadoGravamen } = gravamen;
 
-        if (!idGravamen || !nombreGravamen || !estadoGravamen || !negativoGravamen || !porcentajeGravamen) {
+        if (!idGravamen || !nombreGravamen || !estadoGravamen ) {
             return NextResponse.json(
                 { message: "Faltan campos por llenar" },
                 { status: 400 }

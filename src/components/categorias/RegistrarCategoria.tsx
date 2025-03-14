@@ -1,31 +1,43 @@
 "use client";
 
 import axios from 'axios';
-import { useForm } from 'react-hook-form';
+
+import { set, useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
+import { useEmpresaContext } from '@/context/EmpresaContext';
+import { useSession } from 'next-auth/react';
+
 import { CategoriaDTO } from '@/dto/CategoriaDTO';
+
 import InputForm from '@/components/form/InputForm';
+import SelectForm from '@/components/form/SelectForm';
 import Notificacion from '@/components/form/Notificacion';
 import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';
-import SelectForm from '@/components/form/SelectForm';
 
 const RegistrarCategoria = ({ idCategoria, obtenerCategorias, setModalActualizar, setModalRegistrar }: { idCategoria?: number, obtenerCategorias: () => void, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+
+    const{ empresas } = useEmpresaContext();
 
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
     const { register, handleSubmit, formState: { errors }, setValue } = useForm<CategoriaDTO>();
 
+    const { data: session } = useSession();
+    const idEmpresa = session?.user?.idEmpresa;
+
     useEffect(() => {
         const fetchCategoria = async () => {
             if (idCategoria) {
                 try {
-                    const response = await axios.get(`/api/categorias/${idCategoria}`);
+                    const response = await axios.get(`/api/empresas/${idEmpresa}/categorias`);
                     if (response.status === 200) {
                         const categoria = response.data;
+                        
                         setValue("nombreCategoria", categoria.nombreCategoria || '');
-                        setValue("estadoCategoria", categoria.estadoCategoria);
+                        setValue("idEmpresa", categoria.idEmpresa || 0);
+                        setValue("estadoCategoria", categoria.estadoCategoria.toString());
                     } else {
                         console.error("Error al obtener datos de la categoría:", response.data.message);
                     }
@@ -40,6 +52,7 @@ const RegistrarCategoria = ({ idCategoria, obtenerCategorias, setModalActualizar
 
     const onSubmit = async (data: CategoriaDTO) => {
         try {
+
             if (idCategoria) {
                 const respuesta = await axios.put(`/api/categorias/${idCategoria}`, data);
                 setError(null);
@@ -47,7 +60,7 @@ const RegistrarCategoria = ({ idCategoria, obtenerCategorias, setModalActualizar
                 obtenerCategorias();
                 setModalActualizar?.(false);
             } else {
-                const respuesta = await axios.post('/api/categorias', { ...data, estadoCategoria: true });
+                const respuesta = await axios.post('/api/categorias', data);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerCategorias();
@@ -68,13 +81,19 @@ const RegistrarCategoria = ({ idCategoria, obtenerCategorias, setModalActualizar
 
     return (
         <ContenedorRegistrar name={idCategoria ? "Actualizar categoría" : "Registrar categoría"}>
-            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-x-6 gap-y-4">
-                <InputForm label="Nombre de la categoría" register={register} name="nombreCategoria" type="text"
+
+            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                <InputForm label="Nombre" register={register} name="nombreCategoria" type="text"
                     validationRules={{
                         required: { value: true, message: "Este campo es obligatorio" },
                         maxLength: { value: 50, message: "Máximo 50 caracteres" }
                     }}
                     errors={errors} />
+
+                <SelectForm label="Empresa" register={register} name="idEmpresa"
+                    validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }} errors={errors} >
+                        {idEmpresa && empresas.find(emp => emp.idEmpresa == idEmpresa) && <option value={idEmpresa}>{empresas.find(emp => emp.idEmpresa == idEmpresa)?.nombreEmpresa}</option>}
+                    </SelectForm>
 
                 {idCategoria && (
                     <SelectForm label="Estado" register={register} name="estadoCategoria"
@@ -86,7 +105,7 @@ const RegistrarCategoria = ({ idCategoria, obtenerCategorias, setModalActualizar
                     </SelectForm>
                 )}
 
-                <div className="col-span-1 flex justify-center mt-4">
+                <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
                     <ButtonForm name={idCategoria ? "Actualizar" : "Registrar"} type="submit" />
                 </div>
             </form>

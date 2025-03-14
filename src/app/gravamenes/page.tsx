@@ -1,14 +1,11 @@
 "use client";
 
 import axios from "axios";
-
 import { useEffect, useState, useRef } from "react";
 import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
 
 import { GravamenDTO } from "@/dto/GravamenDTO";
 
-import MostrarInfoGravamen from "@/components/gravamenes/MostrarInfoGravamen";
-import RegistrarGravamen from "@/components/gravamenes/RegistrarGravamen";
 import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
 import ContenedorBotonesFiltros from "@/components/filtros/ContenedorBotonesFiltros";
 import BotonFiltro from "@/components/filtros/BotonFiltro";
@@ -20,6 +17,8 @@ import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAcc
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
+import MostrarInfoGravamen from "@/components/gravamenes/MostrarInfoGravamen";
+import RegistrarGravamen from "@/components/gravamenes/RegistrarGravamen";
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 
 const GravamenesPage: React.FC = () => {
@@ -71,7 +70,7 @@ const GravamenesPage: React.FC = () => {
 
     let gravamenesFiltrados = [...gravamenes];
 
-    if (estadoGravamen && estadoGravamen !== "true") {
+    if (estadoGravamen !== undefined && estadoGravamen !== "") {
       gravamenesFiltrados = gravamenesFiltrados.filter(
         (gravamen) => gravamen.estadoGravamen === (estadoGravamen === "true")
       );
@@ -88,15 +87,14 @@ const GravamenesPage: React.FC = () => {
     setGravamenesFiltrados(gravamenesFiltrados);
   };
 
+  const limpiarFiltros = () => {
+    if (nombreGravamenRef.current) nombreGravamenRef.current.value = "";
+    filtrarGravamenes();
+  };
+
   useEffect(() => {
     filtrarGravamenes();
   }, [gravamenes]);
-
-  const limpiarFiltros = () => {
-    if (nombreGravamenRef.current) nombreGravamenRef.current.value = "";
-    if (estadoGravamenRef.current) estadoGravamenRef.current.value = "true";
-    filtrarGravamenes();
-  };
 
   return (
     <ContenedorPrincipal>
@@ -113,13 +111,16 @@ const GravamenesPage: React.FC = () => {
             name="Limpiar filtros"
           />
         </ContenedorBotonesFiltros>
+
         <ContenedorSelectores>
+
           <InputFiltro
             id="nombreGravamen"
             name="Nombre"
             ref={nombreGravamenRef}
             onChange={filtrarGravamenes}
           />
+          
           <SelectFiltro
             id="estadoGravamen"
             name="Estado"

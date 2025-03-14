@@ -3,12 +3,14 @@
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
+
 import { GravamenDTO } from '@/dto/GravamenDTO';
+
 import InputForm from '@/components/form/InputForm';
+import SelectForm from '@/components/form/SelectForm';
 import Notificacion from '@/components/form/Notificacion';
 import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';
-import SelectForm from '@/components/form/SelectForm';
 
 const RegistrarGravamen = ({ idGravamen, obtenerGravamenes, setModalActualizar, setModalRegistrar }: { idGravamen?: number, obtenerGravamenes: () => void, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
@@ -24,10 +26,9 @@ const RegistrarGravamen = ({ idGravamen, obtenerGravamenes, setModalActualizar, 
                     const response = await axios.get(`/api/gravamen/${idGravamen}`);
                     if (response.status === 200) {
                         const gravamen = response.data;
+
                         setValue("nombreGravamen", gravamen.nombreGravamen || '');
-                        setValue("estadoGravamen", gravamen.estadoGravamen);
-                        setValue("negativoGravamen", gravamen.negativoGravamen);
-                        setValue("porcentajeGravamen", gravamen.porcentajeGravamen);
+                        setValue("estadoGravamen", gravamen.estadoGravamen.toString());
                     } else {
                         console.error("Error al obtener datos del gravamen:", response.data.message);
                     }
@@ -49,7 +50,7 @@ const RegistrarGravamen = ({ idGravamen, obtenerGravamenes, setModalActualizar, 
                 obtenerGravamenes();
                 setModalActualizar?.(false);
             } else {
-                const respuesta = await axios.post('/api/gravamen', { ...data, estadoGravamen: true });
+                const respuesta = await axios.post('/api/gravamen', data);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerGravamenes();
@@ -70,27 +71,14 @@ const RegistrarGravamen = ({ idGravamen, obtenerGravamenes, setModalActualizar, 
 
     return (
         <ContenedorRegistrar name={idGravamen ? "Actualizar gravamen" : "Registrar gravamen"}>
-            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-x-6 gap-y-4">
-                <InputForm label="Nombre del gravamen" register={register} name="nombreGravamen" type="text"
+
+            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                <InputForm label="Nombre" register={register} name="nombreGravamen" type="text"
                     validationRules={{
                         required: { value: true, message: "Este campo es obligatorio" },
                         maxLength: { value: 50, message: "Máximo 50 caracteres" }
                     }}
                     errors={errors} />
-
-                <InputForm label="Porcentaje del gravamen" register={register} name="porcentajeGravamen" type="number"
-                    validationRules={{
-                        required: { value: true, message: "Este campo es obligatorio" },
-                    }}
-                    errors={errors} />
-
-                <SelectForm label="Tipo" register={register} name="negativoGravamen"
-                    validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
-                    errors={errors} >
-                    <option value="" disabled>Seleccione un tipo</option>
-                    <option value="true">Deducción</option>
-                    <option value="false">Adición</option>
-                </SelectForm>
 
                 {idGravamen && (
                     <SelectForm label="Estado" register={register} name="estadoGravamen"
@@ -102,7 +90,7 @@ const RegistrarGravamen = ({ idGravamen, obtenerGravamenes, setModalActualizar, 
                     </SelectForm>
                 )}
 
-                <div className="col-span-1 flex justify-center mt-4">
+                <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
                     <ButtonForm name={idGravamen ? "Actualizar" : "Registrar"} type="submit" />
                 </div>
             </form>

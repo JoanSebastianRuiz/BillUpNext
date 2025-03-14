@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+
 import { GravamenDTO } from "@/dto/GravamenDTO"; 
 
 import ContenedorCard from "../modal/ContenedorCard";
@@ -11,11 +12,9 @@ const GravamenCard = ({
     gravamen: GravamenDTO;
     children: ReactNode;
 }) => {
-    const porcentajeFormateado = `${gravamen.porcentajeGravamen}%`;
 
     return (
         <ContenedorCard name={gravamen.nombreGravamen}>
-            <ParrafoCard subtitle="Porcentaje" text={porcentajeFormateado} />
             <ParrafoCard
                 subtitle="Estado"
                 text={gravamen.estadoGravamen ? "Activo" : "Inactivo"}

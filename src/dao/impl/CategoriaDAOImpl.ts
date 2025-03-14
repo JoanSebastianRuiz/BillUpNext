@@ -17,7 +17,7 @@ export class CategoriaDAOImpl implements CategoriaDAO {
   public getAll = async (idEmpresa: number): Promise<Array<CategoriaDTO>> => {
     try {
       const categoriasDatabase: CategoriaDTO[] = await ejecutarQuery(
-        `SELECT c.\"idCategoria\", c.\"nombreCategoria\", c.\"estadoCategoria\"
+        `SELECT c.\"idCategoria\", c.\"idEmpresa\", c.\"nombreCategoria\", c.\"estadoCategoria\"
                 FROM \"Categoria\" c
                 WHERE c.\"idEmpresa\" = $1;`,
         [idEmpresa]
@@ -34,7 +34,7 @@ export class CategoriaDAOImpl implements CategoriaDAO {
   ): Promise<CategoriaDTO | null> => {
     try {
       const respuesta: CategoriaDTO[] = await ejecutarQuery(
-        `SELECT c.\"idCategoria\", c.\"nombreCategoria\", c.\"estadoCategoria\"
+        `SELECT c.\"idCategoria\", c.\"idEmpresa\", c.\"nombreCategoria\", c.\"estadoCategoria\"
                 FROM \"Categoria\" c 
                 WHERE c.\"idCategoria\" = $1;`,
         [idCategoria]
@@ -49,8 +49,8 @@ export class CategoriaDAOImpl implements CategoriaDAO {
   public create = async (categoria: CategoriaDTO): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT insertarCategoria($1,$2) as resultado;`,
-        [categoria.nombreCategoria, categoria.estadoCategoria]
+        `SELECT insertarCategoria($1,$2,$3) as resultado;`,
+        [categoria.idEmpresa, categoria.nombreCategoria, categoria.estadoCategoria]
       );
 
       return respuesta.length > 0 ? respuesta[0].resultado : false;
@@ -62,9 +62,10 @@ export class CategoriaDAOImpl implements CategoriaDAO {
   public update = async (categoria: CategoriaDTO): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT actualizarCategoria($1,$2,$3) as resultado;`,
+        `SELECT actualizarCategoria($1,$2,$3,$4) as resultado;`,
         [
           categoria.idCategoria,
+          categoria.idEmpresa,
           categoria.nombreCategoria,
           categoria.estadoCategoria,
         ]
@@ -78,12 +79,13 @@ export class CategoriaDAOImpl implements CategoriaDAO {
 
   public existCategoriaNombre = async (
     nombreCategoria: string,
+    idEmpresa: number,
     idCategoria?: number
   ): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT existeCategoriaNombre($1,$2) as resultado;`,
-        [nombreCategoria, idCategoria]
+        `SELECT existeCategoriaNombre($1,$2,$3) as resultado;`,
+        [nombreCategoria, idEmpresa, idCategoria]
       );
 
       return respuesta.length > 0 ? respuesta[0].resultado : false;
