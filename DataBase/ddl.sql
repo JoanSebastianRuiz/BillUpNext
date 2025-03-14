@@ -264,6 +264,7 @@ CREATE TABLE IF NOT EXISTS "TerceroProducto" (
     "idTercero" int not null,
     "idProducto" int not null,
     "precioCompraTerceroProducto" double precision not null,
+    "estadoTerceroProducto" boolean not null,
     primary key ("idTerceroProducto"),
     foreign key ("idTercero") references "Tercero" ("idTercero"),
     foreign key ("idProducto") references "Producto" ("idProducto")

@@ -3,4 +3,5 @@ export interface TerceroProductoDTO {
     idTercero: number,
     idProducto: number,
     precioCompraTerceroProducto: number,
+    estadoTerceroProducto: boolean
 }

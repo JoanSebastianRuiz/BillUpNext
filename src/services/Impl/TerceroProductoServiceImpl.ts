@@ -137,10 +137,10 @@ export class TerceroProductoServiceImpl implements TerceroProductoService {
     }
   };
 
-  public getAll = async (): Promise<Array<TerceroProductoDTO>> => {
+  public getAll = async (idEmpresa: number): Promise<Array<TerceroProductoDTO>> => {
     try {
       const respuesta: TerceroProductoDTO[] =
-        await this.terceroProductoDAOImpl.getAll();
+        await this.terceroProductoDAOImpl.getAll(idEmpresa);
       return respuesta;
     } catch (error) {
       throw new Error(`Error en TerceroProducto.getAll: ${error}`);

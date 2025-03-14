@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { TerceroProductoServiceImpl } from "@/services/Impl/TerceroProductoServiceImpl";
 
-export const GET = async (_:Request, { params }: { params: { idTerceroProducto: string } }) => {
+export const GET = async (_: Request, { params }: { params: { idTerceroProducto: string } }) => {
     try {
         const terceroProductoService = TerceroProductoServiceImpl.getInstance();
         const { idTerceroProducto } = await params;
@@ -15,7 +15,7 @@ export const GET = async (_:Request, { params }: { params: { idTerceroProducto: 
     } catch (error) {
         console.error("Error al obtener terceroProducto por id", error);
         return NextResponse.json(
-            { message: "Error al obtener terceroProducto por id"},
+            { message: "Error al obtener terceroProducto por id" },
             { status: 500 }
         );
     }
@@ -23,7 +23,7 @@ export const GET = async (_:Request, { params }: { params: { idTerceroProducto: 
 
 export const PUT = async (
     request: Request,
-    { params }: { params: { idTerceroProducto: string }}
+    { params }: { params: { idTerceroProducto: string } }
 ) => {
     const terceroProductoService = TerceroProductoServiceImpl.getInstance();
     const { idTerceroProducto } = await params;
@@ -40,7 +40,7 @@ export const PUT = async (
     } catch (error) {
         console.error("Error al actualizar terceroProducto:", error);
         return NextResponse.json(
-            { message: "Error al actualizar terceroProducto"},
+            { message: "Error al actualizar terceroProducto" },
             { status: 500 }
         );
     }

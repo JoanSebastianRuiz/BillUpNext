@@ -24,14 +24,16 @@ CREATE OR REPLACE FUNCTION actualizarTerceroProducto(
     _idTerceroProducto "TerceroProducto"."idTerceroProducto"%TYPE,
     _idTercero "TerceroProducto"."idTercero"%TYPE,
     _idProducto "TerceroProducto"."idProducto"%TYPE,
-    _precioCompraTerceroProducto "TerceroProducto"."precioCompraTerceroProducto"%TYPE)
+    _precioCompraTerceroProducto "TerceroProducto"."precioCompraTerceroProducto"%TYPE,
+    _estadoTerceroProducto "TerceroProducto"."estadoTerceroProducto"%TYPE),
      RETURNS BOOLEAN AS
 $BODY$
 BEGIN 
     UPDATE "TerceroProducto"
     SET "idTercero" = _idTercero,
         "idProducto" = _idProducto,
-        "precioCompraTerceroProducto" = _precioCompraTerceroProducto
+        "precioCompraTerceroProducto" = _precioCompraTerceroProducto,
+        "estadoTerceroProducto" = _precioCompraTerceroProducto
     WHERE "idTerceroProducto"  = _idTerceroProducto;
 
     IF FOUND THEN

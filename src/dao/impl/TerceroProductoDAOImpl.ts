@@ -17,7 +17,7 @@ export class TerceroProductoDAOImpl implements TerceroProductoDAO {
   public getAll = async (idEmpresa: number): Promise<Array<TerceroProductoDTO>> => {
     try {
       const terceroProductoDatabase: TerceroProductoDTO[] = await ejecutarQuery(
-        `SELECT t.\"idTerceroProducto\", t.\"idTercero\", t.\"idProducto\", t.\"precioCompraTerceroProducto\"
+        `SELECT t.\"idTerceroProducto\", t.\"idTercero\", t.\"idProducto\", t.\"precioCompraTerceroProducto\", t.\"estadoTerceroProducto\"
                 FROM \"TerceroProducto\" t
                 JOIN \"Producto\" p ON p.\"idProducto\" = t.\"idProducto\"
                 WHERE p.\"idEmpresa\" = $1;`,

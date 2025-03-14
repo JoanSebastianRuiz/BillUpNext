@@ -20,10 +20,9 @@ import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';
 
 
-const RegistrarTerceroPersona = ({ idTercero, setModalActualizar, setModalRegistrar, proveedorTerceroPersona }: { idTercero?: number, proveedorTerceroPersona: boolean, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+const RegistrarTerceroProducto = ({ idTerceroProducto, setModalActualizar, setModalRegistrar, proveedorTerceroPersona }: { idTerceroProducto?: number, proveedorTerceroPersona: boolean, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
     const { departamentos, municipios, tiposDocumento } = useUsuarioContext();
-    const {proveedoresPersona, clientesPersona} = useTerceroContext()
 
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
     const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);
@@ -67,8 +66,9 @@ const RegistrarTerceroPersona = ({ idTercero, setModalActualizar, setModalRegist
 
     useEffect(() => {
         const fetchTercero = async () => {
-            if (idTercero) {
-                    const tercero = usuarios.find(usuario=>usu)
+            if (idTerceroProducto) {
+                try {
+                    const response = await axios.get(`/api/terceros/${idTerceroProducto}?tipo=persona`);
                     if (response.status == 200) {
                         const tercero = response.data;
 
@@ -98,17 +98,17 @@ const RegistrarTerceroPersona = ({ idTercero, setModalActualizar, setModalRegist
         };
 
         fetchTercero();
-    }, [idTercero, setValue]);
+    }, [idTerceroProducto, setValue]);
 
 
     const onSubmit = async (data: TerceroRequestPersonaDTO) => {
         try {
-            if (idTercero) {
+            if (idTerceroProducto) {
                 let { idDepartamento, ...datosModificados } = data;
 
                 datosModificados = { ...datosModificados, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), estadoTercero: String(data.estadoTercero) === "true" };
 
-                const respuesta = await axios.put(`/api/terceros/${idTercero}?tipo=persona`, datosModificados);
+                const respuesta = await axios.put(`/api/terceros/${idTerceroProducto}?tipo=persona`, datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerPersonas(proveedorTerceroPersona ? "proveedores" : "clientes");
@@ -141,7 +141,7 @@ const RegistrarTerceroPersona = ({ idTercero, setModalActualizar, setModalRegist
 
     return (
         <ContenedorRegistrar name={
-            idTercero ?
+            idTerceroProducto ?
                 proveedorTerceroPersona ? "Actualizar proveedor" : "Actualizar cliente"
                 : proveedorTerceroPersona ? "Registrar proveedor" : "Registrar cliente"}>
 
@@ -208,7 +208,7 @@ const RegistrarTerceroPersona = ({ idTercero, setModalActualizar, setModalRegist
                         validate: (value: string) => isValidEmail(value) || "Correo inválido"
                     }} errors={errors} />
 
-                {idTercero && (
+                {idTerceroProducto && (
                     <SelectForm label="Estado" register={register} name="estadoTercero"
                         validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
                         errors={errors} >
@@ -219,7 +219,7 @@ const RegistrarTerceroPersona = ({ idTercero, setModalActualizar, setModalRegist
                 )}
 
                 <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
-                    <ButtonForm name={idTercero ? "Actualizar" : "Registrar"} type="submit" />
+                    <ButtonForm name={idTerceroProducto ? "Actualizar" : "Registrar"} type="submit" />
                 </div>
             </form>
 
@@ -231,5 +231,5 @@ const RegistrarTerceroPersona = ({ idTercero, setModalActualizar, setModalRegist
     )
 };
 
-export default RegistrarTerceroPersona;
+export default RegistrarTerceroProducto;
 
