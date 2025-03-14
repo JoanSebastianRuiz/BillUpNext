@@ -5,6 +5,8 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { useProductoContext } from '@/context/ProductoContext';
+import { useEmpresaContext } from '@/context/EmpresaContext';
+import { useSession } from 'next-auth/react';
 
 import { ProductoRequestDTO } from '@/dto/ProductoRequestDTO';
 
@@ -17,12 +19,15 @@ import ButtonForm from '../form/ButtonForm';
 const RegistrarProducto = ({ idProducto, obtenerProductos, setModalActualizar, setModalRegistrar }: { idProducto?: number, obtenerProductos: () => void, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
     const { categorias } = useProductoContext();
+    const { empresas } = useEmpresaContext();
     
-    const [empresas, setEmpresas] = useState<{ idEmpresa: number; nombreEmpresa: string }[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
-    const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<ProductoRequestDTO>();
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm<ProductoRequestDTO>();
+
+    const { data: session } = useSession();
+    const idEmpresa = session?.user?.idEmpresa;
 
     useEffect(() => {
         const fetchProducto = async () => {
@@ -40,7 +45,7 @@ const RegistrarProducto = ({ idProducto, obtenerProductos, setModalActualizar, s
                         setValue("porcentajeDescuentoProducto", producto.porcentajeDescuentoProducto || 0);
                         setValue("stockMinimoProducto", producto.stockMinimoProducto || 0);
                         setValue("stockMaximoProducto", producto.stockMaximoProducto || 0);
-                        setValue("estadoProducto", producto.estadoProducto ? producto.estadoProducto.toString() : '');
+                        setValue("estadoProducto", producto.estadoProducto.toString());
                     } else {
                         console.error("Error al obtener datos del producto:", response.data.message);
                     }
@@ -50,24 +55,7 @@ const RegistrarProducto = ({ idProducto, obtenerProductos, setModalActualizar, s
             }
         };
 
-        const fetchEmpresas = async () => {
-            try {
-                const response = await axios.get("/api/empresas");
-                if (response.status === 200) {
-                    setEmpresas(response.data.map((empresa: { idEmpresa: number; nombreEmpresa: string }) => ({
-                        idEmpresa: empresa.idEmpresa,
-                        nombreEmpresa: empresa.nombreEmpresa,
-                    })));
-                } else {
-                    console.error("Error al obtener datos de las empresas:", response.data.message);
-                }
-            } catch (error) {
-                console.error("Error al obtener datos de las empresas:", error);
-            }
-        };
-
         fetchProducto();
-        fetchEmpresas();
     }, [idProducto, setValue]);
 
     const onSubmit = async (data: ProductoRequestDTO) => {
@@ -79,7 +67,7 @@ const RegistrarProducto = ({ idProducto, obtenerProductos, setModalActualizar, s
                 obtenerProductos();
                 setModalActualizar?.(false);
             } else {
-                const respuesta = await axios.post('/api/productos', { ...data, estadoProducto: true });
+                const respuesta = await axios.post('/api/productos',data);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerProductos();
@@ -100,13 +88,14 @@ const RegistrarProducto = ({ idProducto, obtenerProductos, setModalActualizar, s
 
     return (
         <ContenedorRegistrar name={idProducto ? "Actualizar producto" : "Registrar producto"}>
+
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
 
                 <SelectForm label="Empresa" register={register} name="idEmpresa"
                     validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
                     errors={errors} >
-                    <option value="" disabled>Seleccione una empresa</option>
-                    {empresas.map(empresa => <option key={empresa.idEmpresa} value={empresa.idEmpresa}>{empresa.nombreEmpresa}</option>)}
+                    {idEmpresa && empresas.find(emp => emp.idEmpresa == idEmpresa) && 
+                        <option value={idEmpresa}>{empresas.find(emp => emp.idEmpresa == idEmpresa)?.nombreEmpresa}</option>}
                 </SelectForm>
 
                 <SelectForm label="Categoría" register={register} name="idCategoria"
@@ -116,7 +105,7 @@ const RegistrarProducto = ({ idProducto, obtenerProductos, setModalActualizar, s
                     {categorias.map(categoria => <option key={categoria.idCategoria} value={categoria.idCategoria}>{categoria.nombreCategoria}</option>)}
                 </SelectForm>
 
-                <InputForm label="Nombre del producto" register={register} name="nombreProducto" type="text"
+                <InputForm label="Nombre" register={register} name="nombreProducto" type="text"
                     validationRules={{
                         required: { value: true, message: "Este campo es obligatorio" },
                         maxLength: { value: 50, message: "Máximo 50 caracteres" }
