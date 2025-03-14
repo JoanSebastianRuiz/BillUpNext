@@ -18,17 +18,17 @@ import CategoriaCard from "@/components/categorias/CategoriaCard";
 import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAccionCard";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
-import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";  
-import MostrarInfoCategoria from "@/components/categorias/MostrarInfoCategoria";
+import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
 import RegistrarCategoria from "@/components/categorias/RegistrarCategoria";
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
+import { useProductoContext } from "@/context/ProductoContext";
 
 const CategoriasPage: React.FC = () => {
     const [modalInfo, setModalInfo] = useState(false);
     const [modalRegistrar, setModalRegistrar] = useState(false);
     const [modalActualizar, setModalActualizar] = useState(false);
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<CategoriaDTO | null>(null);
-    const [categorias, setCategorias] = useState<CategoriaDTO[]>([]);
+    const { categorias, obtenerCategorias } = useProductoContext()
     const { empresas } = useEmpresaContext();
     const [categoriasFiltradas, setCategoriasFiltradas] = useState<CategoriaDTO[]>([]);
 
@@ -43,24 +43,6 @@ const CategoriasPage: React.FC = () => {
     const indexOfFirstCategoria = indexOfLastCategoria - itemsPerPage;
     const categoriasActuales = categoriasFiltradas.slice(indexOfFirstCategoria, indexOfLastCategoria);
     const totalPages = Math.ceil(categoriasFiltradas.length / itemsPerPage);
-
-    const obtenerCategorias = async () => {
-        try {
-            const respuesta = await axios.get<CategoriaDTO[]>("/api/empresas/[idEmpresa]/categorias");
-            if (respuesta.status === 200) {
-                setCategorias(respuesta.data);
-                setCategoriasFiltradas(respuesta.data);
-            }
-        } catch (error) {
-            console.error("Error obteniendo categorías", error);
-        }
-    };
-
-    useEffect(() => {
-        if (!categorias.length) {
-            obtenerCategorias();
-        }
-    }, [categorias.length]);
 
     const filtrarCategorias = () => {
         const nombreCategoria = nombreCategoriaRef.current?.value;
@@ -82,7 +64,7 @@ const CategoriasPage: React.FC = () => {
                 });
             }
         }
-    
+
         setCategoriasFiltradas(categoriasFiltradas);
     };
 
@@ -115,13 +97,13 @@ const CategoriasPage: React.FC = () => {
                 </ContenedorBotonesFiltros>
 
                 <ContenedorSelectores>
-                    
+
                     <InputFiltro
                         id="nombreCategoria"
                         name="Nombre"
                         ref={nombreCategoriaRef}
                         onChange={filtrarCategorias} />
-                    
+
                     <SelectFiltro
                         id="idEmpresa"
                         name="Empresa"
@@ -134,7 +116,7 @@ const CategoriasPage: React.FC = () => {
                             </option>
                         ))}
                     </SelectFiltro>
-    
+
                     <SelectFiltro
                         id="estadoCategoria"
                         name="Estado"
@@ -146,36 +128,29 @@ const CategoriasPage: React.FC = () => {
                         <option value="true">Activo</option>
                         <option value="false">Inactivo</option>
                     </SelectFiltro>
-                    </ContenedorSelectores>
-                </ContenedorFiltros>
+                </ContenedorSelectores>
+            </ContenedorFiltros>
 
             {categoriasActuales.length === 0 ? (
                 <div className="text-center text-gray-500 mt-8">
                     No se encontraron categorías
                 </div>
             ) : (
-            <div className="grid gap-4 md:grid-cols-3">
-                {categoriasActuales.map((categoria) => (
-                    <CategoriaCard categoria={categoria} key={categoria.idCategoria}>
-                        <ContenedorBotonesAccionCard>
-                            <BotonAccionCard
-                                Symbol={Pencil}
-                                onClick={() => {
-                                    setCategoriaSeleccionada(categoria);
-                                    setModalActualizar(true);
-                                }}
-                            />
-                            <BotonAccionCard
-                                Symbol={Eye}
-                                onClick={() => {
-                                    setCategoriaSeleccionada(categoria);
-                                    setModalInfo(true);
-                                }}
-                            />
-                        </ContenedorBotonesAccionCard>
-                    </CategoriaCard>
-                ))}
-            </div>
+                <div className="grid gap-4 md:grid-cols-3">
+                    {categoriasActuales.map((categoria) => (
+                        <CategoriaCard categoria={categoria} key={categoria.idCategoria}>
+                            <ContenedorBotonesAccionCard>
+                                <BotonAccionCard
+                                    Symbol={Pencil}
+                                    onClick={() => {
+                                        setCategoriaSeleccionada(categoria);
+                                        setModalActualizar(true);
+                                    }}
+                                />
+                            </ContenedorBotonesAccionCard>
+                        </CategoriaCard>
+                    ))}
+                </div>
             )}
             <ControlesPaginacion
                 currentPage={currentPage}
@@ -183,16 +158,12 @@ const CategoriasPage: React.FC = () => {
                 setCurrentPage={setCurrentPage}
             />
 
-            <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>
-                {categoriaSeleccionada && <MostrarInfoCategoria categoria={categoriaSeleccionada} />}
-            </Modal>
-
             <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
-                <RegistrarCategoria obtenerCategorias={obtenerCategorias} setModalRegistrar={setModalRegistrar} />
+                <RegistrarCategoria setModalRegistrar={setModalRegistrar} />
             </Modal>
 
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
-                <RegistrarCategoria idCategoria={categoriaSeleccionada?.idCategoria} obtenerCategorias={obtenerCategorias} setModalActualizar={setModalActualizar} />
+                <RegistrarCategoria categoriaSeleccionada={categoriaSeleccionada} setModalActualizar={setModalActualizar} />
             </Modal>
         </ContenedorPrincipal>
     );

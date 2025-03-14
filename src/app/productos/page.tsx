@@ -33,7 +33,7 @@ const ProductosPage: React.FC = () => {
   const [productosFiltrados, setProductosFiltrados] = useState<
     ProductoResponseDTO[]
   >([]);
-  const { productos, setProductos, categorias } = useProductoContext();
+  const { productos, categorias, obtenerProductos } = useProductoContext();
   const [empresas, setEmpresas] = useState<
     { idEmpresa: number; nombreEmpresa: string }[]
   >([]);
@@ -53,48 +53,6 @@ const ProductosPage: React.FC = () => {
     indexOfLastProducto
   );
   const totalPages = Math.ceil(productosFiltrados.length / itemsPerPage);
-
-  const obtenerProductos = async () => {
-    try {
-      const respuesta = await axios.get<ProductoResponseDTO[]>(
-        "/api/productos"
-      );
-      if (respuesta.status === 200) {
-        setProductos(respuesta.data);
-        setProductosFiltrados(respuesta.data);
-      }
-    } catch (error) {
-      console.error("Error obteniendo productos", error);
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (!productos.length) {
-          obtenerProductos();
-        }
-
-        if (!empresas.length) {
-          const empresasRes = await axios.get("/api/empresas");
-          if (empresasRes.status === 200) {
-            setEmpresas(
-              empresasRes.data.map(
-                (empresa: { idEmpresa: number; nombreEmpresa: string }) => ({
-                  idEmpresa: empresa.idEmpresa,
-                  nombreEmpresa: empresa.nombreEmpresa,
-                })
-              )
-            );
-          }
-        }
-      } catch (error) {
-        console.error("Error obteniendo datos iniciales", error);
-      }
-    };
-
-    fetchData();
-  }, [productos.length, empresas.length, setProductos]);
 
   const filtrarProductos = () => {
     const nombreProducto = nombreProductoRef.current?.value;
@@ -246,29 +204,27 @@ const ProductosPage: React.FC = () => {
         setCurrentPage={setCurrentPage}
       />
 
-      {/* Modal para mostrar la información de una empresa*/}
+      {/* Modal para mostrar la información de un producto*/}
       <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>
         {productoSeleccionado && (
           <MostrarInfoProducto producto={productoSeleccionado} />
         )}
       </Modal>
 
-      {/* Modal para registrar un empresa*/}
+      {/* Modal para registrar un producto*/}
       <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
         <RegistrarProducto
-          obtenerProductos={obtenerProductos}
           setModalRegistrar={setModalRegistrar}
         />
       </Modal>
 
-      {/* Modal para actualizar un empresa*/}
+      {/* Modal para actualizar un producto */}
       <Modal
         isOpen={modalActualizar}
         setIsOpen={() => setModalActualizar(false)}
       >
         <RegistrarProducto
           idProducto={productoSeleccionado?.idProducto}
-          obtenerProductos={obtenerProductos}
           setModalActualizar={setModalActualizar}
         />
       </Modal>

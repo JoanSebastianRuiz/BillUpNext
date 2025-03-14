@@ -26,7 +26,7 @@ export const PUT = async (
   { params }: { params: { idCategoria: string } }
 ) => {
   const categoriaService = CategoriaServiceImpl.getInstance();
-  const { idCategoria } = params;
+  const { idCategoria } = await params;
   const data = await request.json();
 
   if (!idCategoria) {

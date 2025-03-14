@@ -7,6 +7,7 @@ export const GET = async (_: Request, { params }: { params: { idEmpresa: string 
         if (!idEmpresa) {
             return NextResponse.json({ message: "idEmpresa es requerido" }, { status: 400 });
         }
+        console.log(idEmpresa)
 
         const categoriaService = CategoriaServiceImpl.getInstance();
         const categorias = await categoriaService.getAll(parseInt(idEmpresa));

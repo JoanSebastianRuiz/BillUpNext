@@ -19,7 +19,7 @@ export class CategoriaServiceImpl implements CategoriaService {
     try {
       const { idEmpresa, nombreCategoria, estadoCategoria } = categoria;
 
-      if (!idEmpresa || !nombreCategoria || !estadoCategoria) {
+      if (!idEmpresa || !nombreCategoria || estadoCategoria === undefined) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
           { status: 400 }
@@ -53,8 +53,9 @@ export class CategoriaServiceImpl implements CategoriaService {
   public update = async (categoria: CategoriaDTO): Promise<NextResponse> => {
     try {
       const { idCategoria, idEmpresa, nombreCategoria, estadoCategoria } = categoria;
+      console.log(categoria);
 
-      if (!idCategoria || !idEmpresa || !nombreCategoria || !estadoCategoria) {
+      if (!idCategoria || !idEmpresa || !nombreCategoria || estadoCategoria=== undefined) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
           { status: 400 }

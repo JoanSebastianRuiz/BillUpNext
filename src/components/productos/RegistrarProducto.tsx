@@ -16,10 +16,11 @@ import Notificacion from '@/components/form/Notificacion';
 import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';
 
-const RegistrarProducto = ({ idProducto, obtenerProductos, setModalActualizar, setModalRegistrar }: { idProducto?: number, obtenerProductos: () => void, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+const RegistrarProducto = ({ idProducto, setModalActualizar, setModalRegistrar }: { idProducto?: number, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
     const { categorias } = useProductoContext();
     const { empresas } = useEmpresaContext();
+    const {obtenerProductos} = useProductoContext();
     
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);

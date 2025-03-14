@@ -11,6 +11,8 @@ interface ProductoContextType {
     setProductos: (productos: ProductoResponseDTO[]) => void;
     categorias: CategoriaDTO[];
     setCategorias: (categorias: CategoriaDTO[]) => void;
+    obtenerCategorias: () => void;
+    obtenerProductos: () => void;
 }
 
 const ProductoContext = createContext<ProductoContextType | undefined>(undefined);
@@ -27,6 +29,30 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
     const { data: session, status } = useSession();
     const idRol = session?.user?.idRol;
     const idEmpresa = session?.user?.idEmpresa;
+
+    const obtenerCategorias = async () => {
+        try {
+            const respuesta = await axios.get<CategoriaDTO[]>(`/api/empresas/${idEmpresa}/categorias`);
+            if (respuesta.status === 200) {
+                setCategorias(respuesta.data);
+            }
+        } catch (error) {
+            console.error("Error obteniendo categorías", error);
+        }
+    };
+
+    const obtenerProductos = async () => {
+        try {
+            const respuesta = await axios.get<ProductoResponseDTO[]>(
+                "/api/productos"
+            );
+            if (respuesta.status === 200) {
+                setProductos(respuesta.data);
+            }
+        } catch (error) {
+            console.error("Error obteniendo productos", error);
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -67,7 +93,7 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
     }, [session, idRol, idEmpresa]);
 
     return (
-        <ProductoContext.Provider value={{ productos, setProductos, categorias, setCategorias }}>
+        <ProductoContext.Provider value={{ productos, setProductos, categorias, setCategorias, obtenerCategorias, obtenerProductos }}>
             {children}
         </ProductoContext.Provider>
     );

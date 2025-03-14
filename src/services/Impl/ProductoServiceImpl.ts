@@ -30,6 +30,7 @@ export class ProductoServiceImpl implements ProductoService {
         stockMaximoProducto,
         estadoProducto,
       } = producto;
+      console.log(producto)
 
       const porcentajeDescuentoProducto =
       producto.porcentajeDescuentoProducto !== undefined &&
@@ -45,7 +46,7 @@ export class ProductoServiceImpl implements ProductoService {
         !precioVentaProducto ||
         !stockMinimoProducto ||
         !stockMaximoProducto ||
-        !estadoProducto
+        estadoProducto === undefined
       ) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
