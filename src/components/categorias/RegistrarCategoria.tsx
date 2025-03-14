@@ -16,7 +16,7 @@ import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';
 import { useProductoContext } from '@/context/ProductoContext';
 
-const RegistrarCategoria = ({ categoriaSeleccionada, setModalActualizar, setModalRegistrar }: { categoriaSeleccionada?: CategoriaDTO, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+const RegistrarCategoria = ({ categoriaSeleccionada, setModalActualizar, setModalRegistrar }: { categoriaSeleccionada?: CategoriaDTO | null, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);

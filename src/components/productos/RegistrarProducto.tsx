@@ -15,13 +15,13 @@ import SelectForm from '@/components/form/SelectForm';
 import Notificacion from '@/components/form/Notificacion';
 import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';
+import { ProductoResponseDTO } from '@/dto/ProductoResponseDTO';
 
-const RegistrarProducto = ({ idProducto, setModalActualizar, setModalRegistrar }: { idProducto?: number, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+const RegistrarProducto = ({ productoSeleccionado, setModalActualizar, setModalRegistrar }: { productoSeleccionado?: ProductoResponseDTO | null, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
     const { categorias } = useProductoContext();
-    const { empresas } = useEmpresaContext();
-    const {obtenerProductos} = useProductoContext();
-    
+    const { obtenerProductos } = useProductoContext();
+
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
@@ -31,44 +31,31 @@ const RegistrarProducto = ({ idProducto, setModalActualizar, setModalRegistrar }
     const idEmpresa = session?.user?.idEmpresa;
 
     useEffect(() => {
-        const fetchProducto = async () => {
-            if (idProducto) {
-                try {
-                    const response = await axios.get(`/api/productos/${idProducto}`);
-                    if (response.status === 200) {
-                        const producto = response.data;
-
-                        setValue("idEmpresa", producto.idEmpresa || 0);
-                        setValue("idCategoria", producto.idCategoria || 0);
-                        setValue("nombreProducto", producto.nombreProducto || '');
-                        setValue("descripcionProducto", producto.descripcionProducto || '');
-                        setValue("precioVentaProducto", producto.precioVentaProducto || 0);
-                        setValue("porcentajeDescuentoProducto", producto.porcentajeDescuentoProducto || 0);
-                        setValue("stockMinimoProducto", producto.stockMinimoProducto || 0);
-                        setValue("stockMaximoProducto", producto.stockMaximoProducto || 0);
-                        setValue("estadoProducto", producto.estadoProducto.toString());
-                    } else {
-                        console.error("Error al obtener datos del producto:", response.data.message);
-                    }
-                } catch (error) {
-                    console.error("Error al obtener datos del producto:", error);
-                }
-            }
-        };
-
-        fetchProducto();
-    }, [idProducto, setValue]);
+        if (productoSeleccionado) {
+            setValue("idEmpresa", productoSeleccionado.idEmpresa || 0);
+            setValue("idCategoria", productoSeleccionado.idCategoria || 0);
+            setValue("nombreProducto", productoSeleccionado.nombreProducto || '');
+            setValue("descripcionProducto", productoSeleccionado.descripcionProducto || '');
+            setValue("precioVentaProducto", productoSeleccionado.precioVentaProducto || 0);
+            setValue("porcentajeDescuentoProducto", productoSeleccionado.porcentajeDescuentoProducto || 0);
+            setValue("stockMinimoProducto", productoSeleccionado.stockMinimoProducto || 0);
+            setValue("stockMaximoProducto", productoSeleccionado.stockMaximoProducto || 0);
+            setValue("estadoProducto", productoSeleccionado.estadoProducto);
+        }
+    }, [productoSeleccionado, setValue]);
 
     const onSubmit = async (data: ProductoRequestDTO) => {
         try {
-            if (idProducto) {
-                const respuesta = await axios.put(`/api/productos/${idProducto}`, data);
+            if (productoSeleccionado) {
+                const datosModificados = { ...data, idEmpresa: idEmpresa, estadoProducto: String(data.estadoProducto) === "true" };
+                const respuesta = await axios.put(`/api/productos/${productoSeleccionado.idProducto}`, datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerProductos();
                 setModalActualizar?.(false);
             } else {
-                const respuesta = await axios.post('/api/productos',data);
+                const datosModificados = { ...data, idEmpresa: idEmpresa, estadoProducto: true };
+                const respuesta = await axios.post('/api/productos', datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerProductos();
@@ -88,23 +75,9 @@ const RegistrarProducto = ({ idProducto, setModalActualizar, setModalRegistrar }
     };
 
     return (
-        <ContenedorRegistrar name={idProducto ? "Actualizar producto" : "Registrar producto"}>
+        <ContenedorRegistrar name={productoSeleccionado ? "Actualizar producto" : "Registrar producto"}>
 
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-
-                <SelectForm label="Empresa" register={register} name="idEmpresa"
-                    validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
-                    errors={errors} >
-                    {idEmpresa && empresas.find(emp => emp.idEmpresa == idEmpresa) && 
-                        <option value={idEmpresa}>{empresas.find(emp => emp.idEmpresa == idEmpresa)?.nombreEmpresa}</option>}
-                </SelectForm>
-
-                <SelectForm label="Categoría" register={register} name="idCategoria"
-                    validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
-                    errors={errors} >
-                    <option value="" disabled>Seleccione una categoría</option>
-                    {categorias.map(categoria => <option key={categoria.idCategoria} value={categoria.idCategoria}>{categoria.nombreCategoria}</option>)}
-                </SelectForm>
 
                 <InputForm label="Nombre" register={register} name="nombreProducto" type="text"
                     validationRules={{
@@ -112,6 +85,13 @@ const RegistrarProducto = ({ idProducto, setModalActualizar, setModalRegistrar }
                         maxLength: { value: 50, message: "Máximo 50 caracteres" }
                     }}
                     errors={errors} />
+
+                <SelectForm label="Categoría" register={register} name="idCategoria"
+                    validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
+                    errors={errors} >
+                    <option value="" disabled>Seleccione una categoría</option>
+                    {categorias.map(categoria => <option key={categoria.idCategoria} value={categoria.idCategoria}>{categoria.nombreCategoria}</option>)}
+                </SelectForm>
 
                 <InputForm label="Descripción del producto" register={register} name="descripcionProducto" type="text"
                     validationRules={{
@@ -135,7 +115,7 @@ const RegistrarProducto = ({ idProducto, setModalActualizar, setModalRegistrar }
                     validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
                     errors={errors} />
 
-                {idProducto && (
+                {productoSeleccionado && (
                     <SelectForm label="Estado" register={register} name="estadoProducto"
                         validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
                         errors={errors} >
@@ -146,7 +126,7 @@ const RegistrarProducto = ({ idProducto, setModalActualizar, setModalRegistrar }
                 )}
 
                 <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
-                    <ButtonForm name={idProducto ? "Actualizar" : "Registrar"} type="submit" />
+                    <ButtonForm name={productoSeleccionado ? "Actualizar" : "Registrar"} type="submit" />
                 </div>
             </form>
 

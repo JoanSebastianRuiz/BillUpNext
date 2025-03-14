@@ -56,13 +56,12 @@ const ProductosPage: React.FC = () => {
 
   const filtrarProductos = () => {
     const nombreProducto = nombreProductoRef.current?.value;
-    const idEmpresa = idEmpresaRef.current?.value;
     const idCategoria = idCategoriaRef.current?.value;
     const estadoProducto = estadoProductoRef.current?.value;
 
     let productosFiltrados = [...productos];
 
-    if (estadoProducto && estadoProducto !== "true") {
+    if (estadoProducto !== undefined && estadoProducto !== "") {
       productosFiltrados = productosFiltrados.filter(
         (producto) => producto.estadoProducto === (estadoProducto === "true")
       );
@@ -74,12 +73,6 @@ const ProductosPage: React.FC = () => {
           .toLowerCase()
           .includes(nombreProducto.toLowerCase());
       });
-    }
-
-    if (idEmpresa && idEmpresa !== "0") {
-      productosFiltrados = productosFiltrados.filter(
-        (producto) => producto.idEmpresa === Number(idEmpresa)
-      );
     }
 
     if (idCategoria && idCategoria !== "0") {
@@ -97,7 +90,6 @@ const ProductosPage: React.FC = () => {
 
   const limpiarFiltros = () => {
     if (nombreProductoRef.current) nombreProductoRef.current.value = "";
-    if (idEmpresaRef.current) idEmpresaRef.current.value = "0";
     if (idCategoriaRef.current) idCategoriaRef.current.value = "0";
     if (estadoProductoRef.current) estadoProductoRef.current.value = "true";
     filtrarProductos();
@@ -129,25 +121,11 @@ const ProductosPage: React.FC = () => {
             onChange={filtrarProductos}
           />
           <SelectFiltro
-            id="idEmpresa"
-            name="Empresa"
-            onChange={filtrarProductos}
-            ref={idEmpresaRef}
-          >
-            <option value="0">Todas</option>
-            {empresas.map((empresa) => (
-              <option key={empresa.idEmpresa} value={empresa.idEmpresa}>
-                {empresa.nombreEmpresa}
-              </option>
-            ))}
-          </SelectFiltro>
-          <SelectFiltro
             id="idCategoria"
             name="Categoría"
             onChange={filtrarProductos}
             ref={idCategoriaRef}
           >
-            <option value="0">Todas</option>
             {categorias.map((categoria) => (
               <option key={categoria.idCategoria} value={categoria.idCategoria}>
                 {categoria.nombreCategoria}
@@ -160,6 +138,7 @@ const ProductosPage: React.FC = () => {
             onChange={filtrarProductos}
             ref={estadoProductoRef}
             defaultValue="true"
+            selectEstado={true}
           >
             <option value="true">Activo</option>
             <option value="false">Inactivo</option>
@@ -224,7 +203,7 @@ const ProductosPage: React.FC = () => {
         setIsOpen={() => setModalActualizar(false)}
       >
         <RegistrarProducto
-          idProducto={productoSeleccionado?.idProducto}
+          productoSeleccionado={productoSeleccionado}
           setModalActualizar={setModalActualizar}
         />
       </Modal>
