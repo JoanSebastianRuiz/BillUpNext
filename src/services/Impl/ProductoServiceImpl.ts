@@ -7,7 +7,7 @@ import { ProductoRequestDTO } from "@/dto/ProductoRequestDTO";
 export class ProductoServiceImpl implements ProductoService {
   private static instancia: ProductoServiceImpl;
   private productoDAOImpl: ProductoDAOImpl = ProductoDAOImpl.getInstance();
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): ProductoServiceImpl {
     if (!ProductoServiceImpl.instancia) {
@@ -33,10 +33,10 @@ export class ProductoServiceImpl implements ProductoService {
       console.log(producto)
 
       const porcentajeDescuentoProducto =
-      producto.porcentajeDescuentoProducto !== undefined &&
-      producto.porcentajeDescuentoProducto !== null 
-        ? parseFloat(producto.porcentajeDescuentoProducto as any)
-        : 0;
+        producto.porcentajeDescuentoProducto !== undefined &&
+          producto.porcentajeDescuentoProducto !== null
+          ? parseFloat(producto.porcentajeDescuentoProducto as any)
+          : 0;
 
       if (
         !idEmpresa ||
@@ -124,10 +124,10 @@ export class ProductoServiceImpl implements ProductoService {
       } = producto;
 
       const porcentajeDescuentoProducto =
-  producto.porcentajeDescuentoProducto !== undefined &&
-  producto.porcentajeDescuentoProducto !== null 
-    ? parseFloat(producto.porcentajeDescuentoProducto as any)
-    : 0;
+        producto.porcentajeDescuentoProducto !== undefined &&
+          producto.porcentajeDescuentoProducto !== null
+          ? parseFloat(producto.porcentajeDescuentoProducto as any)
+          : 0;
 
       if (
         !idProducto ||
@@ -138,7 +138,7 @@ export class ProductoServiceImpl implements ProductoService {
         !precioVentaProducto ||
         !stockMinimoProducto ||
         !stockMaximoProducto ||
-        !estadoProducto
+        estadoProducto === undefined
       ) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
@@ -155,7 +155,7 @@ export class ProductoServiceImpl implements ProductoService {
         )
       ) {
         return NextResponse.json(
-          { message: "El nombre del producto ya existe"},
+          { message: "El nombre del producto ya existe" },
           { status: 400 }
         );
       }

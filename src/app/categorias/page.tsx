@@ -46,7 +46,6 @@ const CategoriasPage: React.FC = () => {
 
     const filtrarCategorias = () => {
         const nombreCategoria = nombreCategoriaRef.current?.value;
-        const idEmpresa = idEmpresaRef.current?.value;
         const estadoCategoria = estadoCategoriaRef.current?.value;
 
         let categoriasFiltradas = [...categorias];
@@ -55,14 +54,10 @@ const CategoriasPage: React.FC = () => {
             categoriasFiltradas = categoriasFiltradas.filter((categoria) => categoria.estadoCategoria === (estadoCategoria === "true"));
         }
 
-        if (idEmpresa && idEmpresa !== "0") {
-            categoriasFiltradas = categoriasFiltradas.filter((categoria) => categoria.idEmpresa === Number(idEmpresa));
-
-            if (nombreCategoria) {
-                categoriasFiltradas = categoriasFiltradas.filter((categoria) => {
-                    return categoria.nombreCategoria.toLowerCase().includes(nombreCategoria.toLowerCase());
-                });
-            }
+        if (nombreCategoria) {
+            categoriasFiltradas = categoriasFiltradas.filter((categoria) => {
+                return categoria.nombreCategoria.toLowerCase().includes(nombreCategoria.toLowerCase());
+            });
         }
 
         setCategoriasFiltradas(categoriasFiltradas);
@@ -70,7 +65,6 @@ const CategoriasPage: React.FC = () => {
 
     const limpiarFiltros = () => {
         if (nombreCategoriaRef.current) nombreCategoriaRef.current.value = "";
-        if (idEmpresaRef.current) idEmpresaRef.current.value = "0";
         filtrarCategorias();
     };
 
@@ -103,19 +97,6 @@ const CategoriasPage: React.FC = () => {
                         name="Nombre"
                         ref={nombreCategoriaRef}
                         onChange={filtrarCategorias} />
-
-                    <SelectFiltro
-                        id="idEmpresa"
-                        name="Empresa"
-                        onChange={filtrarCategorias}
-                        ref={idEmpresaRef}
-                    >
-                        {empresas.map((emp) => (
-                            <option key={emp.idEmpresa} value={emp.idEmpresa.toString()}>
-                                {emp.nombreEmpresa}
-                            </option>
-                        ))}
-                    </SelectFiltro>
 
                     <SelectFiltro
                         id="estadoCategoria"

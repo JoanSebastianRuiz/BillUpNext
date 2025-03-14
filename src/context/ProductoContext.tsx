@@ -44,7 +44,7 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
     const obtenerProductos = async () => {
         try {
             const respuesta = await axios.get<ProductoResponseDTO[]>(
-                "/api/productos"
+                `/api/empresas/${idEmpresa}/productos`
             );
             if (respuesta.status === 200) {
                 setProductos(respuesta.data);
