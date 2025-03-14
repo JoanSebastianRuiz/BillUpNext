@@ -19,9 +19,10 @@ import SelectForm from '@/components/form/SelectForm';
 import Notificacion from '@/components/form/Notificacion';
 import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';
+import { TerceroResponseEmpresaDTO } from '@/dto/TerceroResponseEmpresaDTO';
 
 
-const RegistrarTerceroEmpresa = ({ idTercero, setModalActualizar, setModalRegistrar, proveedorTerceroEmpresa }: { idTercero?: number, proveedorTerceroEmpresa: boolean, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+const RegistrarTerceroEmpresa = ({ terceroSeleccionado, setModalActualizar, setModalRegistrar, proveedorTerceroEmpresa }: { terceroSeleccionado?: TerceroResponseEmpresaDTO | null, proveedorTerceroEmpresa: boolean, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
     const { departamentos, municipios } = useUsuarioContext();
     const { tiposPersona, regimenesContribuyente } = useEmpresaContext();
@@ -66,53 +67,40 @@ const RegistrarTerceroEmpresa = ({ idTercero, setModalActualizar, setModalRegist
 
 
     useEffect(() => {
-        const fetchTercero = async () => {
-            if (idTercero) {
-                try {
-                    const response = await axios.get(`/api/terceros/${idTercero}?tipo=empresa`);
-                    if (response.status == 200) {
-                        const tercero = response.data;
 
-                        setValue("nombreTercero", tercero.nombreTercero || '');
-                        setValue("nitTercero", tercero.nitTercero || '');
-                        setValue("digitoVerificacionTercero", tercero.digitoVerificacionTercero || '');
-                        setValue("razonSocialTercero", tercero.razonSocialTercero || '');
-                        setValue("idTipoPersona", tercero.idTipoPersona || 0);
-                        setValue("idRegimenContribuyente", tercero.idRegimenContribuyente || 0);
-                        setValue("idDepartamento", tercero.idDepartamento || 0);
-                        setValue("idMunicipio", tercero.idMunicipio || 0);
-                        setValue("codigoPostalTercero", tercero.codigoPostalTercero || '');
-                        setValue("telefonoTercero", tercero.telefonoTercero || '');
-                        setValue("direccionTercero", tercero.direccionTercero || '');
-                        setValue("correoTercero", tercero.correoTercero || '');
-                        setValue("estadoTercero", tercero.estadoTercero.toString());
+        if (terceroSeleccionado) {
+            setValue("nombreTercero", terceroSeleccionado.nombreTercero || '');
+            setValue("nitTercero", terceroSeleccionado.nitTercero || '');
+            setValue("digitoVerificacionTercero", terceroSeleccionado.digitoVerificacionTercero || '');
+            setValue("razonSocialTercero", terceroSeleccionado.razonSocialTercero || '');
+            setValue("idTipoPersona", terceroSeleccionado.idTipoPersona || 0);
+            setValue("idRegimenContribuyente", terceroSeleccionado.idRegimenContribuyente || 0);
+            setValue("idDepartamento", terceroSeleccionado.idDepartamento || 0);
+            setValue("idMunicipio", terceroSeleccionado.idMunicipio || 0);
+            setValue("codigoPostalTercero", terceroSeleccionado.codigoPostalTercero || '');
+            setValue("telefonoTercero", terceroSeleccionado.telefonoTercero || '');
+            setValue("direccionTercero", terceroSeleccionado.direccionTercero || '');
+            setValue("correoTercero", terceroSeleccionado.correoTercero || '');
+            setValue("estadoTercero", terceroSeleccionado.estadoTercero);
 
-                        register("idEmpresa");
-                        setValue("idEmpresa", tercero.idEmpresa || 0);
+            register("idEmpresa");
+            setValue("idEmpresa", terceroSeleccionado.idEmpresa || 0);
 
-                        register("proveedorTercero");
-                        setValue("proveedorTercero", tercero.proveedorTercero);
-                    } else {
-                        console.error("Error al obtener datos del tercero empresa:", response.data.message);
-                    }
-                } catch (error) {
-                    console.error("Error al obtener datos del tercero empresa:", error);
-                }
-            }
-        };
+            register("proveedorTercero");
+            setValue("proveedorTercero", terceroSeleccionado.proveedorTercero);
+        }
 
-        fetchTercero();
-    }, [idTercero, setValue]);
+    }, [terceroSeleccionado, setValue]);
 
 
     const onSubmit = async (data: TerceroRequestEmpresaDTO) => {
         try {
-            if (idTercero) {
+            if (terceroSeleccionado) {
                 let { idDepartamento, ...datosModificados } = data;
 
                 datosModificados = { ...datosModificados, idTipoPersona: parseInt(data.idTipoPersona.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idRegimenContribuyente: parseInt(data.idRegimenContribuyente.toString()), estadoTercero: String(data.estadoTercero) === "true" };
 
-                const respuesta = await axios.put(`/api/terceros/${idTercero}?tipo=empresa`, datosModificados);
+                const respuesta = await axios.put(`/api/terceros/${terceroSeleccionado}?tipo=empresa`, datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerEmpresas(proveedorTerceroEmpresa ? "proveedores" : "clientes");
@@ -145,7 +133,7 @@ const RegistrarTerceroEmpresa = ({ idTercero, setModalActualizar, setModalRegist
 
     return (
         <ContenedorRegistrar name={
-            idTercero ?
+            terceroSeleccionado ?
                 proveedorTerceroEmpresa ? "Actualizar proveedor" : "Actualizar cliente"
                 : proveedorTerceroEmpresa ? "Registrar proveedor" : "Registrar cliente"}>
 
@@ -254,7 +242,7 @@ const RegistrarTerceroEmpresa = ({ idTercero, setModalActualizar, setModalRegist
                         validate: (value: string) => isValidEmail(value) || "Correo inválido"
                     }} errors={errors} />
 
-                {idTercero && (
+                {terceroSeleccionado && (
                     <SelectForm label="Estado" register={register} name="estadoTercero"
                         validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
                         errors={errors} >
@@ -265,7 +253,7 @@ const RegistrarTerceroEmpresa = ({ idTercero, setModalActualizar, setModalRegist
                 )}
 
                 <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
-                    <ButtonForm name={idTercero ? "Actualizar" : "Registrar"} type="submit" />
+                    <ButtonForm name={terceroSeleccionado ? "Actualizar" : "Registrar"} type="submit" />
                 </div>
             </form>
 

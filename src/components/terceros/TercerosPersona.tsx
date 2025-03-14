@@ -301,7 +301,7 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
 
             {/* Modal para actualizar un persona*/}
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
-                <RegistrarTerceroPersona idTercero={terceroSeleccionado?.idTercero} setModalActualizar={setModalActualizar} proveedorTerceroPersona={proveedorTerceroPersona} />
+                <RegistrarTerceroPersona terceroSeleccionado={terceroSeleccionado} setModalActualizar={setModalActualizar} proveedorTerceroPersona={proveedorTerceroPersona} />
             </Modal>
 
         </section >

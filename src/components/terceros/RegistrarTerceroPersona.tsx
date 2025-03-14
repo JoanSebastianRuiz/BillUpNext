@@ -18,12 +18,13 @@ import SelectForm from '@/components/form/SelectForm';
 import Notificacion from '@/components/form/Notificacion';
 import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';
+import { TerceroResponsePersonaDTO } from '@/dto/TerceroResponsePersonaDTO';
 
 
-const RegistrarTerceroPersona = ({ idTercero, setModalActualizar, setModalRegistrar, proveedorTerceroPersona }: { idTercero?: number, proveedorTerceroPersona: boolean, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+const RegistrarTerceroPersona = ({ terceroSeleccionado, setModalActualizar, setModalRegistrar, proveedorTerceroPersona }: { terceroSeleccionado?: TerceroResponsePersonaDTO | null, proveedorTerceroPersona: boolean, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
     const { departamentos, municipios, tiposDocumento } = useUsuarioContext();
-    const {proveedoresPersona, clientesPersona} = useTerceroContext()
+    const { proveedoresPersona, clientesPersona } = useTerceroContext()
 
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
     const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);
@@ -35,7 +36,7 @@ const RegistrarTerceroPersona = ({ idTercero, setModalActualizar, setModalRegist
     const idDepartamento = watch("idDepartamento");
     const idMunicipio = watch("idMunicipio");
 
-    const {obtenerPersonas} =useTerceroContext()
+    const { obtenerPersonas } = useTerceroContext()
 
     const { data: session } = useSession()
     const idEmpresa = session?.user?.idEmpresa ?? 0;
@@ -66,49 +67,35 @@ const RegistrarTerceroPersona = ({ idTercero, setModalActualizar, setModalRegist
 
 
     useEffect(() => {
-        const fetchTercero = async () => {
-            if (idTercero) {
-                    const tercero = usuarios.find(usuario=>usu)
-                    if (response.status == 200) {
-                        const tercero = response.data;
+        if (terceroSeleccionado) {
+            setValue("nombreTercero", terceroSeleccionado.nombreTercero || '');
+            setValue("apellidoTercero", terceroSeleccionado.apellidoTercero || '');
+            setValue("idTipoDocumento", terceroSeleccionado.idTipoDocumento || 0);
+            setValue("numeroDocumentoTercero", terceroSeleccionado.numeroDocumentoTercero || '');
+            setValue("idDepartamento", terceroSeleccionado.idDepartamento || 0);
+            setValue("idMunicipio", terceroSeleccionado.idMunicipio || 0);
+            setValue("telefonoTercero", terceroSeleccionado.telefonoTercero || '');
+            setValue("direccionTercero", terceroSeleccionado.direccionTercero || '');
+            setValue("correoTercero", terceroSeleccionado.correoTercero || '');
+            setValue("estadoTercero", terceroSeleccionado.estadoTercero);
 
-                        setValue("nombreTercero", tercero.nombreTercero || '');
-                        setValue("apellidoTercero", tercero.apellidoTercero || '');
-                        setValue("idTipoDocumento", tercero.idTipoDocumento || 0);
-                        setValue("numeroDocumentoTercero", tercero.numeroDocumentoTercero || '');
-                        setValue("idDepartamento", tercero.idDepartamento || 0);
-                        setValue("idMunicipio", tercero.idMunicipio || 0);
-                        setValue("telefonoTercero", tercero.telefonoTercero || '');
-                        setValue("direccionTercero", tercero.direccionTercero || '');
-                        setValue("correoTercero", tercero.correoTercero || '');
-                        setValue("estadoTercero", tercero.estadoTercero.toString());
+            register("idEmpresa");
+            setValue("idEmpresa", terceroSeleccionado.idEmpresa || 0);
 
-                        register("idEmpresa");
-                        setValue("idEmpresa", tercero.idEmpresa || 0);
-
-                        register("proveedorTercero");
-                        setValue("proveedorTercero", tercero.proveedorTercero);
-                    } else {
-                        console.error("Error al obtener datos del tercero persona:", response.data.message);
-                    }
-                } catch (error) {
-                    console.error("Error al obtener datos del tercero persona:", error);
-                }
-            }
-        };
-
-        fetchTercero();
-    }, [idTercero, setValue]);
+            register("proveedorTercero");
+            setValue("proveedorTercero", terceroSeleccionado.proveedorTercero);
+        }
+    }, [terceroSeleccionado, setValue]);
 
 
     const onSubmit = async (data: TerceroRequestPersonaDTO) => {
         try {
-            if (idTercero) {
+            if (terceroSeleccionado) {
                 let { idDepartamento, ...datosModificados } = data;
 
                 datosModificados = { ...datosModificados, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), estadoTercero: String(data.estadoTercero) === "true" };
 
-                const respuesta = await axios.put(`/api/terceros/${idTercero}?tipo=persona`, datosModificados);
+                const respuesta = await axios.put(`/api/terceros/${terceroSeleccionado}?tipo=persona`, datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerPersonas(proveedorTerceroPersona ? "proveedores" : "clientes");
@@ -141,7 +128,7 @@ const RegistrarTerceroPersona = ({ idTercero, setModalActualizar, setModalRegist
 
     return (
         <ContenedorRegistrar name={
-            idTercero ?
+            terceroSeleccionado ?
                 proveedorTerceroPersona ? "Actualizar proveedor" : "Actualizar cliente"
                 : proveedorTerceroPersona ? "Registrar proveedor" : "Registrar cliente"}>
 
@@ -208,7 +195,7 @@ const RegistrarTerceroPersona = ({ idTercero, setModalActualizar, setModalRegist
                         validate: (value: string) => isValidEmail(value) || "Correo inválido"
                     }} errors={errors} />
 
-                {idTercero && (
+                {terceroSeleccionado && (
                     <SelectForm label="Estado" register={register} name="estadoTercero"
                         validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
                         errors={errors} >
@@ -219,7 +206,7 @@ const RegistrarTerceroPersona = ({ idTercero, setModalActualizar, setModalRegist
                 )}
 
                 <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
-                    <ButtonForm name={idTercero ? "Actualizar" : "Registrar"} type="submit" />
+                    <ButtonForm name={terceroSeleccionado ? "Actualizar" : "Registrar"} type="submit" />
                 </div>
             </form>
 

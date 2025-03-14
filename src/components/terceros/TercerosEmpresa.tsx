@@ -298,7 +298,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
 
             {/* Modal para actualizar un empresa*/}
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
-                <RegistrarTerceroEmpresa idTercero={terceroSeleccionado?.idTercero} setModalActualizar={setModalActualizar} proveedorTerceroEmpresa={proveedorTerceroEmpresa} />
+                <RegistrarTerceroEmpresa terceroSeleccionado={terceroSeleccionado} setModalActualizar={setModalActualizar} proveedorTerceroEmpresa={proveedorTerceroEmpresa} />
             </Modal>
 
         </section >

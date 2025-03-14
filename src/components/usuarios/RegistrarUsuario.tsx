@@ -18,9 +18,10 @@ import SelectForm from '@/components/form/SelectForm';
 import Notificacion from '@/components/form/Notificacion';
 import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';
+import { UsuarioResponseDTO } from '@/dto/UsuarioResponseDTO';
 
 
-const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setModalRegistrar }: { idUsuario?: number, obtenerUsuarios: () => void, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+const RegistrarUsuario = ({ usuarioSeleccionado, obtenerUsuarios, setModalActualizar, setModalRegistrar }: { usuarioSeleccionado?: UsuarioResponseDTO | null, obtenerUsuarios: () => void, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
     const { departamentos, municipios, roles, tiposDocumento } = useUsuarioContext();
     const { empresas } = useEmpresaContext();
@@ -65,36 +66,23 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
 
 
     useEffect(() => {
-        const fetchUsuario = async () => {
-            if (idUsuario) {
-                try {
-                    const response = await axios.get(`/api/usuarios/${idUsuario}`);
-                    if (response.status == 200) {
-                        const usuario = response.data;
+        if (usuarioSeleccionado) {
 
-                        setValue("nombreUsuario", usuario.nombreUsuario || '');
-                        setValue("apellidoUsuario", usuario.apellidoUsuario || '');
-                        setValue("idTipoDocumento", usuario.idTipoDocumento || 0);
-                        setValue("numeroDocumentoUsuario", usuario.numeroDocumentoUsuario || '');
-                        setValue("idDepartamento", usuario.idDepartamento || 0);
-                        setValue("idMunicipio", usuario.idMunicipio || 0);
-                        setValue("idEmpresa", usuario.idEmpresa || 0);
-                        setValue("idRol", usuario.idRol || 0);
-                        setValue("telefonoUsuario", usuario.telefonoUsuario || '');
-                        setValue("direccionUsuario", usuario.direccionUsuario || '');
-                        setValue("correoUsuario", usuario.correoUsuario || '');
-                        setValue("estadoUsuario", usuario.estadoUsuario.toString());
-                    } else {
-                        console.error("Error al obtener datos del usuario:", response.data.message);
-                    }
-                } catch (error) {
-                    console.error("Error al obtener datos del usuario:", error);
-                }
-            }
+            setValue("nombreUsuario", usuarioSeleccionado.nombreUsuario || '');
+            setValue("apellidoUsuario", usuarioSeleccionado.apellidoUsuario || '');
+            setValue("idTipoDocumento", usuarioSeleccionado.idTipoDocumento || 0);
+            setValue("numeroDocumentoUsuario", usuarioSeleccionado.numeroDocumentoUsuario || '');
+            setValue("idDepartamento", usuarioSeleccionado.idDepartamento || 0);
+            setValue("idMunicipio", usuarioSeleccionado.idMunicipio || 0);
+            setValue("idEmpresa", usuarioSeleccionado.idEmpresa || 0);
+            setValue("idRol", usuarioSeleccionado.idRol || 0);
+            setValue("telefonoUsuario", usuarioSeleccionado.telefonoUsuario || '');
+            setValue("direccionUsuario", usuarioSeleccionado.direccionUsuario || '');
+            setValue("correoUsuario", usuarioSeleccionado.correoUsuario || '');
+            setValue("estadoUsuario", usuarioSeleccionado.estadoUsuario);
+
         };
-
-        fetchUsuario();
-    }, [idUsuario, setValue]);
+    }, [usuarioSeleccionado, setValue]);
 
     useEffect(() => {
         if (idRol === 2) {
@@ -104,7 +92,7 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
 
     const onSubmit = async (data: UsuarioRequestDTO) => {
         try {
-            if (idUsuario) {
+            if (usuarioSeleccionado) {
                 let { idDepartamento, ...datosModificados } = data;
                 console.log(data);
 
@@ -112,7 +100,7 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
 
                 console.log(datosModificados);
 
-                const respuesta = await axios.put(`/api/usuarios/${idUsuario}`, datosModificados);
+                const respuesta = await axios.put(`/api/usuarios/${usuarioSeleccionado}`, datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerUsuarios();
@@ -144,7 +132,7 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
 
 
     return (
-        <ContenedorRegistrar name={idUsuario ? "Actualizar usuario" : "Registrar usuario"}>
+        <ContenedorRegistrar name={usuarioSeleccionado ? "Actualizar usuario" : "Registrar usuario"}>
 
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
                 <InputForm label="Nombre" register={register} name="nombreUsuario" type="text"
@@ -230,7 +218,7 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
                         validate: (value: string) => isValidEmail(value) || "Correo inválido"
                     }} errors={errors} />
 
-                {idUsuario && (
+                {usuarioSeleccionado && (
                     <SelectForm label="Estado" register={register} name="estadoUsuario"
                         validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
                         errors={errors} >
@@ -241,7 +229,7 @@ const RegistrarUsuario = ({ idUsuario, obtenerUsuarios, setModalActualizar, setM
                 )}
 
                 <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
-                    <ButtonForm name={idUsuario ? "Actualizar" : "Registrar"} type="submit" />
+                    <ButtonForm name={usuarioSeleccionado ? "Actualizar" : "Registrar"} type="submit" />
                 </div>
             </form>
 
