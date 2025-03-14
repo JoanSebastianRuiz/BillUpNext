@@ -32,7 +32,7 @@ export const PUT = async (
   { params }: { params: { idGravamen: string } }
 ) => {
   const gravamenService = GravamenServiceImpl.getInstance();
-  const { idGravamen } = params;
+  const { idGravamen } =await params;
   const data = await request.json();
 
   if (!idGravamen) {
