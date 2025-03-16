@@ -1,7 +1,7 @@
 export interface CompraDTO {
-    idCompra: number,
+    idCompra?: number,
     idTercero: number,
     idUsuario: number,
-    fechaCompra: Date,
-    observacionCompra: string
+    fechaCompra?: Date,
+    observacionCompra?: string
 }
