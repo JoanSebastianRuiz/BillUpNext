@@ -18,10 +18,10 @@ export class MovimientoServiceImpl implements MovimientoService {
 
   public create = async (movimiento: MovimientoDTO): Promise<NextResponse> => {
     try {
-      const { idUsuario, idCaja, descripcionMovimiento, valorMovimiento } =
+      const { idUsuario, idCaja, tipoMovimiento, descripcionMovimiento, valorMovimiento } =
         movimiento;
 
-      if (!idUsuario || !idCaja || !descripcionMovimiento || !valorMovimiento) {
+      if (!idUsuario || !idCaja || !tipoMovimiento || !descripcionMovimiento || !valorMovimiento) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
           { status: 400 }
@@ -42,46 +42,6 @@ export class MovimientoServiceImpl implements MovimientoService {
       }
     } catch (error) {
       throw new Error(`Error en MovimientoService.create: ${error}`);
-    }
-  };
-
-  public update = async (movimiento: MovimientoDTO): Promise<NextResponse> => {
-    try {
-      const {
-        idMovimiento,
-        idUsuario,
-        idCaja,
-        descripcionMovimiento,
-        valorMovimiento,
-      } = movimiento;
-
-      if (
-        !idMovimiento ||
-        !idUsuario ||
-        !idCaja ||
-        !descripcionMovimiento ||
-        !valorMovimiento
-      ) {
-        return NextResponse.json(
-          { message: "Faltan campos por llenar" },
-          { status: 400 }
-        );
-      }
-
-      const respuesta = await this.movimientoDAOImpl.update(movimiento);
-      if (respuesta) {
-        return NextResponse.json(
-          { message: "Movimiento actualizado correctamente" },
-          { status: 200 }
-        );
-      } else {
-        return NextResponse.json(
-          { message: "Error al actualizar el movimiento" },
-          { status: 500 }
-        );
-      }
-    } catch (error) {
-      throw new Error(`Error en MovimientoService.update: ${error}`);
     }
   };
 

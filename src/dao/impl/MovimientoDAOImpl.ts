@@ -17,7 +17,7 @@ export class MovimientoDAOImpl implements MovimientoDAO {
   public getAll = async (): Promise<Array<MovimientoDTO>> => {
     try {
       const movimientoDatabase: MovimientoDTO[] = await ejecutarQuery(
-        `SELECT m.\"idMovimiento\", m.\"idUsuario\", m.\"idCaja\", m.\"descripcionMovimiento\", m.\"valorMovimiento\"
+        `SELECT m.\"idMovimiento\", m.\"idUsuario\", m.\"idCaja\", m.\"tipoMovimiento\", m.\"descripcionMovimiento\", m.\"fechaMovimiento\", m.\"valorMovimiento\"
             FROM \"Movimiento\" m;`,
         []
       );
@@ -33,7 +33,7 @@ export class MovimientoDAOImpl implements MovimientoDAO {
   ): Promise<MovimientoDTO | null> => {
     try {
       const respuesta: MovimientoDTO[] = await ejecutarQuery(
-        `SELECT m.\"idMovimiento\", m.\"idUsuario\", m.\"idCaja\", m.\"descripcionMovimiento\", m.\"valorMovimiento\"
+        `SELECT m.\"idMovimiento\", m.\"idUsuario\", m.\"idCaja\", m.\"fechaMovimiento\", m.\"descripcionMovimiento\", m.\"valorMovimiento\"
             FROM \"Movimiento\" m
             WHERE m.\"idMovimiento\" = $1;`,
         [idMovimiento]
@@ -48,10 +48,11 @@ export class MovimientoDAOImpl implements MovimientoDAO {
   public create = async (movimiento: MovimientoDTO): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT insertarMovimiento($1,$2,$3,$4) as resultado;`,
+        `SELECT insertarMovimiento($1,$2,$3,$4,$5) as resultado;`,
         [
           movimiento.idUsuario,
           movimiento.idCaja,
+          movimiento.tipoMovimiento,
           movimiento.descripcionMovimiento,
           movimiento.valorMovimiento,
         ]
@@ -60,25 +61,6 @@ export class MovimientoDAOImpl implements MovimientoDAO {
       return respuesta.length > 0 ? respuesta[0].resultado : false;
     } catch (error) {
         throw new Error(`Error en MovimientoDAO.create: ${error}`);
-    }
-  };
-
-  public update = async (movimiento: MovimientoDTO): Promise<boolean> => {
-    try {
-        const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-            `SELECT actualizarMovimiento($1,$2,$3,$4,$5) as resultado;`,
-            [
-                movimiento.idMovimiento,
-                movimiento.idUsuario,
-                movimiento.idCaja,
-                movimiento.descripcionMovimiento,
-                movimiento.valorMovimiento
-            ]
-        );
-
-        return respuesta.length > 0 ? respuesta[0].resultado : false;
-    } catch (error) {
-        throw new Error(`Error en MovimientoDAO.update: ${error}`);
     }
   };
 }
