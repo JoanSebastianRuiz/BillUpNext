@@ -18,7 +18,7 @@ const RegistrarGravamen = ({
   setModalActualizar,
   setModalRegistrar,
 }: {
-  gravamenSeleccionado?: GravamenDTO;
+  gravamenSeleccionado?: GravamenDTO | null;
   setModalActualizar?: (value: boolean) => void;
   setModalRegistrar?: (value: boolean) => void;
 }) => {
