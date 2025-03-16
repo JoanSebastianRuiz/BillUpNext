@@ -1,5 +1,5 @@
 export interface DetalleVentaDTO {
-    idDetalleVenta: number,
+    idDetalleVenta?: number,
     idVenta: number,
     idProducto: number,
     idGravamen: number,
