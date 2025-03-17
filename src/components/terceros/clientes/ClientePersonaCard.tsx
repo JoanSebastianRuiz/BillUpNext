@@ -3,8 +3,8 @@ import { ReactNode } from "react";
 
 import { TerceroResponsePersonaDTO } from "@/dto/TerceroResponsePersonaDTO";
 
-import ContenedorCard from "../modal/ContenedorCard";
-import ParrafoCard from "../modal/ParrafoCard";
+import ContenedorCard from "../../modal/ContenedorCard";
+import ParrafoCard from "../../modal/ParrafoCard";
 
 
 

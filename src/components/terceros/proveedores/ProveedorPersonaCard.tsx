@@ -10,10 +10,11 @@ import { useState } from "react";
 import { TerceroResponsePersonaDTO } from "@/dto/TerceroResponsePersonaDTO";
 import { TerceroProductoDTO } from "@/dto/TerceroProductoDTO";
 
-import ContenedorCardLista from "../modal/ContenedorCardLista";
-import ParrafoCard from "../modal/ParrafoCard";
-import BotonAccionCard from "../cards/BotonAccionCard";
-import Modal from "../modal/Modal";
+import ContenedorCardLista from "../../modal/ContenedorCardLista";
+import ParrafoCard from "../../modal/ParrafoCard";
+import BotonAccionCard from "../../cards/BotonAccionCard";
+import Modal from "../../modal/Modal";
+import RegistrarTerceroProducto from "./RegistrarTerceroProducto";
 
 
 
@@ -24,7 +25,7 @@ const ProveedorPersonaCard = ({ tercero, children }: { tercero: TerceroResponseP
     const { productos } = useProductoContext();
     const productosProveedor = proveedoresProducto.filter(p => p.idTercero === tercero.idTercero);
     const [modalActualizar, setModalActualizar] = useState(false);
-    const [modalAgregar, setModalAgregar] = useState(false);
+    const [modalRegistar, setModalRegistrar] = useState(false);
     const [terceroProductoSeleccionado, setTerceroProductoSeleccionado] = useState<TerceroProductoDTO | null>(null);
 
     const handleCambiarEstado = async (terceroProducto: TerceroProductoDTO) => {
@@ -65,7 +66,7 @@ const ProveedorPersonaCard = ({ tercero, children }: { tercero: TerceroResponseP
                     <BotonAccionCard
                         Symbol={Plus}
                         onClick={() => {
-                            setModalAgregar(true);
+                            setModalRegistrar(true);
                         }}
                         h={3}
                     />
@@ -101,14 +102,14 @@ const ProveedorPersonaCard = ({ tercero, children }: { tercero: TerceroResponseP
             </div>
             
             {/* Modal para aagregar un tercero producto*/}
-            <Modal isOpen={modalAgregar} setIsOpen={() => setModalAgregar(false)}>
-                <RegistrarTerceroPersona setModalRegistrar={setModalRegistrar} proveedorTerceroPersona={proveedorTerceroPersona} />
+            <Modal isOpen={modalRegistar} setIsOpen={() => setModalRegistrar(false)}>
+                <RegistrarTerceroProducto setModalRegistrar={setModalRegistrar} />
             </Modal>
 
 
             {/* Modal para actualizar un tercero producto*/}
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
-                <RegistrarTerceroPersona idTercero={terceroSeleccionado?.idTercero} setModalActualizar={setModalActualizar} proveedorTerceroPersona={proveedorTerceroPersona} />
+                <RegistrarTerceroProducto terceroProductoSeleccionado={terceroProductoSeleccionado} setModalActualizar={setModalActualizar} />
             </Modal>
 
         </ContenedorCardLista>

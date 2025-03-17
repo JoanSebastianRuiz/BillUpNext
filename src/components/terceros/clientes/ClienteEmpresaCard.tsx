@@ -2,8 +2,8 @@ import { ReactNode } from "react";
 
 import { TerceroResponseEmpresaDTO } from "@/dto/TerceroResponseEmpresaDTO";
 
-import ContenedorCard from "../modal/ContenedorCard";
-import ParrafoCard from "../modal/ParrafoCard";
+import ContenedorCard from "../../modal/ContenedorCard";
+import ParrafoCard from "../../modal/ParrafoCard";
 
 const ClienteEmpresaCard = ({ tercero, children }: { tercero: TerceroResponseEmpresaDTO, children: ReactNode }) => {
     return (

@@ -16,99 +16,62 @@ import { isValidEmail } from '@/util/validators/validators';
 import InputForm from '@/components/form/InputForm';
 import SelectForm from '@/components/form/SelectForm';
 import Notificacion from '@/components/form/Notificacion';
-import ContenedorRegistrar from '../modal/ContenedorRegistrar';
-import ButtonForm from '../form/ButtonForm';
+import ContenedorRegistrar from '../../modal/ContenedorRegistrar';
+import ButtonForm from '../../form/ButtonForm';
+import { TerceroProductoDTO } from '@/dto/TerceroProductoDTO';
+import { useProductoContext } from '@/context/ProductoContext';
 
 
-const RegistrarTerceroProducto = ({ idTerceroProducto, setModalActualizar, setModalRegistrar, proveedorTerceroPersona }: { idTerceroProducto?: number, proveedorTerceroPersona: boolean, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+const RegistrarTerceroProducto = ({ terceroProductoSeleccionado, setModalActualizar, setModalRegistrar }: { terceroProductoSeleccionado?: TerceroProductoDTO | null, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
-    const { departamentos, municipios, tiposDocumento } = useUsuarioContext();
-
-    const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
-    const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
     const { register, handleSubmit, formState: { errors }, watch, setValue, reset } = useForm<TerceroRequestPersonaDTO>();
 
-    const idDepartamento = watch("idDepartamento");
-    const idMunicipio = watch("idMunicipio");
+    const { obtenerProveedoresProducto, proveedoresEmpresa, proveedoresPersona, proveedoresProducto } = useTerceroContext();
+    const { productos } = useProductoContext();
 
-    const {obtenerPersonas} =useTerceroContext()
+    const productosFiltrados = productos.filter(
+        p => !proveedoresProducto.some(pp => pp.idProducto === p.idProducto && pp.idTercero === terceroProductoSeleccionado?.idTercero)
+      );
 
     const { data: session } = useSession()
-    const idEmpresa = session?.user?.idEmpresa ?? 0;
+    const idEmpresa = session?.user?.idEmpresa;
+
 
     useEffect(() => {
-        if (!departamentos.length) return;
-        setDepartamentosFiltrados(departamentos);
+        if (terceroProductoSeleccionado) {
 
-        if (idDepartamento) {
-            setMunicipiosFiltrados(municipios.filter((municipio) => municipio.idDepartamento == idDepartamento));
+            setValue("nombreTercero", tercero.nombreTercero || '');
+            setValue("apellidoTercero", tercero.apellidoTercero || '');
+            setValue("idTipoDocumento", tercero.idTipoDocumento || 0);
+            setValue("numeroDocumentoTercero", tercero.numeroDocumentoTercero || '');
+            setValue("idDepartamento", tercero.idDepartamento || 0);
+            setValue("idMunicipio", tercero.idMunicipio || 0);
+            setValue("telefonoTercero", tercero.telefonoTercero || '');
+            setValue("direccionTercero", tercero.direccionTercero || '');
+            setValue("correoTercero", tercero.correoTercero || '');
+            setValue("estadoTercero", tercero.estadoTercero.toString());
+
+            register("idEmpresa");
+            setValue("idEmpresa", tercero.idEmpresa || 0);
+
+            register("proveedorTercero");
+            setValue("proveedorTercero", tercero.proveedorTercero);
         }
 
-    }, [idDepartamento, departamentos]);
-
-
-    useEffect(() => {
-        if (!municipios.length) return;
-
-        setMunicipiosFiltrados(municipios);
-
-        if (idMunicipio) {
-            const departamentoEncontrado = municipios.find((municipio) => municipio.idMunicipio == idMunicipio)?.idDepartamento;
-            if (departamentoEncontrado) {
-                setValue("idDepartamento", departamentoEncontrado);
-            }
-        }
-    }, [idMunicipio, municipios]);
-
-
-    useEffect(() => {
-        const fetchTercero = async () => {
-            if (idTerceroProducto) {
-                try {
-                    const response = await axios.get(`/api/terceros/${idTerceroProducto}?tipo=persona`);
-                    if (response.status == 200) {
-                        const tercero = response.data;
-
-                        setValue("nombreTercero", tercero.nombreTercero || '');
-                        setValue("apellidoTercero", tercero.apellidoTercero || '');
-                        setValue("idTipoDocumento", tercero.idTipoDocumento || 0);
-                        setValue("numeroDocumentoTercero", tercero.numeroDocumentoTercero || '');
-                        setValue("idDepartamento", tercero.idDepartamento || 0);
-                        setValue("idMunicipio", tercero.idMunicipio || 0);
-                        setValue("telefonoTercero", tercero.telefonoTercero || '');
-                        setValue("direccionTercero", tercero.direccionTercero || '');
-                        setValue("correoTercero", tercero.correoTercero || '');
-                        setValue("estadoTercero", tercero.estadoTercero.toString());
-
-                        register("idEmpresa");
-                        setValue("idEmpresa", tercero.idEmpresa || 0);
-
-                        register("proveedorTercero");
-                        setValue("proveedorTercero", tercero.proveedorTercero);
-                    } else {
-                        console.error("Error al obtener datos del tercero persona:", response.data.message);
-                    }
-                } catch (error) {
-                    console.error("Error al obtener datos del tercero persona:", error);
-                }
-            }
-        };
-
-        fetchTercero();
-    }, [idTerceroProducto, setValue]);
+    }, [terceroProductoSeleccionado, setValue]);
 
 
     const onSubmit = async (data: TerceroRequestPersonaDTO) => {
         try {
-            if (idTerceroProducto) {
+            if (terceroProductoSeleccionado) {
                 let { idDepartamento, ...datosModificados } = data;
 
                 datosModificados = { ...datosModificados, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), estadoTercero: String(data.estadoTercero) === "true" };
 
-                const respuesta = await axios.put(`/api/terceros/${idTerceroProducto}?tipo=persona`, datosModificados);
+                const respuesta = await axios.put(`/api/terceros/${terceroProductoSeleccionado}?tipo=persona`, datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerPersonas(proveedorTerceroPersona ? "proveedores" : "clientes");
@@ -141,30 +104,19 @@ const RegistrarTerceroProducto = ({ idTerceroProducto, setModalActualizar, setMo
 
     return (
         <ContenedorRegistrar name={
-            idTerceroProducto ?
-                proveedorTerceroPersona ? "Actualizar proveedor" : "Actualizar cliente"
-                : proveedorTerceroPersona ? "Registrar proveedor" : "Registrar cliente"}>
+            terceroProductoSeleccionado ? "Actualizar información" : "Registrar producto"}>
 
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-                <InputForm label="Nombre" register={register} name="nombreTercero" type="text"
-                    validationRules={{
-                        required: { value: true, message: "Este campo es obligatorio" },
-                        maxLength: { value: 100, message: "Máximo 100 caracteres" }
-                    }}
-                    errors={errors} />
-
-                <InputForm label="Apellido" register={register} name="apellidoTercero" type="text"
-                    validationRules={{
-                        required: { value: true, message: "Este campo es obligatorio" },
-                        maxLength: { value: 100, message: "Máximo 100 caracteres" }
-                    }}
-                    errors={errors} />
-
-                <SelectForm label="Tipo de documento" register={register} name="idTipoDocumento"
+                <SelectForm label="Producto" register={register} name="idProducto"
                     validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
                     errors={errors} >
-                    <option value="" disabled>Seleccione un tipo de documento</option>
-                    {tiposDocumento.map(tipo => <option key={tipo.idTipoDocumento} value={tipo.idTipoDocumento}>{tipo.nombreTipoDocumento}</option>)}
+                    <option value="" disabled>Seleccione un producto</option>
+                    {productos
+                        
+                        .map(proveedorProducto => {
+                            const producto = productos.find(p => p.idProducto === proveedorProducto.idProducto);
+                            return <option key={proveedorProducto.idProducto} value={proveedorProducto.idProducto}>{producto?.nombreProducto}</option>
+                        })}
                 </SelectForm>
 
                 <InputForm label="Número de documento" type="number" register={register} name="numeroDocumentoTercero"
@@ -208,7 +160,7 @@ const RegistrarTerceroProducto = ({ idTerceroProducto, setModalActualizar, setMo
                         validate: (value: string) => isValidEmail(value) || "Correo inválido"
                     }} errors={errors} />
 
-                {idTerceroProducto && (
+                {terceroProductoSeleccionado && (
                     <SelectForm label="Estado" register={register} name="estadoTercero"
                         validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
                         errors={errors} >
@@ -219,7 +171,7 @@ const RegistrarTerceroProducto = ({ idTerceroProducto, setModalActualizar, setMo
                 )}
 
                 <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
-                    <ButtonForm name={idTerceroProducto ? "Actualizar" : "Registrar"} type="submit" />
+                    <ButtonForm name={terceroProductoSeleccionado ? "Actualizar" : "Registrar"} type="submit" />
                 </div>
             </form>
 
@@ -227,7 +179,7 @@ const RegistrarTerceroProducto = ({ idTerceroProducto, setModalActualizar, setMo
             {error && <Notificacion type="error" message={error} />}
             {success && <Notificacion type="success" message={success} />}
 
-        </ContenedorRegistrar>
+        </ContenedorRegistrar >
     )
 };
 
