@@ -9,10 +9,10 @@ CREATE OR REPLACE FUNCTION insertarVenta(
     RETURNS BOOLEAN AS
 $$
 DECLARE
-    idVenta "Venta"."idVenta"%TYPE
+    idVenta "Venta"."idVenta"%TYPE;
 BEGIN
     INSERT INTO "Venta" ("idTercero", "idCaja", "idUsuario", "idUbicacionVenta", "idTipoMedioPago", "observacionVenta", "valorTotalVenta")
-    VALUES ( _idTercero, _ idCaja, _idUsuario, _idUbicacionVenta, _idTipoMedioPago, _observacioVenta, _valorTotalVenta);
+    VALUES ( _idTercero, _idCaja, _idUsuario, _idUbicacionVenta, _idTipoMedioPago, _observacioVenta, _valorTotalVenta);
 
     IF FOUND THEN
         RAISE NOTICE 'Se insertó correctamente la venta';

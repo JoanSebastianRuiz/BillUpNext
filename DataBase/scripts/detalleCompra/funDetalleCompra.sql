@@ -2,12 +2,12 @@ CREATE OR REPLACE FUNCTION insertarDetalleCompra(
     _idCompra "DetalleCompra"."idCompra"%TYPE,
     _idProducto "DetalleCompra"."idProducto"%TYPE,
     _cantidadDetalleCompra "DetalleCompra"."cantidadDetalleCompra"%TYPE,
-    _valorDetalleCompra "DetalleCompra"."valorDetalleCompra"%TYPE
-    _fechaVencimientoDetalleCompra "DetalleCompra"."fechaVencimientoDetalleCompra")
+    _valorDetalleCompra "DetalleCompra"."valorDetalleCompra"%TYPE,
+    _fechaVencimientoDetalleCompra "DetalleCompra"."fechaVencimientoDetalleCompra"%TYPE)
     RETURNS BOOLEAN AS
 $$
 DECLARE
-    _idDetalleCompra "DetalleCompra"."DetalleCompra"%TYPE;
+    _idDetalleCompra "DetalleCompra"."idDetalleCompra"%TYPE;
 BEGIN
     INSERT INTO "DetalleCompra" ("idCompra", "idProducto", "cantidadDetalleCompra", "valorDetalleCompra", "fechaVencimientoDetalleCompra")
     VALUES (_idCompra, _idProducto, _cantidadDetalleCompra, _valorDetalleCompra, _fechaVencimientoDetalleCompra);
@@ -29,8 +29,8 @@ CREATE OR REPLACE FUNCTION actualizarDetalleCompra(
     _idCompra "DetalleCompra"."idCompra"%TYPE,
     _idProducto "DetalleCompra"."idProducto"%TYPE,
     _cantidadDetalleCompra "DetalleCompra"."cantidadDetalleCompra"%TYPE,
-    _valorDetalleCompra "DetalleCompra"."valorDetalleCompra"%TYPE
-    _fechaVencimientoDetalleCompra "DetalleCompra"."fechaVencimientoDetalleCompra")
+    _valorDetalleCompra "DetalleCompra"."valorDetalleCompra"%TYPE,
+    _fechaVencimientoDetalleCompra "DetalleCompra"."fechaVencimientoDetalleCompra"%TYPE)
     RETURNS BOOLEAN AS
 $$
 BEGIN
