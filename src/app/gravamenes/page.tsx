@@ -109,6 +109,7 @@ const GravamenesPage: React.FC = () => {
             name="Estado"
             onChange={filtrarGravamenes}
             ref={estadoGravamenRef}
+            selectEstado={true}
             defaultValue="true"
           >
             <option value="true">Activo</option>

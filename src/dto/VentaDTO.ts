@@ -1,9 +1,11 @@
 export interface VentaDTO {
-    idVenta: number,
+    idVenta?: number,
     idTercero: number,
     idCaja: number,
     idUsuario: number,
     idUbicacionVenta: number,
-    fechaVenta: Date,
-    observacionVenta: string
+    idTipoMedioPago: number,
+    fechaVenta?: Date,
+    observacionVenta?: string,
+    valorTotalVenta: number
 }

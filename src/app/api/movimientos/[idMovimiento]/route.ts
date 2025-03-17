@@ -19,29 +19,5 @@ export const GET = async (_:Request, { params }: { params: { idMovimiento: strin
       { status: 500 }
     );
   }
-};
+}
 
-export const PUT = async (
-  request: Request,
-  { params }: { params: { idMovimiento: string } }
-) => {
-  const movimientoService = MovimientoServiceImpl.getInstance();
-  const { idMovimiento } = params;
-  const data = await request.json();
-
-  if (!idMovimiento) {
-    return NextResponse.json({ message: "ID inválido" }, { status: 400 });
-  }
-
-  try {
-    const dataWithId = { ...data, idMovimiento: parseInt(idMovimiento) };
-    const respuesta = await movimientoService.update(dataWithId);
-    return respuesta;
-  } catch (error) {
-    console.error("Error al actualizar el movimiento:", error);
-    return NextResponse.json(
-      { message: "Error al actualizar el movimiento" },
-      { status: 500 }
-    );
-  }
-};

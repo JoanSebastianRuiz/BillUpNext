@@ -59,8 +59,9 @@ export class GravamenServiceImpl implements GravamenService {
   public update = async (gravamen: GravamenDTO): Promise<NextResponse> => {
     try {
         const { idGravamen, nombreGravamen, estadoGravamen } = gravamen;
+        console.log(gravamen);
 
-        if (!idGravamen || !nombreGravamen || !estadoGravamen ) {
+        if (!idGravamen || !nombreGravamen || estadoGravamen=== undefined ) {
             return NextResponse.json(
                 { message: "Faltan campos por llenar" },
                 { status: 400 }

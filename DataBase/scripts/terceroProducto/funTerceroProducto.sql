@@ -25,7 +25,7 @@ CREATE OR REPLACE FUNCTION actualizarTerceroProducto(
     _idTercero "TerceroProducto"."idTercero"%TYPE,
     _idProducto "TerceroProducto"."idProducto"%TYPE,
     _precioCompraTerceroProducto "TerceroProducto"."precioCompraTerceroProducto"%TYPE,
-    _estadoTerceroProducto "TerceroProducto"."estadoTerceroProducto"%TYPE),
+    _estadoTerceroProducto "TerceroProducto"."estadoTerceroProducto"%TYPE)
      RETURNS BOOLEAN AS
 $BODY$
 BEGIN 

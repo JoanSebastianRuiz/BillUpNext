@@ -1,6 +1,7 @@
 CREATE OR REPLACE FUNCTION insertarMovimiento(
     _idUsuario "Movimiento"."idUsuario"%TYPE,
     _idCaja "Movimiento"."idCaja"%TYPE,
+    _tipoMovimiento "Movimiento"."tipoMovimiento"%TYPE,
     _descripcionMovimiento "Movimiento"."descripcionMovimiento"%TYPE,
     _valorMovimiento "Movimiento"."valorMovimiento"%TYPE)
     RETURNS BOOLEAN AS
@@ -8,42 +9,14 @@ $$
 DECLARE
     _idMovimiento "Movimiento"."idMovimiento"%TYPE;
 BEGIN
-    INSERT INTO "Movimiento" ("idUsuario", "idCaja", "descripcionMovimiento", "valorMovimiento")
-    VALUES (_idUsuario, _idCaja, _descripcionMovimiento, _valorMovimiento);
+    INSERT INTO "Movimiento" ("idUsuario", "idCaja", "tipoMovimiento", "descripcionMovimiento", "fechaMovimiento", "valorMovimiento")
+    VALUES (_idUsuario, _idCaja, _tipoMovimiento, _descripcionMovimiento, CURRENT_TIMESTAMP, _valorMovimiento);
 
     IF FOUND THEN
         RAISE NOTICE 'Se insertó correctamente el movimiento';
         RETURN TRUE;
     ELSE
         RAISE EXCEPTION 'Ocurrió un error';
-        RETURN FALSE;
-    END IF;
-END;
-$$
-LANGUAGE PLPGSQL;
-
-
-CREATE OR REPLACE FUNCTION actualizarMovimiento(
-    _idMovimiento "Movimiento"."idMovimiento"%TYPE,
-    _idUsuario "Movimiento"."idUsuario"%TYPE,
-    _idCaja "Movimiento"."idCaja"%TYPE,
-    _descripcionMovimiento "Movimiento"."descripcionMovimiento"%TYPE,
-    _valorMovimiento "Movimiento"."valorMovimiento"%TYPE)
-    RETURNS BOOLEAN AS
-$$
-BEGIN
-    UPDATE "Movimiento"
-    SET "idUsuario" = _idUsuario,
-        "idCaja" = _idCaja,
-        "descripcionMovimiento" = _descripcionMovimiento,
-        "valorMovimiento" = _valorMovimiento
-    WHERE "idMovimiento" = _idMovimiento;
-
-    IF FOUND THEN
-        RAISE NOTICE 'Se actualizó correctamente el movimiento';
-        RETURN TRUE;
-    ELSE
-        RAISE NOTICE 'Ocurrió un error al actualizar el movimiento';
         RETURN FALSE;
     END IF;
 END;

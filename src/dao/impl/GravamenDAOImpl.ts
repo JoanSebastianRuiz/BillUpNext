@@ -5,7 +5,7 @@ import { ResultadoBooleanDTO } from "@/dto/ResultadoBooleanDTO";
 
 export class GravamenDAOImpl implements GravamenDAO {
   private static instancia: GravamenDAOImpl;
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): GravamenDAOImpl {
     if (!GravamenDAOImpl.instancia) {
