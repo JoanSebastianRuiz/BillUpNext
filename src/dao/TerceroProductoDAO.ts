@@ -6,5 +6,4 @@ export interface TerceroProductoDAO{
     create(terceroProducto: TerceroProductoDTO): Promise<boolean>;
     update(terceroProducto: TerceroProductoDTO): Promise<boolean>;
     validarRelacion(idProducto: number, idTercero: number, idTerceroProducto?: number):Promise<boolean>;
-    validarPrecio(precioCompraTerceroProducto: number):Promise<boolean>;
 }

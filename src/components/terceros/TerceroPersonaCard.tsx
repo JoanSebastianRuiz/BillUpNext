@@ -3,12 +3,12 @@ import { ReactNode } from "react";
 
 import { TerceroResponsePersonaDTO } from "@/dto/TerceroResponsePersonaDTO";
 
-import ContenedorCard from "../../modal/ContenedorCard";
-import ParrafoCard from "../../modal/ParrafoCard";
+import ContenedorCard from "../modal/ContenedorCard";
+import ParrafoCard from "../modal/ParrafoCard";
 
 
 
-const ClientePersonaCard = ({ tercero, children }: { tercero: TerceroResponsePersonaDTO, children: ReactNode }) => {
+const TerceroPersonaCard = ({ tercero, children }: { tercero: TerceroResponsePersonaDTO, children: ReactNode }) => {
     const { tiposDocumento } = useUsuarioContext();
 
     return (
@@ -27,4 +27,4 @@ const ClientePersonaCard = ({ tercero, children }: { tercero: TerceroResponsePer
     );
 };
 
-export default ClientePersonaCard;
+export default TerceroPersonaCard;

@@ -52,11 +52,12 @@ export class TerceroProductoDAOImpl implements TerceroProductoDAO {
   ): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT insertarTerceroProducto($1,$2,$3) as resultado;`,
+        `SELECT insertarTerceroProducto($1,$2,$3,$4) as resultado;`,
         [
           terceroProducto.idTercero,
           terceroProducto.idProducto,
           terceroProducto.precioCompraTerceroProducto,
+          terceroProducto.estadoTerceroProducto
         ]
       );
 
@@ -70,12 +71,13 @@ export class TerceroProductoDAOImpl implements TerceroProductoDAO {
   ): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT actualizarTerceroProducto($1,$2,$3,$4) as resultado;`,
+        `SELECT actualizarTerceroProducto($1,$2,$3,$4,$5) as resultado;`,
         [
           terceroProducto.idTerceroProducto,
           terceroProducto.idTercero,
           terceroProducto.idProducto,
           terceroProducto.precioCompraTerceroProducto,
+          terceroProducto.estadoTerceroProducto
         ]
       );
 
@@ -98,20 +100,6 @@ export class TerceroProductoDAOImpl implements TerceroProductoDAO {
       return respuesta.length > 0 ? respuesta[0].resultado : false;
     } catch (error) {
       throw new Error(`Error en TerceroProductoDAO.validarRelacion: ${error}`);
-    }
-  };
-
-  public validarPrecio = async (
-    precioCompraTerceroProducto: number
-  ): Promise<boolean> => {
-    try {
-      const respuesta = await ejecutarQuery(
-        `SELECT validarPrecioCompraProducto ($1) as resultado;`,
-        [precioCompraTerceroProducto]
-      );
-      return respuesta.length > 0 ? respuesta[0].ressultado : false;
-    } catch (error) {
-      throw new Error(`Error en TerceroProductoDAO.validarPrecio: ${error}`);
     }
   };
 }

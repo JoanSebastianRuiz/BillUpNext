@@ -336,7 +336,7 @@ const UsuariosPage: React.FC = () => {
 
             {/* Modal para actualizar un usuario*/}
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
-                <RegistrarUsuario idUsuario={usuarioSeleccionado?.idUsuario} obtenerUsuarios={obtenerUsuarios} setModalActualizar={setModalActualizar} />
+                <RegistrarUsuario usuarioSeleccionado={usuarioSeleccionado} obtenerUsuarios={obtenerUsuarios} setModalActualizar={setModalActualizar} />
             </Modal>
 
         </ContenedorPrincipal >

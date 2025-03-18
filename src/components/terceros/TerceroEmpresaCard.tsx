@@ -2,10 +2,10 @@ import { ReactNode } from "react";
 
 import { TerceroResponseEmpresaDTO } from "@/dto/TerceroResponseEmpresaDTO";
 
-import ContenedorCard from "../../modal/ContenedorCard";
-import ParrafoCard from "../../modal/ParrafoCard";
+import ContenedorCard from "../modal/ContenedorCard";
+import ParrafoCard from "../modal/ParrafoCard";
 
-const ClienteEmpresaCard = ({ tercero, children }: { tercero: TerceroResponseEmpresaDTO, children: ReactNode }) => {
+const TerceroEmpresaCard = ({ tercero, children }: { tercero: TerceroResponseEmpresaDTO, children: ReactNode }) => {
     return (
         <ContenedorCard name={tercero.nombreTercero}>
             <ParrafoCard subtitle="NIT" text={`${tercero.nitTercero} - ${tercero.digitoVerificacionTercero}`} />
@@ -18,4 +18,4 @@ const ClienteEmpresaCard = ({ tercero, children }: { tercero: TerceroResponseEmp
     );
 };
 
-export default ClienteEmpresaCard;
+export default TerceroEmpresaCard;

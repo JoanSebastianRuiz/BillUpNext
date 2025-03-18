@@ -4,14 +4,7 @@ import axios from 'axios';
 
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import { useUsuarioContext } from '@/context/UsuarioContext';
-import { useSession } from 'next-auth/react';
 import { useTerceroContext } from '@/context/TerceroContext';
-
-import { DepartamentoResponseDTO } from '@/dto/DepartamentoResponseDTO';
-import { MunicipioResponseDTO } from '@/dto/MunicipioResponseDTO';
-import { TerceroRequestPersonaDTO } from '@/dto/TerceroRequestPersonaDTO';
-import { isValidEmail } from '@/util/validators/validators';
 
 import InputForm from '@/components/form/InputForm';
 import SelectForm from '@/components/form/SelectForm';
@@ -22,68 +15,48 @@ import { TerceroProductoDTO } from '@/dto/TerceroProductoDTO';
 import { useProductoContext } from '@/context/ProductoContext';
 
 
-const RegistrarTerceroProducto = ({ terceroProductoSeleccionado, setModalActualizar, setModalRegistrar }: { terceroProductoSeleccionado?: TerceroProductoDTO | null, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+const RegistrarTerceroProducto = ({ idTerceroProductoSeleccionado, setModalActualizar, setModalRegistrar, idTercero }: { idTerceroProductoSeleccionado?: number, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void, idTercero?: number }) => {
 
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
-    const { register, handleSubmit, formState: { errors }, watch, setValue, reset } = useForm<TerceroRequestPersonaDTO>();
+    const { register, handleSubmit, formState: { errors }, watch, setValue, reset } = useForm<TerceroProductoDTO>();
 
-    const { obtenerProveedoresProducto, proveedoresEmpresa, proveedoresPersona, proveedoresProducto } = useTerceroContext();
+    const { obtenerProveedoresProducto, proveedoresProducto } = useTerceroContext();
+    const terceroProductoSeleccionado = proveedoresProducto.find(p => p.idTerceroProducto === idTerceroProductoSeleccionado);
     const { productos } = useProductoContext();
 
     const productosFiltrados = productos.filter(
-        p => !proveedoresProducto.some(pp => pp.idProducto === p.idProducto && pp.idTercero === terceroProductoSeleccionado?.idTercero)
-      );
-
-    const { data: session } = useSession()
-    const idEmpresa = session?.user?.idEmpresa;
+        p => !proveedoresProducto.some(pp => pp.idProducto === p.idProducto && pp.idTercero === idTercero)
+    );
 
 
     useEffect(() => {
         if (terceroProductoSeleccionado) {
-
-            setValue("nombreTercero", tercero.nombreTercero || '');
-            setValue("apellidoTercero", tercero.apellidoTercero || '');
-            setValue("idTipoDocumento", tercero.idTipoDocumento || 0);
-            setValue("numeroDocumentoTercero", tercero.numeroDocumentoTercero || '');
-            setValue("idDepartamento", tercero.idDepartamento || 0);
-            setValue("idMunicipio", tercero.idMunicipio || 0);
-            setValue("telefonoTercero", tercero.telefonoTercero || '');
-            setValue("direccionTercero", tercero.direccionTercero || '');
-            setValue("correoTercero", tercero.correoTercero || '');
-            setValue("estadoTercero", tercero.estadoTercero.toString());
-
-            register("idEmpresa");
-            setValue("idEmpresa", tercero.idEmpresa || 0);
-
-            register("proveedorTercero");
-            setValue("proveedorTercero", tercero.proveedorTercero);
+            setValue("precioCompraTerceroProducto", terceroProductoSeleccionado?.precioCompraTerceroProducto ?? 0);
+            setValue("estadoTerceroProducto", terceroProductoSeleccionado?.estadoTerceroProducto ?? true);
         }
 
     }, [terceroProductoSeleccionado, setValue]);
 
 
-    const onSubmit = async (data: TerceroRequestPersonaDTO) => {
+    const onSubmit = async (data: TerceroProductoDTO) => {
         try {
             if (terceroProductoSeleccionado) {
-                let { idDepartamento, ...datosModificados } = data;
+                const datosModificados = { ...data, idTercero: idTercero ? parseInt(idTercero.toString()) : undefined, idProducto: terceroProductoSeleccionado.idProducto, estadoTerceroProducto: String(data.estadoTerceroProducto) === "true", precioCompraTerceroProducto: parseFloat(data.precioCompraTerceroProducto.toString()) };
 
-                datosModificados = { ...datosModificados, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), estadoTercero: String(data.estadoTercero) === "true" };
-
-                const respuesta = await axios.put(`/api/terceros/${terceroProductoSeleccionado}?tipo=persona`, datosModificados);
+                const respuesta = await axios.put(`/api/tercero-producto/${terceroProductoSeleccionado.idTerceroProducto}`, datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
-                obtenerPersonas(proveedorTerceroPersona ? "proveedores" : "clientes");
+                obtenerProveedoresProducto();
                 setModalActualizar?.(false);
             } else {
-                let { idDepartamento, ...datosModificados } = data;
-                datosModificados = { ...datosModificados, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idEmpresa: parseInt(idEmpresa.toString()), estadoTercero: true, proveedorTercero: proveedorTerceroPersona };
+                const datosModificados = { ...data, idTercero: idTercero ? parseInt(idTercero.toString()) : undefined, estadoTerceroProducto: true, precioCompraTerceroProducto: parseFloat(data.precioCompraTerceroProducto.toString()) };
 
-                const respuesta = await axios.post("/api/terceros?tipo=persona", datosModificados);
+                const respuesta = await axios.post("/api/tercero-producto", datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
-                obtenerPersonas(proveedorTerceroPersona ? "proveedores" : "clientes");
+                obtenerProveedoresProducto();
                 setModalRegistrar?.(false);
             }
         } catch (error: unknown) {
@@ -107,61 +80,31 @@ const RegistrarTerceroProducto = ({ terceroProductoSeleccionado, setModalActuali
             terceroProductoSeleccionado ? "Actualizar información" : "Registrar producto"}>
 
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-                <SelectForm label="Producto" register={register} name="idProducto"
-                    validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
-                    errors={errors} >
-                    <option value="" disabled>Seleccione un producto</option>
-                    {productos
+                {!terceroProductoSeleccionado && (
+                    <SelectForm label="Producto" register={register} name="idProducto"
+                        validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
+                        errors={errors} >
+                        <option value="" disabled>Seleccione un producto</option>
+                        {productosFiltrados.length > 0?(
+                            productosFiltrados.map(proveedorProducto => {
+                                const producto = productos.find(p => p.idProducto === proveedorProducto.idProducto);
+                                return <option key={proveedorProducto.idProducto} value={proveedorProducto.idProducto}>{producto?.nombreProducto}</option>
+                            })
+                        ) : (
+                            <option value="" disabled>No hay productos disponibles</option>
+                        )}
                         
-                        .map(proveedorProducto => {
-                            const producto = productos.find(p => p.idProducto === proveedorProducto.idProducto);
-                            return <option key={proveedorProducto.idProducto} value={proveedorProducto.idProducto}>{producto?.nombreProducto}</option>
-                        })}
-                </SelectForm>
+                    </SelectForm>
+                )}
 
-                <InputForm label="Número de documento" type="number" register={register} name="numeroDocumentoTercero"
+                <InputForm label="Precio de compra" type="number" register={register} name="precioCompraTerceroProducto"
                     validationRules={{
                         required: { value: true, message: "Este campo es obligatorio" },
-                        minLength: { value: 8, message: "Debe tener al menos 8 caracteres" },
-                        maxLength: { value: 10, message: "Máximo 10 caracteres" }
-                    }} errors={errors} />
-
-                <SelectForm label="Departamento" register={register} name="idDepartamento"
-                    validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
-                    errors={errors} >
-                    <option value="" disabled>Seleccione un departamento</option>
-                    {departamentosFiltrados.map(depto => <option key={depto.idDepartamento} value={depto.idDepartamento}>{depto.nombreDepartamento}</option>)}
-                </SelectForm>
-
-                <SelectForm label="Municipio" register={register} name="idMunicipio"
-                    validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
-                    errors={errors} >
-                    <option value="" disabled>Seleccione un municipio</option>
-                    {municipiosFiltrados.map(mun => <option key={mun.idMunicipio} value={mun.idMunicipio}>{mun.nombreMunicipio}</option>)}
-                </SelectForm>
-
-                <InputForm label="Teléfono" register={register} name="telefonoTercero" type="number"
-                    validationRules={{
-                        required: { value: true, message: "Este campo es obligatorio" },
-                        length: { value: 10, message: "Debe tener 10 dígitos" }
-                    }} errors={errors} />
-
-                <InputForm label="Dirección" register={register} name="direccionTercero" type="text"
-                    validationRules={{
-                        required: { value: true, message: "Este campo es obligatorio" },
-                        maxLength: { value: 250, message: "Máximo 250 caracteres" }
-                    }}
-                    errors={errors} />
-
-                <InputForm label="Correo electrónico" register={register} name="correoTercero" type="text"
-                    validationRules={{
-                        required: { value: true, message: "Este campo es obligatorio" },
-                        maxLength: { value: 250, message: "Máximo 250 caracteres" },
-                        validate: (value: string) => isValidEmail(value) || "Correo inválido"
+                        min: { value: 0, message: "El precio de compra debe ser mayor a 0" }
                     }} errors={errors} />
 
                 {terceroProductoSeleccionado && (
-                    <SelectForm label="Estado" register={register} name="estadoTercero"
+                    <SelectForm label="Estado" register={register} name="estadoTerceroProducto"
                         validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
                         errors={errors} >
                         <option value="" disabled>Seleccione un estado</option>

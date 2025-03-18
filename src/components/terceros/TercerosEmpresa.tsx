@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
+import { Pencil, Eye, PlusCircle, XCircle, PackageSearch } from "lucide-react";
 
 import { useUsuarioContext } from '@/context/UsuarioContext';
 import { useEmpresaContext } from "@/context/EmpresaContext";
@@ -17,19 +17,21 @@ import BotonFiltro from "@/components/filtros/BotonFiltro";
 import ContenedorSelectores from "@/components/filtros/ContenedorSelectores";
 import InputFiltro from "@/components/filtros/InputFiltro";
 import SelectFiltro from "@/components/filtros/SelectFiltro";
-import ClienteEmpresaCard from "@/components/terceros/clientes/ClienteEmpresaCard";
+import TerceroEmpresaCard from "@/components/terceros/TerceroEmpresaCard";
 import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAccionCard";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import MostrarInfoTerceroEmpresa from "@/components/terceros/MostrarInfoTerceroEmpresa";
 import RegistrarTerceroEmpresa from "@/components/terceros/RegistrarTerceroEmpresa";
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
+import SublistaProductos from "@/components/terceros/proveedores/SublistaProductos";
 
 
 const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorTerceroEmpresa: boolean, tipoEmpresas: "clientes" | "proveedores" }) => {
     const [modalInfo, setModalInfo] = useState(false)
     const [modalRegistrar, setModalRegistrar] = useState(false)
     const [modalActualizar, setModalActualizar] = useState(false)
+    const [modalProductos, setModalProductos] = useState(false)
     const [terceroSeleccionado, setTerceroSeleccionado] = useState<TerceroResponseEmpresaDTO | null>(null)
     const { departamentos, municipios } = useUsuarioContext()
     const { tiposPersona, regimenesContribuyente } = useEmpresaContext()
@@ -255,7 +257,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
                 (< div className="grid gap-4 md:grid-cols-3" >
                     {
                         empresasActuales.map((empresa) => (
-                            <ClienteEmpresaCard tercero={empresa} key={empresa.idTercero}>
+                            <TerceroEmpresaCard tercero={empresa} key={empresa.idTercero}>
                                 <ContenedorBotonesAccionCard>
                                     <BotonAccionCard
                                         Symbol={Pencil}
@@ -271,8 +273,17 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
                                             setModalInfo(true);
                                         }}
                                     />
+                                    {proveedorTerceroEmpresa && (
+                                        <BotonAccionCard
+                                            Symbol={PackageSearch}
+                                            onClick={() => {
+                                                setTerceroSeleccionado(empresa);
+                                                setModalProductos(true);
+                                            }}
+                                        />
+                                    )}
                                 </ContenedorBotonesAccionCard>
-                            </ClienteEmpresaCard>
+                            </TerceroEmpresaCard>
                         ))}
 
                 </div >)}
@@ -292,13 +303,18 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
 
             {/* Modal para registrar un empresa*/}
             <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
-                <RegistrarTerceroEmpresa  setModalRegistrar={setModalRegistrar} proveedorTerceroEmpresa={proveedorTerceroEmpresa} />
+                <RegistrarTerceroEmpresa setModalRegistrar={setModalRegistrar} proveedorTerceroEmpresa={proveedorTerceroEmpresa} />
             </Modal>
 
 
             {/* Modal para actualizar un empresa*/}
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
                 <RegistrarTerceroEmpresa terceroSeleccionado={terceroSeleccionado} setModalActualizar={setModalActualizar} proveedorTerceroEmpresa={proveedorTerceroEmpresa} />
+            </Modal>
+
+            {/* Modal para gestionar los productos de un proveedor*/}
+            <Modal isOpen={modalProductos} setIsOpen={() => setModalProductos(false)}>
+                <SublistaProductos tercero={terceroSeleccionado} />
             </Modal>
 
         </section >

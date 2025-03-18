@@ -39,7 +39,6 @@ const ProductosPage: React.FC = () => {
   >([]);
 
   const nombreProductoRef = useRef<HTMLInputElement>(null);
-  const idEmpresaRef = useRef<HTMLSelectElement>(null);
   const idCategoriaRef = useRef<HTMLSelectElement>(null);
   const estadoProductoRef = useRef<HTMLSelectElement>(null);
 

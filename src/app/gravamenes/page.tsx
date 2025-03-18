@@ -23,15 +23,12 @@ import RegistrarGravamen from "@/components/gravamenes/RegistrarGravamen";
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 
 const GravamenesPage: React.FC = () => {
-  const [modalInfo, setModalInfo] = useState(false);
   const [modalRegistrar, setModalRegistrar] = useState(false);
   const [modalActualizar, setModalActualizar] = useState(false);
-  const [gravamenSeleccionado, setGravamenSeleccionado] =
-    useState<GravamenDTO | null>(null);
-  const { gravamenes, obtenerGravamenes } = useGravamenContext();
-  const [gravamenesFiltrados, setGravamenesFiltrados] = useState<GravamenDTO[]>(
-    []
-  );
+  const [gravamenSeleccionado, setGravamenSeleccionado] = useState<GravamenDTO | null>(null);
+  const { gravamenes } = useGravamenContext();
+
+  const [gravamenesFiltrados, setGravamenesFiltrados] = useState<GravamenDTO[]>([]);
 
   const nombreGravamenRef = useRef<HTMLInputElement>(null);
   const estadoGravamenRef = useRef<HTMLSelectElement>(null);
@@ -103,7 +100,7 @@ const GravamenesPage: React.FC = () => {
             ref={nombreGravamenRef}
             onChange={filtrarGravamenes}
           />
-          
+
           <SelectFiltro
             id="estadoGravamen"
             name="Estado"
@@ -118,6 +115,7 @@ const GravamenesPage: React.FC = () => {
         </ContenedorSelectores>
       </ContenedorFiltros>
 
+      {/* Grid de gravamenes */}
       {gravamenesActuales.length === 0 ? (
         <div className="text-center text-gray-500 mt-8">
           No se encontraron gravamenes

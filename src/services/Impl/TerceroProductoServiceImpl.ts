@@ -2,6 +2,7 @@ import { TerceroProductoService } from "@/services/TerceroProductoService";
 import { TerceroProductoDAOImpl } from "@/dao/impl/TerceroProductoDAOImpl";
 import { NextResponse } from "next/server";
 import { TerceroProductoDTO } from "@/dto/TerceroProductoDTO";
+import { pre } from "framer-motion/client";
 
 export class TerceroProductoServiceImpl implements TerceroProductoService {
   private static instancia: TerceroProductoServiceImpl;
@@ -20,10 +21,10 @@ export class TerceroProductoServiceImpl implements TerceroProductoService {
     terceroProducto: TerceroProductoDTO
   ): Promise<NextResponse> => {
     try {
-      const { idTercero, idProducto, precioCompraTerceroProducto } =
+      const { idTercero, idProducto, precioCompraTerceroProducto, estadoTerceroProducto } =
         terceroProducto;
 
-      if (!idTercero || !idProducto || !precioCompraTerceroProducto) {
+      if (!idTercero || !idProducto || !precioCompraTerceroProducto || estadoTerceroProducto === undefined) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
           { status: 400 }
@@ -40,12 +41,10 @@ export class TerceroProductoServiceImpl implements TerceroProductoService {
       }
 
       if (
-        await this.terceroProductoDAOImpl.validarPrecio(
-          precioCompraTerceroProducto
-        )
+        precioCompraTerceroProducto <= 0
       ) {
         return NextResponse.json(
-          { message: "El precio del producto no puede ser cero" },
+          { message: "El precio del producto debe ser mayor a cero" },
           { status: 400 }
         );
       }
@@ -79,13 +78,16 @@ export class TerceroProductoServiceImpl implements TerceroProductoService {
         idTercero,
         idProducto,
         precioCompraTerceroProducto,
+        estadoTerceroProducto
       } = terceroProducto;
+
 
       if (
         !idTerceroProducto ||
         !idTercero ||
         !idProducto ||
-        !precioCompraTerceroProducto
+        !precioCompraTerceroProducto ||
+        estadoTerceroProducto === undefined
       ) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
@@ -107,12 +109,10 @@ export class TerceroProductoServiceImpl implements TerceroProductoService {
       }
 
       if (
-        await this.terceroProductoDAOImpl.validarPrecio(
-          precioCompraTerceroProducto
-        )
+        precioCompraTerceroProducto <= 0
       ) {
         return NextResponse.json(
-          { message: "El precio del producto no puede ser cero" },
+          { message: "El precio del producto debe ser mayor a cero" },
           { status: 400 }
         );
       }

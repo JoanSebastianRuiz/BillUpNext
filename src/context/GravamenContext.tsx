@@ -1,70 +1,59 @@
-"use client";
+    "use client";
 
-import { createContext, useState, useEffect, useContext, ReactNode } from "react";
-import { GravamenDTO } from "@/dto/GravamenDTO";
-import axios from "axios";
-import { useSession } from "next-auth/react";
+    import { createContext, useState, useEffect, useContext, ReactNode } from "react";
+    import { GravamenDTO } from "@/dto/GravamenDTO";
+    import axios from "axios";
+    import { useSession } from "next-auth/react";
 
-interface GravamenContextType {
-    gravamenes: GravamenDTO[];
-    setGravamenes: (gravamenes: GravamenDTO[]) => void;
-    obtenerGravamenes: () => void;
-}
+    interface GravamenContextType {
+        gravamenes: GravamenDTO[];
+        setGravamenes: (gravamenes: GravamenDTO[]) => void;
+        obtenerGravamenes: () => void;
+    }
 
-const GravamenContext = createContext<GravamenContextType | undefined>(undefined);
+    const GravamenContext = createContext<GravamenContextType | undefined>(undefined);
 
-interface GravamenProviderProps {
-    children: ReactNode;
-}
+    interface GravamenProviderProps {
+        children: ReactNode;
+    }
 
-export const GravamenContextProvider: React.FC<GravamenProviderProps> = ({ children }) => {
-    const [gravamenes, setGravamenes] = useState<GravamenDTO[]>([]);
+    export const GravamenContextProvider: React.FC<GravamenProviderProps> = ({ children }) => {
+        const [gravamenes, setGravamenes] = useState<GravamenDTO[]>([]);
 
-    const { data: session, status } = useSession();
-    const idRol = session?.user?.idRol;
-    const idEmpresa = session?.user?.idEmpresa;
+        const { data: session, status } = useSession();
+        const idRol = session?.user?.idRol;
+        const idEmpresa = session?.user?.idEmpresa;
 
-    const obtenerGravamenes = async () => {
-        try {
-            const respuesta = await axios.get<GravamenDTO[]>(`/api/gravamen`);
-            if (respuesta.status === 200) {
-                setGravamenes(respuesta.data);
-            }
-        }
-        catch (error) {
-            console.error("Error obteniendo gravamenes", error);
-        }
-    };
-
-    useEffect(() => {
-        const fetchGravamenes = async () => {
-
+        const obtenerGravamenes = async () => {
             try {
-                if (!session || idRol === undefined || idEmpresa === undefined) return;
-                const response = await axios.get('/api/gravamen');
-                if (response.status === 200) {
-                    setGravamenes(response.data);
-                } else {
-                    console.error("Error al obtener los gravamenes:", response.data.message);
+                const respuesta = await axios.get<GravamenDTO[]>(`/api/gravamen`);
+                if (respuesta.status === 200) {
+                    setGravamenes(respuesta.data);
                 }
-            } catch (error) {
-                console.error("Error al obtener los gravamenes:", error);
+            }
+            catch (error) {
+                console.error("Error obteniendo gravamenes", error);
             }
         };
-        if(idRol === 2) fetchGravamenes();
-    }, []);
 
-    return (
-        <GravamenContext.Provider value={{ gravamenes, setGravamenes, obtenerGravamenes }}>
-            {children}
-        </GravamenContext.Provider>
-    );
-};
+        useEffect(() => {
+            if (idRol === 1) {
+                if (!session || idRol === undefined || idEmpresa === undefined) return;
+                obtenerGravamenes();
+            };
+        }, [session, idRol, idEmpresa]);
 
-export const useGravamenContext = (): GravamenContextType => {
-    const context = useContext(GravamenContext);
-    if (!context) {
-        throw new Error("useGravamenContext debe usarse dentro de un GravamenContextProvider");
-    }
-    return context;
-};
+        return (
+            <GravamenContext.Provider value={{ gravamenes, setGravamenes, obtenerGravamenes }}>
+                {children}
+            </GravamenContext.Provider>
+        );
+    };
+
+    export const useGravamenContext = (): GravamenContextType => {
+        const context = useContext(GravamenContext);
+        if (!context) {
+            throw new Error("useGravamenContext debe usarse dentro de un GravamenContextProvider");
+        }
+        return context;
+    };

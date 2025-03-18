@@ -1,12 +1,13 @@
 CREATE OR REPLACE FUNCTION insertarTerceroProducto(
     _idTercero "TerceroProducto"."idTercero"%TYPE,
     _idProducto "TerceroProducto"."idProducto"%TYPE,
-    _precioCompraTerceroProducto "TerceroProducto"."precioCompraTerceroProducto"%TYPE) 
+    _precioCompraTerceroProducto "TerceroProducto"."precioCompraTerceroProducto"%TYPE,
+    _estadoTerceroProducto "TerceroProducto"."estadoTerceroProducto"%TYPE) 
     RETURNS BOOLEAN AS
 $BODY$
 BEGIN
-    INSERT INTO "TerceroProducto" ("idTercero", "idProducto", "precioCompraTerceroProducto")
-    VALUES (_idTercero,_idProducto,_precioCompraTerceroProducto);
+    INSERT INTO "TerceroProducto" ("idTercero", "idProducto", "precioCompraTerceroProducto", "estadoTerceroProducto")
+    VALUES (_idTercero,_idProducto,_precioCompraTerceroProducto,_estadoTerceroProducto);
 
     IF FOUND THEN
         RAISE NOTICE 'Se insertó correctamente';
@@ -33,7 +34,7 @@ BEGIN
     SET "idTercero" = _idTercero,
         "idProducto" = _idProducto,
         "precioCompraTerceroProducto" = _precioCompraTerceroProducto,
-        "estadoTerceroProducto" = _precioCompraTerceroProducto
+        "estadoTerceroProducto" = _estadoTerceroProducto
     WHERE "idTerceroProducto"  = _idTerceroProducto;
 
     IF FOUND THEN
@@ -66,14 +67,3 @@ BEGIN
 END;
 $$ 
 LANGUAGE PLPGSQL;
-
-
-CREATE OR REPLACE FUNCTION validarPrecioTerceroProducto(
-    _precioCompraTerceroProducto "TerceroProducto"."precioCompraTerceroProducto"%TYPE
-)
-RETURNS BOOLEAN AS
-$$
-BEGIN
-    RETURN _precioCompraTerceroProducto > 0;   
-END;
-$$ LANGUAGE PLPGSQL
