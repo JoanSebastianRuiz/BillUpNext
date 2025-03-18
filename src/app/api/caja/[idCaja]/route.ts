@@ -3,7 +3,7 @@ import { CajaServiceImpl } from "@/services/Impl/CajaServiceImpl";
 
 export const PUT = async (request: Request, { params }: { params: { idCaja: string } }) => {
     const cajaService = CajaServiceImpl.getInstance();
-    const { idCaja } = params;
+    const {idCaja} = params;
     const data = await request.json();
 
     if (!idCaja) {

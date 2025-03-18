@@ -87,7 +87,7 @@ BEGIN
     RETURN EXISTS(
         SELECT 3
         FROM "Caja"
-        WHERE "nombreCaja" = _nombreCajas
+        WHERE "nombreCaja" = _nombreCaja
     );
 END;
 $$

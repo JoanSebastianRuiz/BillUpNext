@@ -91,7 +91,7 @@ export class CajaDAOImpl implements CajaDAO {
 
     public existCajaNombre = async (nombreCaja: string): Promise<boolean> => {
         try {
-            const respuesta = await ejecutarQuery( `SELECT validarExisteNombreCaja ($1) as resultado;`,[nombreCaja]);
+            const respuesta = await ejecutarQuery( `SELECT validarExistCajaNombre ($1) as resultado;`,[nombreCaja]);
             return respuesta.length > 0 ? respuesta[0].resultado : false;
         } catch (error) {
             throw new Error(`Error en CajaDAO.existCajaNombre: ${error}`);
