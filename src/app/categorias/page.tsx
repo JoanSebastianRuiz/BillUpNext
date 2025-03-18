@@ -1,10 +1,8 @@
 "use client";
 
-import axios from "axios";
 import { useEffect, useState, useRef } from "react";
-import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
-
-import { useEmpresaContext } from "@/context/EmpresaContext";
+import { Pencil, PlusCircle, XCircle } from "lucide-react";
+import { useProductoContext } from "@/context/ProductoContext";
 
 import { CategoriaDTO } from "@/dto/CategoriaDTO";
 
@@ -21,19 +19,17 @@ import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
 import RegistrarCategoria from "@/components/categorias/RegistrarCategoria";
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
-import { useProductoContext } from "@/context/ProductoContext";
+import Table from "@/components/common/Table";
+
 
 const CategoriasPage: React.FC = () => {
-    const [modalInfo, setModalInfo] = useState(false);
     const [modalRegistrar, setModalRegistrar] = useState(false);
     const [modalActualizar, setModalActualizar] = useState(false);
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<CategoriaDTO | null>(null);
-    const { categorias, obtenerCategorias } = useProductoContext()
-    const { empresas } = useEmpresaContext();
+    const { categorias } = useProductoContext()
     const [categoriasFiltradas, setCategoriasFiltradas] = useState<CategoriaDTO[]>([]);
 
     const nombreCategoriaRef = useRef<HTMLInputElement>(null);
-    const idEmpresaRef = useRef<HTMLSelectElement>(null);
     const estadoCategoriaRef = useRef<HTMLSelectElement>(null);
 
     // Paginacion
@@ -71,6 +67,12 @@ const CategoriasPage: React.FC = () => {
     useEffect(() => {
         filtrarCategorias();
     }, [categorias]);
+
+    const titulosTabla = [
+        { titulo: "Nombre", center: false },
+        { titulo: "Estado", center: true },
+        { titulo: "Acciones", center: true }
+    ]
 
 
 
@@ -112,27 +114,38 @@ const CategoriasPage: React.FC = () => {
                 </ContenedorSelectores>
             </ContenedorFiltros>
 
-            {categoriasActuales.length === 0 ? (
-                <div className="text-center text-gray-500 mt-8">
-                    No se encontraron categorías
-                </div>
-            ) : (
-                <div className="grid gap-4 md:grid-cols-3">
-                    {categoriasActuales.map((categoria) => (
-                        <CategoriaCard categoria={categoria} key={categoria.idCategoria}>
-                            <ContenedorBotonesAccionCard>
-                                <BotonAccionCard
-                                    Symbol={Pencil}
-                                    onClick={() => {
-                                        setCategoriaSeleccionada(categoria);
-                                        setModalActualizar(true);
-                                    }}
-                                />
-                            </ContenedorBotonesAccionCard>
-                        </CategoriaCard>
-                    ))}
-                </div>
-            )}
+            <div className="w-1/2 mx-auto">
+                <Table titulos={titulosTabla}>
+                    {categoriasActuales.length > 0 ? (
+                        categoriasActuales.map((categoria) => (
+                            <tr key={categoria.idCategoria} className="hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <td className="px-4 py-3">{categoria.nombreCategoria}</td>
+                                <td className="px-4 py-3 text-center">{categoria.estadoCategoria ? "Activo" : "Inactivo"}</td>
+                                <td className="px-4 py-3 text-center">
+                                    <BotonAccionCard
+                                        Symbol={Pencil}
+                                        onClick={() => {
+                                            setCategoriaSeleccionada(categoria);
+                                            setModalActualizar(true);
+                                        }}
+                                        h={5}
+                                    />
+                                </td>
+                            </tr>
+                        ))) : (
+
+                        <tr>
+                            <td colSpan={3} className="text-center py-4 text-gray-500 dark:text-gray-400">
+                                No se encontraron categorías
+                            </td>
+                        </tr>
+                    )}
+                </Table>
+            </div>
+
+
+
+
             <ControlesPaginacion
                 currentPage={currentPage}
                 totalPages={totalPages}
