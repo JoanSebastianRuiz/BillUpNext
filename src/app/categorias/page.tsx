@@ -34,7 +34,7 @@ const CategoriasPage: React.FC = () => {
 
     // Paginacion
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(12); // Número de categorias por página
+    const [itemsPerPage] = useState(6); // Número de categorias por página
     const indexOfLastCategoria = currentPage * itemsPerPage;
     const indexOfFirstCategoria = indexOfLastCategoria - itemsPerPage;
     const categoriasActuales = categoriasFiltradas.slice(indexOfFirstCategoria, indexOfLastCategoria);

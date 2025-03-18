@@ -1,8 +1,7 @@
 "use client";
 
-import axios from "axios";
 import { useEffect, useState, useRef } from "react";
-import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
+import { Pencil, PlusCircle, XCircle } from "lucide-react";
 
 import { useGravamenContext } from "@/context/GravamenContext";
 
@@ -21,6 +20,7 @@ import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
 import RegistrarGravamen from "@/components/gravamenes/RegistrarGravamen";
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
+import Table from "@/components/common/Table";
 
 const GravamenesPage: React.FC = () => {
   const [modalRegistrar, setModalRegistrar] = useState(false);
@@ -35,7 +35,7 @@ const GravamenesPage: React.FC = () => {
 
   // Paginacion
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(12); // Número de gravamenes por página
+  const [itemsPerPage] = useState(6); // Número de gravamenes por página
   const indexOfLastGravamen = currentPage * itemsPerPage;
   const indexOfFirstGravamen = indexOfLastGravamen - itemsPerPage;
   const gravamenesActuales = gravamenesFiltrados.slice(
@@ -76,9 +76,15 @@ const GravamenesPage: React.FC = () => {
     filtrarGravamenes();
   }, [gravamenes]);
 
+  const titulosTabla = [
+    { titulo: "Nombre", center: false },
+    { titulo: "Estado", center: true },
+    { titulo: "Acciones", center: true },
+  ];
+
   return (
     <ContenedorPrincipal>
-      <ContenedorFiltros title="Gravamenes">
+      <ContenedorFiltros title="Gravámenes">
         <ContenedorBotonesFiltros>
           <BotonFiltro
             onClick={() => setModalRegistrar(true)}
@@ -115,28 +121,38 @@ const GravamenesPage: React.FC = () => {
         </ContenedorSelectores>
       </ContenedorFiltros>
 
-      {/* Grid de gravamenes */}
-      {gravamenesActuales.length === 0 ? (
-        <div className="text-center text-gray-500 mt-8">
-          No se encontraron gravamenes
-        </div>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-3">
-          {gravamenesActuales.map((gravamen) => (
-            <GravamenCard gravamen={gravamen} key={gravamen.idGravamen}>
-              <ContenedorBotonesAccionCard>
-                <BotonAccionCard
-                  Symbol={Pencil}
-                  onClick={() => {
-                    setGravamenSeleccionado(gravamen);
-                    setModalActualizar(true);
-                  }}
-                />
-              </ContenedorBotonesAccionCard>
-            </GravamenCard>
-          ))}
-        </div>
-      )}
+      {/* Gravamenes */}
+
+      <div className="w-1/2 mx-auto">
+        <Table titulos={titulosTabla}>
+          {gravamenesActuales.length > 0 ? (
+            gravamenesActuales.map((gravamen) => (
+              <tr className="hover:bg-gray-100 dark:hover:bg-gray-700" key={gravamen.idGravamen}>
+                <td className="px-4 py-3">{gravamen.nombreGravamen}</td>
+                <td className="text-center px-4 py-3">
+                  {gravamen.estadoGravamen ? "Activo" : "Inactivo"}
+                </td>
+                <td className="text-center px-4 py-3">
+                  <BotonAccionCard
+                    Symbol={Pencil}
+                    onClick={() => {
+                      setGravamenSeleccionado(gravamen);
+                      setModalActualizar(true);
+                    }}
+                  />
+                </td>
+              </tr>
+            ))) : (
+
+            <tr>
+              <td colSpan={3} className="text-center py-4 text-gray-500 dark:text-gray-400">
+                No se encontraron gravámenes
+              </td>
+            </tr>
+          )}
+        </Table>
+      </div>
+
 
       <ControlesPaginacion
         currentPage={currentPage}
