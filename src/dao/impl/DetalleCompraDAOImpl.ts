@@ -83,4 +83,32 @@ export class DetalleCompraDAOImpl implements DetalleCompraDAO {
       throw new Error(`Error en DetalleCompraDAO.update: ${error}`);
     }
   };
+
+  public validarCantidad = async (
+    cantidadDetalleCompra: number
+  ) : Promise<boolean> => {
+    try {
+      const respuesta = await ejecutarQuery(
+        `SELECT validarCantidadDetalleCompra ($1) as resultado;`,
+        [cantidadDetalleCompra]
+      );
+      return respuesta.length > 0 ? respuesta[0].resultado : false;
+    } catch (error) {
+      throw new Error(`Error en DetalleCompraDAO.validarCantidad: ${error}`);
+    }
+  };
+
+  public validarValor = async (
+    valorDetalleCompra: number
+  ): Promise<boolean> => {
+    try {
+      const respuesta = await ejecutarQuery(
+        `SELECT validarValorDetalleCompra ($1) as resultado;`,
+        [valorDetalleCompra]
+      );
+      return respuesta.length > 0 ? respuesta[0].resultado : false;
+    } catch (error) {
+      throw new Error(`Error en DetalleCompraDAO.validarValor: ${error}`);
+    }
+  };
 }

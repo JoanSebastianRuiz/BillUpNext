@@ -41,6 +41,28 @@ export class DetalleCompraServiceImpl implements DetalleCompraService {
         );
       }
 
+      if (
+        await this.detalleCompraDAOImpl.validarCantidad(
+          cantidadDetalleCompra
+        )
+      ) {
+        return NextResponse.json(
+          { message: "La cantidad no es valida"},
+          { status: 400 }
+        )
+      }
+
+      if (
+        await this.detalleCompraDAOImpl.validarValor(
+          valorDetalleCompra
+        )
+      ) {
+        return NextResponse.json(
+          { message: "El valor no es valido"},
+          { status: 400 }
+        )
+      }
+
       const respuesta = await this.detalleCompraDAOImpl.create(detalleCompra);
       if (respuesta) {
         return NextResponse.json(
@@ -81,6 +103,28 @@ export class DetalleCompraServiceImpl implements DetalleCompraService {
       ) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
+          { status: 400 }
+        );
+      }
+
+      if (
+        await this.detalleCompraDAOImpl.validarCantidad(
+          cantidadDetalleCompra
+        )
+      ) {
+        return NextResponse.json(
+          { message: "La cantidad no es valida" },
+          { status: 400 }
+        );
+      }
+
+      if (
+        await this.detalleCompraDAOImpl.validarValor(
+          valorDetalleCompra
+        )
+      ) {
+        return NextResponse.json(
+          { message: "El valor no es valido" },
           { status: 400 }
         );
       }
