@@ -3,7 +3,7 @@
 import axios from "axios";
 
 import { useEffect, useState, useRef } from "react";
-import { Pencil, Eye, PlusCircle, XCircle, PackageSearch } from "lucide-react";
+import { Pencil, Eye, PlusCircle, XCircle, ReceiptText } from "lucide-react";
 
 import { useProductoContext } from "@/context/ProductoContext";
 
@@ -35,10 +35,7 @@ const ProductosPage: React.FC = (gravamenProducto) => {
   const [productosFiltrados, setProductosFiltrados] = useState<
     ProductoResponseDTO[]
   >([]);
-  const { productos, categorias, obtenerProductos } = useProductoContext();
-  const [empresas, setEmpresas] = useState<
-    { idEmpresa: number; nombreEmpresa: string }[]
-  >([]);
+  const { productos, categorias } = useProductoContext();
 
   const nombreProductoRef = useRef<HTMLInputElement>(null);
   const idCategoriaRef = useRef<HTMLSelectElement>(null);
@@ -97,7 +94,7 @@ const ProductosPage: React.FC = (gravamenProducto) => {
   };
 
   return (
-    <section>
+    <ContenedorPrincipal>
       <ContenedorFiltros title="Productos">
         {/* Botones de filtros */}
         <ContenedorBotonesFiltros>
@@ -174,7 +171,7 @@ const ProductosPage: React.FC = (gravamenProducto) => {
 
                 {gravamenProducto && (
                   <BotonAccionCard
-                    Symbol={PackageSearch}
+                    Symbol={ReceiptText}
                     onClick={() => {
                       setProductoSeleccionado(producto);
                       setModalGravamenes(true);
@@ -217,14 +214,14 @@ const ProductosPage: React.FC = (gravamenProducto) => {
         />
       </Modal>
 
-      {/* Modal para gestionar los gravamenes de un proveedor*/}
+      {/* Modal para gestionar los gravamenes de un producto*/}
       <Modal
         isOpen={modalGravamenes}
         setIsOpen={() => setModalGravamenes(false)}
       >
         <SublistaGravamenes producto={productoSeleccionado} />
       </Modal>
-    </section>
+    </ContenedorPrincipal>
   );
 };
 

@@ -3,10 +3,13 @@ import { ProductoDAOImpl } from "@/dao/impl/ProductoDAOImpl";
 import { NextResponse } from "next/server";
 import { ProductoResponseDTO } from "@/dto/ProductoResponseDTO";
 import { ProductoRequestDTO } from "@/dto/ProductoRequestDTO";
+import { GravamenProductoDTO } from "@/dto/GravamenProductoDTO";
+import { GravamenProductoDAOImpl } from "@/dao/impl/GravamenProductoDAOImpl";
 
 export class ProductoServiceImpl implements ProductoService {
   private static instancia: ProductoServiceImpl;
   private productoDAOImpl: ProductoDAOImpl = ProductoDAOImpl.getInstance();
+  private gravamenProductoDAOImpl: GravamenProductoDAOImpl = GravamenProductoDAOImpl.getInstance();
   private constructor() { }
 
   public static getInstance(): ProductoServiceImpl {
@@ -203,9 +206,20 @@ export class ProductoServiceImpl implements ProductoService {
 
   public getAll = async (idEmpresa: number): Promise<Array<ProductoResponseDTO>> => {
     try {
-      const respuesta: ProductoResponseDTO[] =
-        await this.productoDAOImpl.getAll(idEmpresa);
-      return respuesta;
+      const productos: ProductoResponseDTO[] = await this.productoDAOImpl.getAll(idEmpresa);
+      const gravamenesProducto: GravamenProductoDTO[] = await this.gravamenProductoDAOImpl.getAll(idEmpresa);
+
+      const productosModificados = productos.map((producto: ProductoResponseDTO) => {
+        const gravamenes = gravamenesProducto.filter((gp: GravamenProductoDTO) => gp.idProducto === producto.idProducto);
+
+        return {
+          ...producto, // Copia el objeto sin modificar el original
+          precioVentaProducto: producto.precioVentaProducto +
+            (gravamenes.reduce((acc: number, gp: GravamenProductoDTO) => acc + gp.porcentajeGravamenProducto, 0) * (producto.precioVentaProducto / 100)) -
+            producto.precioVentaProducto * (producto.porcentajeDescuentoProducto / 100),
+        };
+      });
+      return productosModificados;
     } catch (error) {
       throw new Error(`Error en ProdcutoService.getAll: ${error}`);
     }

@@ -277,7 +277,6 @@ CREATE TABLE IF NOT EXISTS "DetalleCompra" (
     "idProducto" int not null,
     "cantidadDetalleCompra" int not null,
     "valorDetalleCompra" double precision not null,
-    "fechaVencimientoDetalleCompra" date not null,
     primary key ("idDetalleCompra"),
     foreign key ("idCompra") references "Compra" ("idCompra"),
     foreign key ("idProducto") references "Producto" ("idProducto")

@@ -98,10 +98,10 @@ export class GravamenProductoServiceImpl implements GravamenProductoService {
     }
   };
 
-  public getAll = async (): Promise<Array<GravamenProductoDTO>> => {
+  public getAll = async (idEmpresa: number): Promise<Array<GravamenProductoDTO>> => {
     try {
       const respuesta: GravamenProductoDTO[] =
-        await this.gravamenProductoDAOImpl.getAll();
+        await this.gravamenProductoDAOImpl.getAll(idEmpresa);
       return respuesta;
     } catch (error) {
       throw new Error(`Error en GravamenProductoService.getAll: ${error}`);

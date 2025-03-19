@@ -1,7 +1,6 @@
 "use client";
 
 import axios from "axios";
-
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import { useSession } from "next-auth/react";
 
@@ -9,21 +8,19 @@ import { ProductoResponseDTO } from "@/dto/ProductoResponseDTO";
 import { CategoriaDTO } from "@/dto/CategoriaDTO";
 import { GravamenProductoDTO } from "@/dto/GravamenProductoDTO";
 
-
 interface ProductoContextType {
     productos: ProductoResponseDTO[];
     setProductos: (productos: ProductoResponseDTO[]) => void;
     categorias: CategoriaDTO[];
     setCategorias: (categorias: CategoriaDTO[]) => void;
-    gravamenesProducto: GravamenProductoDTO[]
-    setGravamenesProducto: (gravamenesProducto: GravamenProductoDTO[]) => void
+    gravamenesProducto: GravamenProductoDTO[];
+    setGravamenesProducto: (gravamenesProducto: GravamenProductoDTO[]) => void;
     obtenerCategorias: () => void;
     obtenerProductos: () => void;
-    obtenerGravamenesProducto: () => void
+    obtenerGravamenesProducto: () => void;
 }
 
 const ProductoContext = createContext<ProductoContextType | undefined>(undefined);
-
 
 interface ProductoProviderProps {
     children: ReactNode;
@@ -51,9 +48,7 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
 
     const obtenerProductos = async () => {
         try {
-            const respuesta = await axios.get<ProductoResponseDTO[]>(
-                `/api/empresas/${idEmpresa}/productos`
-            );
+            const respuesta = await axios.get<ProductoResponseDTO[]>(`/api/empresas/${idEmpresa}/productos`);
             if (respuesta.status === 200) {
                 setProductos(respuesta.data);
             }
@@ -64,7 +59,7 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
 
     const obtenerGravamenesProducto = async () => {
         try {
-            const respuesta = await axios.get<GravamenProductoDTO[]>(`/api/gravamenProducto`);
+            const respuesta = await axios.get<GravamenProductoDTO[]>(`/api/empresas/${idEmpresa}/gravamen-producto`);
             if (respuesta.status === 200) {
                 setGravamenesProducto(respuesta.data);
             }
@@ -73,16 +68,17 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
         }
     };
 
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 if (!session || idRol === undefined || idEmpresa === undefined) return;
 
                 if (idRol === 2) {
-                    const [categoriasRes, productosRes, gravamenesProductoRes ] = await Promise.all([
+                    const [categoriasRes, productosRes, gravamenesProductoRes] = await Promise.all([
                         axios.get(`/api/empresas/${idEmpresa}/categorias`),
                         axios.get(`/api/empresas/${idEmpresa}/productos`),
-                        axios.get(`/api/gravamenProducto`)
+                        axios.get(`/api/empresas/${idEmpresa}/gravamen-producto`)
                     ]);
 
                     if (categoriasRes.status === 200) {
@@ -97,17 +93,10 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
                         console.error("Error al obtener productos:", productosRes.data.message);
                     }
 
-                    if (gravamenesProductoRes.status === 200 ) {
+                    if (gravamenesProductoRes.status === 200) {
                         setGravamenesProducto(gravamenesProductoRes.data);
                     } else {
-                        console.error("Error al obtener los gravamenes producto", gravamenesProductoRes.data.message)
-                    }
-                } else if (idRol === 3 || idRol === 4) {
-                    const productosRes = await axios.get(`/api/empresas/${idEmpresa}/productos`);
-                    if (productosRes.status === 200) {
-                        setProductos(productosRes.data);
-                    } else {
-                        console.error("Error al obtener productos:", productosRes.data.message);
+                        console.error("Error al obtener gravamenes producto", gravamenesProductoRes.data.message);
                     }
                 }
             } catch (error) {
