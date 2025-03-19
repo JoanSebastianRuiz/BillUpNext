@@ -41,6 +41,39 @@ export class DetalleVentaServiceImpl implements DetalleVentaService {
         );
       }
 
+      if (
+        await this.detalleVentaDAOImpl.validarCantidad(
+          cantidadDetalleVenta
+        )
+      ) {
+        return NextResponse.json(
+          { message: "La cantidad no es valida" },
+          { status: 400 }
+        )
+      }
+
+      if (
+        await this.detalleVentaDAOImpl.validarDescuento(
+          valorDescuentoDetalleVenta
+        )
+      ) {
+        return NextResponse.json(
+          { message: "El descuento no es valido" },
+          { status: 400 }
+        )
+      }
+
+      if (
+        await this.detalleVentaDAOImpl.validarValor(
+          valorTotalDetalleVenta
+        )
+      ) {
+        return NextResponse.json(
+          { message: "El valor total no es valido" },
+          { status: 400 }
+        )
+      }
+
       const respuesta = await this.detalleVentaDAOImpl.create(detalleVenta);
       if (respuesta) {
         return NextResponse.json(

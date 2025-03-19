@@ -22,3 +22,36 @@ BEGIN
 END;
 $$
 LANGUAGE PLPGSQL;
+
+
+CREATE OR REPLACE FUNCTION validarCantidadDetalleVenta(
+    _cantidadDetalleVenta "DetalleVenta"."cantidadDetalleVenta"%TYPE
+)
+RETURNS BOOLEAN AS
+$$
+BEGIN
+    RETURN _cantidadDetalleVenta > 0;
+END;
+LANGUAGE PLPGSQL;
+
+
+CREATE OR REPLACE FUNCTION validarValorDescuentoDetalleVenta(
+    _valorDescuentoDetalleVenta "DetalleVenta"."valorDescuentoDetalleVenta"%TYPE
+)
+RETURNS BOOLEAN AS
+$$
+BEGIN
+    RETURN _valorDescuentoDetalleVenta > 0;
+END;
+LANGUAGE PLPGSQL;
+
+
+CREATE OR REPLACE FUNCTION validarValorTotalDetalleVenta(
+    _valorTotalDetalleVenta "DetalleVenta"."valorTotalDetalleVenta"%TYPE
+)
+RETURNS BOOLEAN AS
+$$
+BEGIN
+    RETURN _valorTotalDetalleVenta > 0;
+END;
+LANGUAGE PLPGSQL;

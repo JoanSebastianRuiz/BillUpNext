@@ -87,7 +87,7 @@ export const TerceroContextProvider: React.FC<TerceroProviderProps> = ({ childre
     const obtenerProveedoresProducto = async () => {
         if (!session || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
         try {
-            const respuesta = await axios.get(`/api/empresas/${idEmpresa}/terceros-producto`);
+            const respuesta = await axios.get(`/api/empresas/${idEmpresa}/tercero-producto`);
             if (respuesta.status === 200) {
                 setProveedoresProducto(respuesta.data)
 
@@ -112,7 +112,7 @@ export const TerceroContextProvider: React.FC<TerceroProviderProps> = ({ childre
                         axios.get<TerceroResponseEmpresaDTO[]>(`/api/empresas/${idEmpresa}/clientes?tipo=empresa`),
                         axios.get<TerceroResponsePersonaDTO[]>(`/api/empresas/${idEmpresa}/proveedores?tipo=persona`),
                         axios.get<TerceroResponseEmpresaDTO[]>(`/api/empresas/${idEmpresa}/proveedores?tipo=empresa`),
-                        axios.get<TerceroProductoDTO[]>(`/api/empresas/${idEmpresa}/terceros-producto`)
+                        axios.get<TerceroProductoDTO[]>(`/api/empresas/${idEmpresa}/tercero-producto`)
                     ]); // Obtener los datos de los clientes y proveedores de la empresa
 
                     if (clientesPersonaRes.status === 200) setClientesPersona(clientesPersonaRes.data);

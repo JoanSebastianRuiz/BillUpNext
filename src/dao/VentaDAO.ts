@@ -4,4 +4,5 @@ export interface VentaDAO {
     getAll(): Promise<Array<VentaDTO>>;
     getById(idVenta: number): Promise<VentaDTO | null>;
     create(venta: VentaDTO): Promise<boolean>;
+    validarValor(valorTotalVenta: number): Promise<boolean>;
 }

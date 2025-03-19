@@ -14,13 +14,15 @@ export class GravamenProductoDAOImpl implements GravamenProductoDAO {
     return GravamenProductoDAOImpl.instancia;
   }
 
-  public getAll = async (): Promise<Array<GravamenProductoDTO>> => {
+  public getAll = async (idEmpresa: number): Promise<Array<GravamenProductoDTO>> => {
     try {
       const gravamenProductoDatabase: GravamenProductoDTO[] =
         await ejecutarQuery(
           `SELECT gp.\"idGravamenProducto\", gp.\"idProducto"\, gp."\idGravamen"\, gp.\"porcentajeGravamenProducto\"
-                    FROM \"GravamenProducto\" gp;`,
-          []
+                    FROM \"GravamenProducto\" gp
+                    JOIN \"Producto\" p ON p.\"idProducto\"=gp.\"idProducto\"
+                    WHERE p.\"idEmpresa\"=$1;`,
+          [idEmpresa]
         );
 
       return gravamenProductoDatabase;
@@ -70,7 +72,7 @@ export class GravamenProductoDAOImpl implements GravamenProductoDAO {
   ): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT actualizarGravamenProducto($1,$2,$3,$4,) as resultado;`,
+        `SELECT actualizarGravamenProducto($1,$2,$3,$4) as resultado;`,
         [
           gravamenProducto.idGravamenProducto,
           gravamenProducto.idProducto,
