@@ -23,10 +23,11 @@ export class DetalleCajaServiceImpl implements DetalleCajaService {
                 fechaAperturaDetalleCaja,
                 fechaCierreDetalleCaja,
                 dineroAperturaDetalleCaja,
-                dineroCierreDetalleCaja
+                dineroCierreDetalleCaja,
+                dineroCierreSistemaDetalleCaja
             } = detalleCaja;
 
-            if(!idCaja || !idUsuario || !fechaAperturaDetalleCaja || !fechaCierreDetalleCaja || !dineroAperturaDetalleCaja || !dineroCierreDetalleCaja){
+            if(!idCaja || !idUsuario || !fechaAperturaDetalleCaja || !fechaCierreDetalleCaja || !dineroAperturaDetalleCaja || !dineroCierreDetalleCaja || !dineroCierreSistemaDetalleCaja){
                 return NextResponse.json({ message: 'Faltan campos por llenar' }, { status: 400 });
                
             }
@@ -43,7 +44,7 @@ export class DetalleCajaServiceImpl implements DetalleCajaService {
                 return NextResponse.json({ message: 'Error al crear el detalle de caja' }, { status: 500 });
             }
         } catch (error) {
-            throw new Error(`Error en EmpresaService.create: ${error}`);
+            throw new Error(`Error en DetalleCajaService.create: ${error}`);
         }
     }
 
@@ -55,10 +56,11 @@ export class DetalleCajaServiceImpl implements DetalleCajaService {
                 fechaAperturaDetalleCaja,
                 fechaCierreDetalleCaja,
                 dineroAperturaDetalleCaja,
-                dineroCierreDetalleCaja
+                dineroCierreDetalleCaja,
+                dineroCierreSistemaDetalleCaja
             } = detalleCaja;
 
-            if(!idDetalleCaja || !idCaja || !idUsuario || !fechaAperturaDetalleCaja || !fechaCierreDetalleCaja || !dineroAperturaDetalleCaja || !dineroCierreDetalleCaja){
+            if(!idDetalleCaja || !idCaja || !idUsuario || !fechaAperturaDetalleCaja || !fechaCierreDetalleCaja || !dineroAperturaDetalleCaja || !dineroCierreDetalleCaja || !dineroCierreSistemaDetalleCaja){
                 return NextResponse.json({ message: 'Faltan campos por llenar' }, { status: 400 });
             }
 
@@ -74,7 +76,7 @@ export class DetalleCajaServiceImpl implements DetalleCajaService {
                 return NextResponse.json({ message: 'Error al actualizar el detalle de caja' }, { status: 500 });
             }
         } catch (error) {
-            throw new Error(`Error en EmpresaService.update: ${error}`);
+            throw new Error(`Error en DetalleCajaService.update: ${error}`);
         }
     }
 
@@ -83,7 +85,7 @@ export class DetalleCajaServiceImpl implements DetalleCajaService {
             const respuesta: DetalleCajaDTO[] = await this.detalleCajaDAOImpl.getAll();
             return respuesta;
         } catch (error) {
-            throw new Error(`Error en DetallaCajaService.getAll: ${error}`);
+            throw new Error(`Error en DetalleCajaService.getAll: ${error}`);
         }
     }
 
