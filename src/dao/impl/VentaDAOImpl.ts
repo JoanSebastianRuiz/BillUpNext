@@ -63,4 +63,18 @@ export class VentaDAOImpl implements VentaDAO {
       throw new Error(`Error en VentaDAO.create: ${error}`);
     }
   };
+
+  public validarValor = async (
+    valorTotalVenta: number
+  ) : Promise<boolean> => {
+    try {
+      const respuesta = await ejecutarQuery(
+        `SELECT validarValorVenta ($1) as resultado;`
+        [valorTotalVenta]
+      );
+      return respuesta.length > 0 ? respuesta[0].resultado : false;
+    } catch (error) {
+      throw new Error(`Error en VentaDAO.validarValor: ${error}`);
+    }
+  };
 }
