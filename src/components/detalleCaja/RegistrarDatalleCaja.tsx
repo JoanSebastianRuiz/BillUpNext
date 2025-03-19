@@ -16,6 +16,7 @@ import Notificacion from "../form/Notificacion";
 import ContenedorRegistrar from "../modal/ContenedorRegistrar";
 import ButtonForm from "../form/ButtonForm";
 import { data } from "framer-motion/client";
+import { DetalleCaja } from "@/models/DetalleCaja";
 
 
 const RegistrarDetalleCaja = ( {idDetalleCaja, obtenerDetallesCaja, setModalActualizar, setModalRegistrar}:
@@ -66,17 +67,108 @@ const RegistrarDetalleCaja = ( {idDetalleCaja, obtenerDetallesCaja, setModalActu
                 //actualizar detalle Caja
                 let { ...datosModificados} = data;
 
-                
+                datosModificados = {...data, idCaja: parseInt(data.idCaja.toString(),10),
+                idUsuario: parseInt(data.idUsuario.toString(),10), 
+                dineroAperturaDetalleCaja: parseFloat(data.dineroAperturaDetalleCaja.toString()),
+                dineroCierreDetalleCaja: parseFloat(data.dineroCierreDetalleCaja.toString()),
+                fechaCierreDetalleCaja: new Date() // Aquí se registra automáticamente la fecha actual
+                };
 
+                const respuesta = await axios.put(`/api/detalle-caja/${idDetalleCaja}`, datosModificados);
+                setError(null);
+                setSuccess(respuesta.data.message);
+                setModalActualizar?.(false);
+            } else {
+
+                // Crear un nuevo detalle Caja
+                let {...datosModificados} = data;
+
+                datosModificados = {...data, idCaja: parseInt(data.idCaja.toString(),10),
+                idUsuario: parseInt(data.idUsuario.toString(),10),fechaAperturaDetalleCaja: new Date(data.fechaAperturaDetalleCaja),
+                fechaCierreDetalleCaja: new Date(), // Se genera automáticamente al crear
+                dineroAperturaDetalleCaja: parseFloat(data.dineroAperturaDetalleCaja.toString()),
+                dineroCierreDetalleCaja: parseFloat(data.dineroCierreDetalleCaja.toString()) };
+
+                const respuesta = await axios.post('/api/detalle-caja', datosModificados);
+                setError(null);
+                setSuccess(respuesta.data.message);
+                setModalRegistrar?.(false);
             }
 
+            obtenerDetallesCaja();
 
-        } catch (error) {
-            
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response){
+                // Capturar el mensaje de error del backend
+                const mensajeError = error.response.data?.message;
+                setSuccess(null);
+                setError(mensajeError);
+                console.error("Error de Axios: ", mensajeError, error);
+            } else {
+                // Error desconocido
+                setError("Ocurrió un error al procesar la solicitud");
+                console.error("Error desconcido: ", error);
+            }
+
         }
 
-    }
+    };
 
 
-}
+    return (
+        <ContenedorRegistrar name= {idDetalleCaja ? "Actualizar detalle Caja" : "Registrar detalle Caja"} >
+            <form onSubmit={ handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4" >
+
+                <SelectForm label=" Caja " register={register} name="idCaja" 
+                validationRules={{ required: {value: true, message: "Este campo es obligatorio" } } }
+                errors={errors} >
+                    <option value="" disabled> Seleccione una caja </option>
+                    {cajas.map(caja => <option key={caja.idCaja} value={caja.idCaja}>{caja.nombreCaja}</option>)}
+                </SelectForm>
+
+                <SelectForm label=" Usuario " register={register} name="idUsuario"
+                validationRules={{required: {value: true, message: "Este campo es obligatorio "}}}
+                errors={errors} >
+                    <option value="" disabled> Seleccione un usuario </option>
+                    {usuarios.map(usu => <option key={usu.idUsuario} value={usu.idUsuario}>{usu.nombreUsuario}</option>)}
+                </SelectForm>
+
+                <InputForm label=" Monto Dinero de Apertura Caja" register={register} name="dineroAperturaDetalleCaja" type="text"
+                validationRules={{
+                    required: {value: true, message: "El monto es obligatorio"},
+                    min: { value: 0.01, message: "El monto debe ser mayor a 0" },
+                    max: { value: 9999999.99, message: "El monto no puede superar 9,999,999.99" },
+                    valueAsNumber: true
+                }}
+                errors={errors}
+                />
+
+                <InputForm label= "Monto Dinero de Cierre Caja " register={register} name="dineroCierreDetalleCaja" type="text"
+                validationRules={{
+                    required: {value: true, message: "El monto es obligatorio"},
+                    min: { value: 0.01, message: "El monto debe ser mayor a 0" },
+                    max: { value: 9999999.99, message: "El monto no puede superar 9,999,999.99" },
+                    valueAsNumber: true
+                }}
+                errors={errors}
+                />
+
+                <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
+                      <ButtonForm name={idDetalleCaja ? "Actualizar" : "Registrar"} type="submit" />
+                </div> 
+
+            </form>
+
+             {/* Notificaciones */}
+             {error && <Notificacion type="error" message={error} />}
+            {success && <Notificacion type="success" message={success} />}
+        </ContenedorRegistrar>
+
+
+    );
+
+
+};
+
+export default RegistrarDetalleCaja;
 
