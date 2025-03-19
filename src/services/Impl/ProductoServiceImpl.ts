@@ -79,6 +79,28 @@ export class ProductoServiceImpl implements ProductoService {
         );
       }
 
+      if (
+        await this.productoDAOImpl.validarPrecio(
+          precioVentaProducto
+        )
+      ) {
+        return NextResponse.json(
+          { message: "El precio no es valido" },
+          { status: 400 }
+        );
+      }
+
+      if (
+        await this.productoDAOImpl.validarPorcentaje(
+          porcentajeDescuentoProducto
+        )
+      ) {
+        return NextResponse.json(
+          { message: "El porcentaje no es valido" },
+          { status: 400 }
+        );
+      }
+
       const respuesta = await this.productoDAOImpl.create({
         idEmpresa,
         idCategoria,
