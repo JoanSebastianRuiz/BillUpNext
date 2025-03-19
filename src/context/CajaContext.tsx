@@ -25,7 +25,7 @@ interface CajaProviderProps {
 export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) => {
     const [empresas, setEmpresas] = useState<EmpresaResponseDTO[]>([]);
     const [cajas, setCajas]= useState<CajaDTO[]>([]);
-     const { data: session, status } = useSession();
+    const { data: session, status } = useSession();
 
     const obtenerCajas = async () => {
         try {
@@ -50,7 +50,7 @@ export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) =
                 if (empresasRes.status === 200) setEmpresas(empresasRes.data)
                 if (cajaRes.status === 200) setCajas(cajaRes.data)
             } catch (error) {
-                console.error("Error al obtener los datos de Caja COntext: ", error)
+                console.error("Error al obtener los datos de Caja Context: ", error)
             }
         }
         fetchData();
