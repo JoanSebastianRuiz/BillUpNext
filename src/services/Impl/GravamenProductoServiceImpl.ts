@@ -7,7 +7,7 @@ export class GravamenProductoServiceImpl implements GravamenProductoService {
   private static instancia: GravamenProductoServiceImpl;
   private gravamenProductoDAOImpl: GravamenProductoDAOImpl =
     GravamenProductoDAOImpl.getInstance();
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): GravamenProductoServiceImpl {
     if (!GravamenProductoServiceImpl.instancia) {
@@ -23,15 +23,13 @@ export class GravamenProductoServiceImpl implements GravamenProductoService {
       const {
         idProducto,
         idGravamen,
-        compraGravamenProducto,
-        ventaGravamenProducto,
+        porcentajeGravamenProducto
       } = gravamenProducto;
 
       if (
         !idProducto ||
         !idGravamen ||
-        !compraGravamenProducto ||
-        !ventaGravamenProducto
+        !porcentajeGravamenProducto 
       ) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
@@ -66,16 +64,14 @@ export class GravamenProductoServiceImpl implements GravamenProductoService {
         idGravamenProducto,
         idProducto,
         idGravamen,
-        compraGravamenProducto,
-        ventaGravamenProducto,
+        porcentajeGravamenProducto
       } = gravamenProducto;
 
       if (
         !idGravamenProducto ||
         !idProducto ||
         !idGravamen ||
-        !compraGravamenProducto ||
-        !ventaGravamenProducto
+        !porcentajeGravamenProducto 
       ) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },

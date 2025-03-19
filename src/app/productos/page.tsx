@@ -3,7 +3,7 @@
 import axios from "axios";
 
 import { useEffect, useState, useRef } from "react";
-import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
+import { Pencil, Eye, PlusCircle, XCircle, PackageSearch } from "lucide-react";
 
 import { useProductoContext } from "@/context/ProductoContext";
 
@@ -23,11 +23,13 @@ import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
+import SublistaGravamenes from "@/components/productos/gravamenes/SublistaGravamenProducto";
 
-const ProductosPage: React.FC = () => {
+const ProductosPage: React.FC = (gravamenProducto) => {
   const [modalInfo, setModalInfo] = useState(false);
   const [modalRegistrar, setModalRegistrar] = useState(false);
   const [modalActualizar, setModalActualizar] = useState(false);
+  const [modalGravamenes, setModalGravamenes] = useState(false);
   const [productoSeleccionado, setProductoSeleccionado] =
     useState<ProductoResponseDTO | null>(null);
   const [productosFiltrados, setProductosFiltrados] = useState<
@@ -95,7 +97,7 @@ const ProductosPage: React.FC = () => {
   };
 
   return (
-    <ContenedorPrincipal>
+    <section>
       <ContenedorFiltros title="Productos">
         {/* Botones de filtros */}
         <ContenedorBotonesFiltros>
@@ -169,6 +171,16 @@ const ProductosPage: React.FC = () => {
                     setModalInfo(true);
                   }}
                 />
+
+                {gravamenProducto && (
+                  <BotonAccionCard
+                    Symbol={PackageSearch}
+                    onClick={() => {
+                      setProductoSeleccionado(producto);
+                      setModalGravamenes(true);
+                    }}
+                  />
+                )}
               </ContenedorBotonesAccionCard>
             </ProductoCard>
           ))}
@@ -191,9 +203,7 @@ const ProductosPage: React.FC = () => {
 
       {/* Modal para registrar un producto*/}
       <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
-        <RegistrarProducto
-          setModalRegistrar={setModalRegistrar}
-        />
+        <RegistrarProducto setModalRegistrar={setModalRegistrar} />
       </Modal>
 
       {/* Modal para actualizar un producto */}
@@ -206,7 +216,15 @@ const ProductosPage: React.FC = () => {
           setModalActualizar={setModalActualizar}
         />
       </Modal>
-    </ContenedorPrincipal>
+
+      {/* Modal para gestionar los gravamenes de un proveedor*/}
+      <Modal
+        isOpen={modalGravamenes}
+        setIsOpen={() => setModalGravamenes(false)}
+      >
+        <SublistaGravamenes producto={productoSeleccionado} />
+      </Modal>
+    </section>
   );
 };
 

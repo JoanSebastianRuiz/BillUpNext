@@ -5,7 +5,7 @@ import { ResultadoBooleanDTO } from "@/dto/ResultadoBooleanDTO";
 
 export class GravamenProductoDAOImpl implements GravamenProductoDAO {
   private static instancia: GravamenProductoDAOImpl;
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): GravamenProductoDAOImpl {
     if (!GravamenProductoDAOImpl.instancia) {
@@ -18,7 +18,7 @@ export class GravamenProductoDAOImpl implements GravamenProductoDAO {
     try {
       const gravamenProductoDatabase: GravamenProductoDTO[] =
         await ejecutarQuery(
-          `SELECT gp.\"idGravamenProducto\", gp.\"idProducto"\, gp."\idGravamen"\, gp.\"compraGravamenProducto\", gp.\"ventaGravamenProducto\"
+          `SELECT gp.\"idGravamenProducto\", gp.\"idProducto"\, gp."\idGravamen"\, gp.\"porcentajeGravamenProducto\"
                     FROM \"GravamenProducto\" gp;`,
           []
         );
@@ -34,7 +34,7 @@ export class GravamenProductoDAOImpl implements GravamenProductoDAO {
   ): Promise<GravamenProductoDTO | null> => {
     try {
       const respuesta: GravamenProductoDTO[] = await ejecutarQuery(
-        `SELECT gp.\"idGravamenProducto\", gp.\"idProducto"\, gp."\idGravamen"\, gp.\"compraGravamenProducto\", gp.\"ventaGravamenProducto\"
+        `SELECT gp.\"idGravamenProducto\", gp.\"idProducto"\, gp."\idGravamen"\, gp.\"porcentajeGravamenProducto\"
                     FROM \"GravamenProducto\" gp 
                     WHERE gp.\"idGravamenProducto\" = $1;`,
         [idGravamenProducto]
@@ -51,12 +51,11 @@ export class GravamenProductoDAOImpl implements GravamenProductoDAO {
   ): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT insertarGravamenProducto($1,$2,$3,$4) as resultado;`,
+        `SELECT insertarGravamenProducto($1,$2,$3) as resultado;`,
         [
           gravamenProducto.idProducto,
           gravamenProducto.idGravamen,
-          gravamenProducto.compraGravamenProducto,
-          gravamenProducto.ventaGravamenProducto,
+          gravamenProducto.porcentajeGravamenProducto
         ]
       );
 
@@ -71,13 +70,12 @@ export class GravamenProductoDAOImpl implements GravamenProductoDAO {
   ): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT actualizarGravamenProducto($1,$2,$3,$4,$5) as resultado;`,
+        `SELECT actualizarGravamenProducto($1,$2,$3,$4,) as resultado;`,
         [
           gravamenProducto.idGravamenProducto,
           gravamenProducto.idProducto,
           gravamenProducto.idGravamen,
-          gravamenProducto.compraGravamenProducto,
-          gravamenProducto.ventaGravamenProducto,
+          gravamenProducto.porcentajeGravamenProducto
         ]
       );
 
