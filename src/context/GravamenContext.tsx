@@ -37,7 +37,7 @@
         };
 
         useEffect(() => {
-            if (idRol === 1) {
+            if (idRol === 1 || idRol === 2) {
                 if (!session || idRol === undefined || idEmpresa === undefined) return;
                 obtenerGravamenes();
             };

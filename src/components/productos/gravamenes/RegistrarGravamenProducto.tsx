@@ -37,7 +37,7 @@ const RegistrarGravamenProducto = ({
     reset,
   } = useForm<GravamenProductoDTO>();
 
-  const { obtenerGravamenesProducto, gravamenesProducto } =
+  const { obtenerGravamenesProducto, gravamenesProducto, obtenerProductos } =
     useProductoContext();
   const gravamenesProductoSeleccionado = gravamenesProducto.find(
     (p) => p.idGravamenProducto === idGravamenProductoSeleccionado
@@ -73,12 +73,13 @@ const RegistrarGravamenProducto = ({
         };
 
         const respuesta = await axios.put(
-          `/api/gravamenProducto/${gravamenesProductoSeleccionado.idGravamenProducto}`,
+          `/api/gravamen-producto/${gravamenesProductoSeleccionado.idGravamenProducto}`,
           datosModificados
         );
         setError(null);
         setSuccess(respuesta.data.message);
         obtenerGravamenesProducto();
+        obtenerProductos();
         setModalActualizar?.(false);
       } else {
         const datosModificados = {
@@ -90,12 +91,13 @@ const RegistrarGravamenProducto = ({
         };
 
         const respuesta = await axios.post(
-          "/api/gravamenProducto",
+          "/api/gravamen-producto",
           datosModificados
         );
         setError(null);
         setSuccess(respuesta.data.message);
         obtenerGravamenesProducto();
+        obtenerProductos();
         setModalRegistrar?.(false);
       }
     } catch (error: unknown) {

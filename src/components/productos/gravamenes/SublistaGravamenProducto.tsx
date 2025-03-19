@@ -21,6 +21,7 @@ import BotonAccionCard from "../../cards/BotonAccionCard";
 import ControlesPaginacion from "../../common/ControlesPaginacion";
 import Table from "@/components/common/Table";
 
+
 interface GravamenMostrar {
     idGravamenProducto: number;
     nombreGravamen: string;
@@ -127,7 +128,7 @@ const SublistaGravamenes = ({ producto}: { producto: ProductoResponseDTO | Produ
                     gravamenesActuales.map((g) => (
                         <tr key={g.idGravamenProducto} className="hover:bg-gray-100 dark:hover:bg-gray-700">
                             <td className="px-4 py-3">{g.nombreGravamen}</td>
-                            <td className="px-4 py-3">$ {g.porcentajeGravamenProducto}</td>
+                            <td className="px-4 py-3">{g.porcentajeGravamenProducto}</td>
                             <td className="px-4 py-3 text-center">
                                 <BotonAccionCard
                                     Symbol={Pencil}
