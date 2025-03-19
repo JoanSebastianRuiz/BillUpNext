@@ -63,4 +63,46 @@ export class DetalleVentaDAOImpl implements DetalleVentaDAO {
       throw new Error(`Error en DetalleVentaDAO.create: ${error}`);
     }
   };
+
+  public validarCantidad = async (
+    cantidadDetalleVenta: number
+  ) : Promise<boolean> => {
+    try {
+      const respuesta = await ejecutarQuery(
+        `SELECT validarCantidadDetalleVenta ($1) as resultado;`,
+        [cantidadDetalleVenta]
+      );
+      return respuesta.length > 0 ? respuesta[0].resultado : false;
+    } catch (error) {
+      throw new Error(`Error en DetalleVentaDAO.validarCantidad: ${error}`);
+    }
+  };
+
+  public validarDescuento = async (
+    valorDescuentoDetalleVenta: number
+  ) : Promise<boolean> => {
+    try {
+      const respuesta = await ejecutarQuery(
+        `SELECT validarValorDescuentoDetalleVenta ($1) as resultado;`,
+        [valorDescuentoDetalleVenta]
+      );
+      return respuesta.length > 0 ? respuesta[0].resultado: false;
+    } catch (error) {
+      throw new Error(`Error en DetalleVentaDAO.validarDescuento: ${error}`)
+    }
+  };
+
+  public validarValor = async (
+    valorTotalDetalleVenta: number
+  ) : Promise<boolean> => {
+    try {
+      const respuesta = await ejecutarQuery(
+        `SELECT validarValorTotalDetalleVenta ($1) as resultado;`,
+        [valorTotalDetalleVenta]
+      );
+      return respuesta.length > 0 ? respuesta[0].resultado : false;
+    } catch (error) {
+      throw new Error(`Error en DetalleVentaDAO.validarValor: ${error}`);
+    }
+  };
 }

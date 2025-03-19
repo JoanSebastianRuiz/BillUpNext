@@ -195,6 +195,7 @@ CREATE TABLE IF NOT EXISTS "DetalleCaja" (
     "fechaCierreDetalleCaja" TIMESTAMP not null,
     "dineroAperturaDetalleCaja" double precision not null,
     "dineroCierreDetalleCaja" double precision not null,
+    "dineroCierreSistemaDetalleCaja" double precision not null,
     primary key ("idDetalleCaja"),
     foreign key ("idCaja") references "Caja" ("idCaja"),
     foreign key ("idUsuario") references "Usuario" ("idUsuario")

@@ -5,7 +5,8 @@ CREATE OR REPLACE FUNCTION actualizarDetalleCaja(
     _fechaAperturaDetalleCaja "DetalleCaja"."fechaAperturaDetalleCaja"%TYPE,
     _fechaCierreDetalleCaja "DetalleCaja"."fechaCierreDetalleCaja"%TYPE,
     _dineroAperturaDetalleCaja "DetalleCaja"."dineroAperturaDetalleCaja"%TYPE,
-    _dineroCierreDetalleCaja "DetalleCaja"."dineroCierreDetalleCaja"%TYPE
+    _dineroCierreDetalleCaja "DetalleCaja"."dineroCierreDetalleCaja"%TYPE,
+    _dineroCierreSistemaDetalleCaja "DetalleCaja"."dineroCierreSistemaDetalleCaja"%TYPE
 )
 RETURNS BOOLEAN AS
 $$
@@ -17,6 +18,7 @@ BEGIN
         "fechaCierreDetalleCaja" = COALESCE(_fechaCierreDetalleCaja, "fechaCierreDetalleCaja"),
         "dineroAperturaDetalleCaja" = COALESCE(_dineroAperturaDetalleCaja, "dineroAperturaDetalleCaja"),
         "dineroCierreDetalleCaja"= COALESCE(_dineroCierreDetalleCaja, "dineroCierreDetalleCaja")
+        "dineroCierreSistemaDetalleCaja"= COALESCE(_dineroCierreSistemaDetalleCaja, "dineroCierreSistemaDetalleCaja")
     WHERE "idDetalleCaja" = _idDetalleCaja;
 
     IF FOUND THEN
@@ -57,7 +59,8 @@ CREATE OR REPLACE FUNCTION insertarDetalleCaja(
     _fechaAperturaDetalleCaja "DetalleCaja"."fechaAperturaDetalleCaja"%TYPE,
     _fechaCierreDetalleCaja "DetalleCaja"."fechaCierreDetalleCaja"%TYPE,
     _dineroAperturaDetalleCaja "DetalleCaja"."dineroAperturaDetalleCaja"%TYPE,
-    _dineroCierreDetalleCaja "DetalleCaja"."dineroCierreDetalleCaja"%TYPE
+    _dineroCierreDetalleCaja "DetalleCaja"."dineroCierreDetalleCaja"%TYPE,
+    _dineroCierreSistemaDetalleCaja "DetalleCaja"."dineroCierreSistemaDetalleCaja"%TYPE
 )
 RETURNS BOOLEAN AS
 $$
@@ -70,7 +73,8 @@ BEGIN
         "fechaAperturaDetalleCaja",
         "fechaCierreDetalleCaja",
         "dineroAperturaDetalleCaja",
-        "dineroCierreDetalleCaja"
+        "dineroCierreDetalleCaja",
+        "dineroCierreSistemaDetalleCaja"
     )
     VALUES(
         _idCaja,
@@ -78,7 +82,8 @@ BEGIN
         _fechaAperturaDetalleCaja,
         _fechaCierreDetalleCaja,
         _dineroAperturaDetalleCaja,
-        _dineroCierreDetalleCaja
+        _dineroCierreDetalleCaja,
+        _dineroCierreSistemaDetalleCaja
     )
     RETURNING "idDetalleCaja" INTO id;
 

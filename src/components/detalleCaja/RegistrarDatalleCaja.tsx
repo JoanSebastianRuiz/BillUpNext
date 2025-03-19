@@ -15,8 +15,6 @@ import SelectForm from "../form/SelectForm";
 import Notificacion from "../form/Notificacion";
 import ContenedorRegistrar from "../modal/ContenedorRegistrar";
 import ButtonForm from "../form/ButtonForm";
-import { data } from "framer-motion/client";
-import { DetalleCaja } from "@/models/DetalleCaja";
 
 
 const RegistrarDetalleCaja = ( {idDetalleCaja, obtenerDetallesCaja, setModalActualizar, setModalRegistrar}:
@@ -84,10 +82,12 @@ const RegistrarDetalleCaja = ( {idDetalleCaja, obtenerDetallesCaja, setModalActu
                 let {...datosModificados} = data;
 
                 datosModificados = {...data, idCaja: parseInt(data.idCaja.toString(),10),
-                idUsuario: parseInt(data.idUsuario.toString(),10),fechaAperturaDetalleCaja: new Date(data.fechaAperturaDetalleCaja),
-                fechaCierreDetalleCaja: new Date(), // Se genera automáticamente al crear
+                idUsuario: parseInt(data.idUsuario.toString(),10),
+                fechaAperturaDetalleCaja: new Date(data.fechaAperturaDetalleCaja),
+                fechaCierreDetalleCaja: new Date(), // Se genera automáticamente al crear el detalle caja
                 dineroAperturaDetalleCaja: parseFloat(data.dineroAperturaDetalleCaja.toString()),
-                dineroCierreDetalleCaja: parseFloat(data.dineroCierreDetalleCaja.toString()) };
+                dineroCierreDetalleCaja: parseFloat(data.dineroCierreDetalleCaja.toString()),
+                dineroCierreSistemaDetalleCaja: parseFloat(data.dineroCierreSistemaDetalleCaja.toString() ) };
 
                 const respuesta = await axios.post('/api/detalle-caja', datosModificados);
                 setError(null);

@@ -42,6 +42,17 @@ export class VentaServiceImpl implements VentaService {
         );
       }
 
+      if (
+        await this.ventaDAOImpl.validarValor(
+          valorTotalVenta
+        )
+      ) {
+        return NextResponse.json(
+          { message: "El valor no es valido" },
+          { status: 400 }
+        )
+      }
+
       const respuesta = await this.ventaDAOImpl.create(venta);
       if (respuesta) {
         return NextResponse.json(
