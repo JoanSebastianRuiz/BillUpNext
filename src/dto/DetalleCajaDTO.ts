@@ -5,5 +5,6 @@ export interface DetalleCajaDTO {
     fechaAperturaDetalleCaja: Date,
     fechaCierreDetalleCaja: Date,
     dineroAperturaDetalleCaja: number,
-    dineroCierreDetalleCaja: number
+    dineroCierreDetalleCaja: number,
+    dineroCierreSistemaDetalleCaja: number
 }

@@ -5,7 +5,7 @@ import { DetalleCajaDTO } from "@/dto/DetalleCajaDTO";
 
 import ContenedorMostrarInfo from "../modal/ContenedorMostrarInfo";
 import ParrafoMostrarInfo from "../modal/ParrafoMostrarInfo";
-import EstadoMostrarInfo from "../modal/EstadoMostrarInfo";
+
 
 const MostrarInfoDetalleCaja = ({ detalleCaja}: {detalleCaja: DetalleCajaDTO}) => {
     const { cajas } = useCajaContext();
@@ -19,6 +19,7 @@ const MostrarInfoDetalleCaja = ({ detalleCaja}: {detalleCaja: DetalleCajaDTO}) =
             <ParrafoMostrarInfo subtitle=" Fecha Cierre " text={detalleCaja.fechaCierreDetalleCaja.toLocaleDateString()} />
             <ParrafoMostrarInfo subtitle=" Monto Apertura Caja " text={detalleCaja.dineroAperturaDetalleCaja.toString()} />
             <ParrafoMostrarInfo subtitle=" Monto Cierre Caja " text={detalleCaja.dineroCierreDetalleCaja.toString()} />
+            <ParrafoMostrarInfo subtitle=" Monto del Sistema Cierre Caja " text={detalleCaja.dineroCierreSistemaDetalleCaja.toString()} />
 
         </ContenedorMostrarInfo>
 
