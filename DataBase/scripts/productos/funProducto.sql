@@ -100,3 +100,25 @@ BEGIN
     );
 END;
 $$ LANGUAGE PLPGSQL;
+
+
+CREATE OR REPLACE FUNCTION validarPrecioVentaProducto(
+    _precioVentaProducto "Producto"."precioVentaProducto"%TYPE
+)
+RETURNS BOOLEAN AS
+$$
+BEGIN
+    RETURN _precioVentaProducto > 0;
+END;
+LANGUAGE PLPGSQL;
+
+
+CREATE OR REPLACE FUNCTION validarPorcentajeDescuentoProducto(
+    _porcentajeDescuentoProducto "Producto"."porcentajeDescuentoProducto"%TYPE
+)
+RETURNS BOOLEAN AS
+$$
+BEGIN
+    RETURN _porcentajeDescuentoProducto > 0;
+END;
+LANGUAGE PLPGSQL;

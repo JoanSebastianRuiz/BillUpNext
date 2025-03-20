@@ -128,4 +128,32 @@ export class ProductoDAOImpl implements ProductoDAO {
       throw new Error(`Error en ProductoDAO.validarStockProducto: ${error}`);
     }
   };
+
+  public validarPrecio = async (
+    precioVentaProducto: number
+  ): Promise<boolean> => {
+    try {
+      const respuesta = await ejecutarQuery(
+        `SELECT validarPrecioVentaProducto ($1) as resultado;`,
+        [precioVentaProducto]
+      );
+      return respuesta.length > 0 ? respuesta[0].resultado : false;
+    } catch (error) {
+      throw new Error(`Error en ProdutoDAO.validarPrecio: ${error}`);
+    }
+  };
+
+  public validarPorcentaje = async (
+    porcentajeDescuentoProducto: number
+  ): Promise<boolean> => {
+    try {
+      const respuesta = await ejecutarQuery(
+        `SELECT validarPorcentajeDescuentoProducto ($1) as resultado;`,
+        [porcentajeDescuentoProducto]
+      );
+      return respuesta.length > 0 ? respuesta[0].resultado : false;
+    } catch (error) {
+      throw new Error(`Error en ProductoDAO.validarPorcentaje: ${error}`);
+    }
+  };
 }
