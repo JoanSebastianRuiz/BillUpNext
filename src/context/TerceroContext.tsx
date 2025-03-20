@@ -102,7 +102,7 @@ export const TerceroContextProvider: React.FC<TerceroProviderProps> = ({ childre
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!session || idRol === undefined || idEmpresa === undefined) return;
+            if (status !== "authenticated" || idRol === undefined || idEmpresa === undefined) return;
 
             setLoading(true); // Iniciar carga antes de la petición
             try {
@@ -139,7 +139,7 @@ export const TerceroContextProvider: React.FC<TerceroProviderProps> = ({ childre
         };
 
         fetchData();
-    }, [session, idRol, idEmpresa]);
+    }, [status, idRol, idEmpresa]);
 
     return (
         <TerceroContext.Provider value={{

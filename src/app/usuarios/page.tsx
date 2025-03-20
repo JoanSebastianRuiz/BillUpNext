@@ -37,8 +37,7 @@ const UsuariosPage: React.FC = () => {
         municipios,
         roles,
         tiposDocumento,
-        usuarios,
-        obtenerUsuarios
+        usuarios
     } = useUsuarioContext()
 
     const { empresas } = useEmpresaContext()
@@ -330,13 +329,13 @@ const UsuariosPage: React.FC = () => {
 
             {/* Modal para registrar un usuario*/}
             <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
-                <RegistrarUsuario obtenerUsuarios={obtenerUsuarios} setModalRegistrar={setModalRegistrar} />
+                <RegistrarUsuario setModalRegistrar={setModalRegistrar} />
             </Modal>
 
 
             {/* Modal para actualizar un usuario*/}
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
-                <RegistrarUsuario usuarioSeleccionado={usuarioSeleccionado} obtenerUsuarios={obtenerUsuarios} setModalActualizar={setModalActualizar} />
+                <RegistrarUsuario usuarioSeleccionado={usuarioSeleccionado} setModalActualizar={setModalActualizar} />
             </Modal>
 
         </ContenedorPrincipal >

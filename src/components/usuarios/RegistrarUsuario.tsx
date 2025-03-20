@@ -21,9 +21,9 @@ import ButtonForm from '../form/ButtonForm';
 import { UsuarioResponseDTO } from '@/dto/UsuarioResponseDTO';
 
 
-const RegistrarUsuario = ({ usuarioSeleccionado, obtenerUsuarios, setModalActualizar, setModalRegistrar }: { usuarioSeleccionado?: UsuarioResponseDTO | null, obtenerUsuarios: () => void, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+const RegistrarUsuario = ({ usuarioSeleccionado, setModalActualizar, setModalRegistrar }: { usuarioSeleccionado?: UsuarioResponseDTO | null, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
-    const { departamentos, municipios, roles, tiposDocumento } = useUsuarioContext();
+    const { departamentos, municipios, roles, tiposDocumento, obtenerUsuarios } = useUsuarioContext();
     const { empresas } = useEmpresaContext();
 
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);

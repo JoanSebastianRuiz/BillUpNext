@@ -136,6 +136,7 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
         if (numeroDocumentoPersonaRef.current) numeroDocumentoPersonaRef.current.value = "";
         if (idDepartamentoRef.current) idDepartamentoRef.current.value = "0";
         if (idMunicipioRef.current) idMunicipioRef.current.value = "0";
+        if (estadoPersonaRef.current) estadoPersonaRef.current.value = "true";
         filtrarUsuarios();
     }
 

@@ -22,12 +22,12 @@ export default withAuth(
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
-    const supervisorRoutes = ["/productos", "/proveedores", "/clientes"];
+    const supervisorRoutes = ["/productos", "/proveedores", "/clientes", "/categorias", "/cajas", "/ubicacion-venta"];
     if (supervisorRoutes.some((route) => req.nextUrl.pathname.startsWith(route)) && userRole !== 2) {
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
-    const adminSupervisorRoutes = ["/dashboard", "/usuarios"];
+    const adminSupervisorRoutes = ["/dashboard", "/usuarios", "/gravamenes"];
     if (adminSupervisorRoutes.some((route) => req.nextUrl.pathname.startsWith(route)) && userRole !== 1 && userRole !== 2) {
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
@@ -50,5 +50,11 @@ export const config = {
     "/productos/:path*",
     "/empresas/:path*",
     "/categorias/:path*",
+    "/proveedores/:path*",
+    "/clientes/:path*",
+    "/gravamenes/:path*",
+    "/cajas/:path*",
+    "/ubicacion-venta/:path*",
+    "/perfil/:path*"
   ], // Protege estas rutas
 };

@@ -72,7 +72,7 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
     useEffect(() => {
         const fetchData = async () => {
             try {
-                if (!session || idRol === undefined || idEmpresa === undefined) return;
+                if (status !== "authenticated" || idRol === undefined || idEmpresa === undefined) return;
 
                 if (idRol === 2) {
                     const [categoriasRes, productosRes, gravamenesProductoRes] = await Promise.all([
@@ -105,7 +105,7 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
         };
 
         fetchData();
-    }, [session, idRol, idEmpresa]);
+    }, [status, idRol, idEmpresa]);
 
     return (
         <ProductoContext.Provider value={{ productos, setProductos, categorias, setCategorias, gravamenesProducto, setGravamenesProducto, obtenerCategorias, obtenerProductos, obtenerGravamenesProducto }}>

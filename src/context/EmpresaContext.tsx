@@ -43,8 +43,8 @@ export const EmpresaContextProvider: React.FC<EmpresaProviderProps> = ({ childre
     }
 
     useEffect(() => {
+        if (status !== "authenticated") return;
         const fetchData = async () => {
-            if (!session) return;
             try {
                 const [tiposPersonaRes, regimenesContribuyenteRes, empresasRes] = await Promise.all([
                     axios.get<TipoPersonaDTO[]>("/api/tipos-persona"),
@@ -60,7 +60,7 @@ export const EmpresaContextProvider: React.FC<EmpresaProviderProps> = ({ childre
             }
         }
         fetchData();
-    }, [session])
+    }, [status])
 
 
     return (

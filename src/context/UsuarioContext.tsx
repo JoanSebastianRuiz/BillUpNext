@@ -21,7 +21,7 @@ interface UserContextType {
     setTiposDocumento: (tiposDocumento: TipoDocumentoResponseDTO[]) => void;
     roles: RolDTO[];
     setRoles: (roles: RolDTO[]) => void;
-    usuarios: UsuarioResponseDTO[]; 
+    usuarios: UsuarioResponseDTO[];
     setUsuarios: (usuarios: UsuarioResponseDTO[]) => void;
     obtenerUsuarios: () => void;
     loading: boolean; // Estado de carga
@@ -39,7 +39,7 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
     const [municipios, setMunicipios] = useState<MunicipioResponseDTO[]>([]);
     const [tiposDocumento, setTiposDocumento] = useState<TipoDocumentoResponseDTO[]>([]);
     const [roles, setRoles] = useState<RolDTO[]>([]);
-    const [usuarios, setUsuarios] = useState<UsuarioResponseDTO[]>([]); 
+    const [usuarios, setUsuarios] = useState<UsuarioResponseDTO[]>([]);
     const [loading, setLoading] = useState(true); // Estado de carga
 
     const { data: session, status } = useSession();
@@ -67,8 +67,8 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
     };
 
     useEffect(() => {
+        if (status !== "authenticated" || !idRol || !idEmpresa) return; // Esperar a que la sesión esté lista
         const fetchData = async () => {
-            if (!session || idRol === undefined || idEmpresa === undefined) return;
 
             setLoading(true); // Iniciar carga antes de la petición
             try {
@@ -100,7 +100,7 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
         };
 
         fetchData();
-    }, [session, idRol, idEmpresa]);
+    }, [status, idRol, idEmpresa]);
 
     return (
         <UsuarioContext.Provider value={{

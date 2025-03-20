@@ -1,11 +1,7 @@
 import { CajaService } from "@/services/CajaService";
 import { CajaDAOImpl } from "@/dao/impl/CajaDAOImpl";
-import { EmpresaDAOImpl } from "@/dao/impl/EmpresaDAOImpl";
 import { NextResponse } from "next/server";
 import { CajaDTO } from "@/dto/CajaDTO";
-import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
- //import{ ifValiNombreCaja, ifValiEstadoCaja } from "@/util/validators/validators";
- // poner la validcion del nombre de la caja y el estado de la caja
 
  export class CajaServiceImpl implements CajaService {
    
@@ -32,7 +28,7 @@ import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
             return NextResponse.json({message: 'Faltan comapos por llenar'}, {status: 400});
          }
 
-         if (await this.cajaDAOImpl.existCajaNombre(nombreCaja)){
+         if (await this.cajaDAOImpl.existCajaNombre(nombreCaja, idEmpresa)) {
             return NextResponse.json({"message": "El nombre la caja ya se encuentra registrado"}, {status: 400});
          }
 
@@ -62,7 +58,7 @@ import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
             return NextResponse.json({message: 'Faltan campos por llenar'}, {status: 400});
          }
 
-         if(await this.cajaDAOImpl.existCajaNombre(nombreCaja)){
+         if(await this.cajaDAOImpl.existCajaNombre(nombreCaja, idEmpresa)){
             return NextResponse.json({message: 'El nombre ya se encuentra registrado'}, {status: 400});
          }
 
@@ -79,31 +75,14 @@ import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
       }
    }
 
-   public getAll = async (): Promise<Array<CajaDTO>> => {
+   public getAll = async (idEmpresa: number): Promise<Array<CajaDTO>> => {
       try {
-         const respuesta: CajaDTO[] = await this.cajaDAOImpl.getAll();
+         const respuesta: CajaDTO[] = await this.cajaDAOImpl.getAll(idEmpresa);
          return respuesta;
       } catch (error) {
          throw new Error(`Error en CajaService.getAll: ${error}`);
       }
    }
-
-   public getEmpresas = async( idCaja: number): Promise<EmpresaResponseDTO []> =>{
-      try {
-         const empresas = await this.cajaDAOImpl.getEmpresas(idCaja);
-         if (empresas === undefined || empresas === null) {
-            return Promise.resolve([]);
-         }
-
-      // revisar esto!!!!!
-
-         return empresas;
-      } catch (error) {
-         console.error("Error al obtener las empresas:", error);
-         throw new Error(`Error al obtener las empresas: ${error}`);
-      }
-   } 
-
 
    public getById = async(idCaja: number ): Promise<CajaDTO | null> => {
       try {

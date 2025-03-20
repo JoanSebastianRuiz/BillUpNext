@@ -7,7 +7,6 @@ import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
 
 import { UbicacionVentaDTO } from "@/dto/UbicacionVentaDTO";
 
-import MostrarInfoUbicacionVenta from "@/components/ubicacionVenta/MostrarInfoUbicacionVenta";  
 import RegistrarUbicacionVenta from "@/components/ubicacionVenta/RegistrarUbicacionVenta";
 import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
 import ContenedorBotonesFiltros from "@/components/filtros/ContenedorBotonesFiltros";
@@ -20,7 +19,6 @@ import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAcc
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
-import { requestToBodyStream } from "next/dist/server/body-streams";
 
 const UbicacionVentaPage: React.FC = () => {
     const [modalInfo, setModalInfo] = useState(false);
@@ -134,9 +132,6 @@ const UbicacionVentaPage: React.FC = () => {
                 )}
             </div>
 
-            <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>
-                {ubicacionVentaSeleccionada && < MostrarInfoUbicacionVenta ubicacionVenta={ubicacionVentaSeleccionada}/>}
-            </Modal>
 
             <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)} >
                 <RegistrarUbicacionVenta obtenerUbicacionesVenta={obtenerUbicacionesVenta} setModalRegistrar={setModalRegistrar} />
