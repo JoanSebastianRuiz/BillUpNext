@@ -23,6 +23,7 @@ export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) =
     const [cajas, setCajas] = useState<CajaDTO[]>([]);
     const { data: session, status } = useSession();
     const idEmpresa = session?.user?.idEmpresa;
+    const idRol = session?.user?.idRol;
 
 
     const obtenerCajas = async () => {
@@ -38,8 +39,10 @@ export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) =
 
     useEffect(() => {
         const fetchData = async () => {
-            if (status !== "authenticated" || idEmpresa==undefined) return;
-            obtenerCajas();
+            if (status !== "authenticated" || idEmpresa == undefined) return;
+            if (idRol === 2 || idRol === 3) {
+                obtenerCajas();
+            }
         }
         fetchData();
     }, [status])

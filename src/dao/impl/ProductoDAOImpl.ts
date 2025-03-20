@@ -101,13 +101,12 @@ export class ProductoDAOImpl implements ProductoDAO {
   public existProductoNombre = async (
     nombreProducto: string,
     idEmpresa: number,
-    idCategoria: number,
-    idProducto?: number
+    idCategoria: number
   ): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery(
-        `SELECT existeProductoNombre ($1,$2,$3,$4) as resultado;`,
-        [nombreProducto, idEmpresa, idCategoria, idProducto]
+        `SELECT existeProductoNombre ($1,$2,$3) as resultado;`,
+        [nombreProducto, idEmpresa, idCategoria]
       );
       return respuesta.length > 0 ? respuesta[0].resultado : false;
     } catch (error) {

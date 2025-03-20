@@ -79,14 +79,6 @@ CREATE TABLE IF NOT EXISTS "Rol" (
     primary key ("idRol")
 );
 
-
-CREATE TABLE IF NOT EXISTS "UbicacionVenta" (
-    "idUbicacionVenta" serial,
-    "nombreUbicacionVenta" varchar(50) not null,
-    "estadoUbicacionVenta" boolean not null,
-    primary key ("idUbicacionVenta")
-);
-
 CREATE TABLE IF NOT EXISTS "TipoMedioPago" (
     "idTipoMedioPago" serial,
     "nombreTipoMedioPago" varchar(50) not null,
@@ -130,10 +122,19 @@ CREATE TABLE IF NOT EXISTS "Categoria" (
     foreign key ("idEmpresa") references "Empresa" ("idEmpresa")
 );
 
+CREATE TABLE IF NOT EXISTS "UbicacionVenta" (
+    "idUbicacionVenta" serial,
+    "idEmpresa" int not null,
+    "nombreUbicacionVenta" varchar(50) not null,
+    "estadoUbicacionVenta" boolean not null,
+    primary key ("idUbicacionVenta"),
+    foreign key ("idEmpresa") references "Empresa" ("idEmpresa")
+);
+
 CREATE TABLE IF NOT EXISTS "Caja" (
     "idCaja" serial,
     "idEmpresa" int not null,
-    "nombreCaja" varchar(20) not null,
+    "nombreCaja" varchar(50) not null,
     "estadoCaja" boolean not null,
     primary key ("idCaja"),
     foreign key ("idEmpresa") references "Empresa" ("idEmpresa")

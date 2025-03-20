@@ -77,6 +77,7 @@ END;
 $$
 LANGUAGE PLPGSQL;
 
+
 CREATE OR REPLACE FUNCTION validarExistCajaNombre(
     _nombreCaja "Caja"."nombreCaja"%TYPE,
     _idEmpresa "Caja"."idEmpresa"%TYPE

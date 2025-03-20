@@ -1,11 +1,13 @@
 CREATE OR REPLACE FUNCTION actualizarUbicacionVenta(
     _idUbicacionVenta "UbicacionVenta"."idUbicacionVenta"%TYPE,
+    _idEmpresa "UbicacionVenta"."idEmpresa"%TYPE,
     _nombreUbicacionVenta "UbicacionVenta"."nombreUbicacionVenta"%TYPE,
     _estadoUbicacionVenta "UbicacionVenta"."estadoUbicacionVenta"%TYPE)
 RETURNS BOOLEAN AS
 $$
 BEGIN
     UPDATE  "UbicacionVenta" SET
+        "idEmpresa" = COALESCE(_idEmpresa, "idEmpresa"),
         "nombreUbicacionVenta" = COALESCE(_nombreUbicacionVenta, "nombreUbicacionVenta"),
          "estadoUbicacionVenta" = COALESCE(_estadoUbicacionVenta, "estadoUbicacionVenta")
     WHERE "idUbicacionVenta" = _idUbicacionVenta;
@@ -23,29 +25,8 @@ $$
 LANGUAGE PLPGSQL;
 
 
-
-CREATE OR REPLACE FUNCTION eliminarUbicacionVenta(
-    _idUbicacionVenta "UbicacionVenta"."idUbicacionVenta"%TYPE)
-RETURNS BOOLEAN AS
-$$
-BEGIN
-    DELETE FROM "UbicacionVenta" WHERE "idUbicacionVenta" = _idUbicacionVenta;
-
-    IF FOUND THEN
-        RAISE NOTICE 'Se eliminó correctamente la UBICACION VENTA';
-        RETURN TRUE;
-    ELSE
-        RAISE NOTICE 'Ocurrió un error al eliminar la UBICACION VENTA';
-        RETURN FALSE;
-    END IF;
-END
-$$
-LANGUAGE PLPGSQL;
-
-
-
 CREATE OR REPLACE FUNCTION insertarUbicacionVenta(
-    _idUbicacionVenta "UbicacionVenta"."idUbicacionVenta"%TYPE,
+    _idEmpresa "UbicacionVenta"."idEmpresa"%TYPE,
     _nombreUbicacionVenta "UbicacionVenta"."nombreUbicacionVenta"%TYPE,
     _estadoUbicacionVenta "UbicacionVenta"."estadoUbicacionVenta"%TYPE
 )
@@ -55,10 +36,12 @@ DECLARE
     id INTEGER;
 BEGIN
     INSERT INTO "UbicacionVenta" (
+        "idEmpresa",
         "nombreUbicacionVenta",
         "estadoUbicacionVenta"
     )
     VALUES(
+        _idEmpresa,
         _nombreUbicacionVenta,
         _estadoUbicacionVenta
     )
@@ -73,4 +56,23 @@ BEGIN
     END IF;
 END;
 $$
+LANGUAGE PLPGSQL;
+
+
+
+CREATE OR REPLACE FUNCTION existeUbicacionVentaNombre(
+    _nombreUbicacionVenta "UbicacionVenta"."nombreUbicacionVenta"%TYPE,
+    _idEmpresa "UbicacionVenta"."idEmpresa"%TYPE
+)
+RETURNS BOOLEAN AS
+$BODY$
+BEGIN
+    RETURN EXISTS (
+        SELECT 1
+        FROM "UbicacionVenta"
+        WHERE LOWER("nombreUbicacionVenta") = LOWER(_nombreUbicacionVenta)
+        AND "idEmpresa" = _idEmpresa
+    );
+END;
+$BODY$
 LANGUAGE PLPGSQL;

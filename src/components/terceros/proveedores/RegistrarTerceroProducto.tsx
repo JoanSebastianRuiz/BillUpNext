@@ -79,7 +79,7 @@ const RegistrarTerceroProducto = ({ idTerceroProductoSeleccionado, setModalActua
         <ContenedorRegistrar name={
             terceroProductoSeleccionado ? "Actualizar información" : "Registrar producto"}>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-1 gap-x-6 gap-y-4">
                 {!terceroProductoSeleccionado && (
                     <SelectForm label="Producto" register={register} name="idProducto"
                         validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
@@ -113,7 +113,7 @@ const RegistrarTerceroProducto = ({ idTerceroProductoSeleccionado, setModalActua
                     </SelectForm>
                 )}
 
-                <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
+                <div className="col-span-1 sm:col-span-1 flex justify-center mt-4">
                     <ButtonForm name={terceroProductoSeleccionado ? "Actualizar" : "Registrar"} type="submit" />
                 </div>
             </form>

@@ -5,6 +5,7 @@ import { ProductoResponseDTO } from "@/dto/ProductoResponseDTO";
 import { ProductoRequestDTO } from "@/dto/ProductoRequestDTO";
 import { GravamenProductoDTO } from "@/dto/GravamenProductoDTO";
 import { GravamenProductoDAOImpl } from "@/dao/impl/GravamenProductoDAOImpl";
+import { isValidLength, isValidNum } from "@/util/validators/validators";
 
 export class ProductoServiceImpl implements ProductoService {
   private static instancia: ProductoServiceImpl;
@@ -33,7 +34,6 @@ export class ProductoServiceImpl implements ProductoService {
         stockMaximoProducto,
         estadoProducto,
       } = producto;
-      console.log(producto)
 
       const porcentajeDescuentoProducto =
         producto.porcentajeDescuentoProducto !== undefined &&
@@ -53,6 +53,41 @@ export class ProductoServiceImpl implements ProductoService {
       ) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
+          { status: 400 }
+        );
+      }
+
+      if (!isValidLength(nombreProducto, 50)) {
+        return NextResponse.json(
+          { message: "Nombre invalido" },
+          { status: 400 }
+        );
+      }
+
+      if (!isValidLength(descripcionProducto, 250)) {
+        return NextResponse.json(
+          { message: "Descripción invalida" },
+          { status: 400 }
+        );
+      }
+
+      if (!isValidNum(precioVentaProducto.toString())) {
+        return NextResponse.json(
+          { message: "Precio invalido" },
+          { status: 400 }
+        );
+      }
+
+      if (!isValidNum(stockMinimoProducto.toString())) {
+        return NextResponse.json(
+          { message: "Stock minimo invalido" },
+          { status: 400 }
+        );
+      }
+
+      if (!isValidNum(stockMaximoProducto.toString())) {
+        return NextResponse.json(
+          { message: "Stock maximo invalido" },
           { status: 400 }
         );
       }
@@ -149,18 +184,63 @@ export class ProductoServiceImpl implements ProductoService {
         );
       }
 
-      if (
-        await this.productoDAOImpl.existProductoNombre(
-          nombreProducto,
-          idEmpresa,
-          idCategoria,
-          idProducto
-        )
-      ) {
+      if (!isValidLength(nombreProducto, 50)) {
         return NextResponse.json(
-          { message: "El nombre del producto ya existe" },
+          { message: "Nombre invalido" },
           { status: 400 }
         );
+      }
+
+      if (!isValidLength(descripcionProducto, 250)) {
+        return NextResponse.json(
+          { message: "Descripción invalida" },
+          { status: 400 }
+        );
+      }
+
+      if (!isValidNum(precioVentaProducto.toString())) {
+        return NextResponse.json(
+          { message: "Precio invalido" },
+          { status: 400 }
+        );
+      }
+
+      if (!isValidNum(stockMinimoProducto.toString())) {
+        return NextResponse.json(
+          { message: "Stock minimo invalido" },
+          { status: 400 }
+        );
+      }
+
+      if (!isValidNum(stockMaximoProducto.toString())) {
+        return NextResponse.json(
+          { message: "Stock maximo invalido" },
+          { status: 400 }
+        );
+      }
+
+      const productoExistente = await this.productoDAOImpl.getById(idProducto);
+
+      if (!productoExistente) {
+        return NextResponse.json(
+          { message: "El producto no existe" },
+          { status: 400 }
+        );
+      }
+
+      if (nombreProducto !== productoExistente.nombreProducto) {
+        if (
+          await this.productoDAOImpl.existProductoNombre(
+            nombreProducto,
+            idEmpresa,
+            idCategoria
+          )
+        ) {
+          return NextResponse.json(
+            { message: "El nombre del producto ya existe" },
+            { status: 400 }
+          );
+        }
       }
 
       if (

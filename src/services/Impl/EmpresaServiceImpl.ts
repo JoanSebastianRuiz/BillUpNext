@@ -145,10 +145,10 @@ export class EmpresaServiceImpl implements EmpresaService {
                 return NextResponse.json({ message: 'El nit no es valido' }, { status: 400 });
             }
 
-            const empresaNitExistente = await this.empresaDAOImpl.existEmpresaNit(nitEmpresa);
-
-            if (empresaNitExistente && empresaExistente.nitEmpresa !== nitEmpresa) {
-                return NextResponse.json({ message: 'El nit ya se encuentra registrado' }, { status: 400 });
+            if (nitEmpresa !== empresaExistente.nitEmpresa) {
+                if (await this.empresaDAOImpl.existEmpresaNit(nitEmpresa)) {
+                    return NextResponse.json({ message: 'El nit ya se encuentra registrado' }, { status: 400 });
+                }
             }
 
             if (!isValidDigitoVerificacion(digitoVerificacionEmpresa)) {
@@ -159,18 +159,20 @@ export class EmpresaServiceImpl implements EmpresaService {
                 return NextResponse.json({ message: 'El telefono no es valido' }, { status: 400 });
             }
 
-            const empresaTelefonoExistente = await this.empresaDAOImpl.existEmpresaTelefono(telefonoEmpresa);
-            if (empresaTelefonoExistente && empresaExistente.telefonoEmpresa !== telefonoEmpresa) {
-                return NextResponse.json({ message: 'El telefono ya se encuentra registrado' }, { status: 400 });
+            if (telefonoEmpresa !== empresaExistente.telefonoEmpresa) {
+                if (await this.empresaDAOImpl.existEmpresaTelefono(telefonoEmpresa)) {
+                    return NextResponse.json({ message: 'El telefono ya se encuentra registrado' }, { status: 400 });
+                }
             }
 
             if (!isValidEmail(correoEmpresa)) {
                 return NextResponse.json({ message: 'El correo no es valido' }, { status: 400 });
             }
 
-            const empresaCorreoExistente = await this.empresaDAOImpl.existEmpresaCorreo(correoEmpresa);
-            if (empresaCorreoExistente && empresaExistente.correoEmpresa !== correoEmpresa) {
-                return NextResponse.json({ message: 'El correo ya se encuentra registrado' }, { status: 400 });
+            if (correoEmpresa !== empresaExistente.correoEmpresa) {
+                if (await this.empresaDAOImpl.existEmpresaCorreo(correoEmpresa)) {
+                    return NextResponse.json({ message: 'El correo ya se encuentra registrado' }, { status: 400 });
+                }
             }
 
             const respuesta = await this.empresaDAOImpl.update(empresa);

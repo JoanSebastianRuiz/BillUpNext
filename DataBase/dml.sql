@@ -139,3 +139,4 @@ VALUES
 ('ICA', TRUE),
 ('ReteIVA', TRUE),
 ('ReteICA', TRUE);
+

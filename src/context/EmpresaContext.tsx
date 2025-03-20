@@ -30,6 +30,7 @@ export const EmpresaContextProvider: React.FC<EmpresaProviderProps> = ({ childre
     const [regimenesContribuyente, setRegimenesContribuyente] = useState<RegimenContribuyenteResponseDTO[]>([]);
     const [empresas, setEmpresas] = useState<EmpresaResponseDTO[]>([]);
     const { data: session, status } = useSession();
+    const idRol = session?.user?.idRol;
 
     const obtenerEmpresas = async () => {
         try {
@@ -59,7 +60,7 @@ export const EmpresaContextProvider: React.FC<EmpresaProviderProps> = ({ childre
                 console.error("Error al obtener los datos de Empresa Context:", error);
             }
         }
-        fetchData();
+        if (idRol === 1) fetchData();
     }, [status])
 
 

@@ -48,7 +48,7 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
     const idUsuario = session?.user?.idUsuario;
 
     const obtenerUsuarios = async () => {
-        if (!session || idRol === undefined || idEmpresa === undefined) return;
+        if (status !== "authenticated" || idRol === undefined || idEmpresa === undefined) return;
         setLoading(true);
         try {
             const endpoint = idRol === 2 ? `/api/empresas/${idEmpresa}/usuarios` : "/api/usuarios";
@@ -98,8 +98,8 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
                 setLoading(false); // Finalizar carga después de obtener los datos
             }
         };
-
-        fetchData();
+        
+        if (idRol === 1 || idRol === 2) fetchData();
     }, [status, idRol, idEmpresa]);
 
     return (

@@ -92,7 +92,7 @@ const RegistrarCaja = ({ cajaSeleccionada, setModalActualizar, setModalRegistrar
 
     return (
         <ContenedorRegistrar name={cajaSeleccionada ? "Actualizar caja" : "Registrar caja"} >
-            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4" >
+            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-1 gap-x-6 gap-y-4" >
 
                 <InputForm label=" Nombre " register={register} name="nombreCaja" type="text"
                     validationRules={{
@@ -112,7 +112,7 @@ const RegistrarCaja = ({ cajaSeleccionada, setModalActualizar, setModalRegistrar
                     </SelectForm>
                 )}
 
-                <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
+                <div className="col-span-1 sm:col-span-1 flex justify-center mt-4">
                     <ButtonForm name={cajaSeleccionada ? "Actualizar" : "Registrar"} type="submit" />
                 </div>
 

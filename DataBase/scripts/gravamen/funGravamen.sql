@@ -46,8 +46,7 @@ LANGUAGE PLPGSQL;
 
 
 CREATE OR REPLACE FUNCTION existeGravamenNombre(
-    _nombreGravamen "Gravamen"."nombreGravamen"%TYPE,
-    _idGravamen "Gravamen"."idGravamen"%TYPE DEFAULT NULL
+    _nombreGravamen "Gravamen"."nombreGravamen"%TYPE
 )
 RETURNS BOOLEAN AS
 $$
@@ -56,7 +55,6 @@ BEGIN
         SELECT 1
         FROM "Gravamen"
         WHERE LOWER("nombreGravamen") = LOWER(_nombreGravamen)
-        AND (_idGravamen IS NULL OR "idGravamen" != _idGravamen)
     );
 END;
 $$

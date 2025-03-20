@@ -26,7 +26,7 @@ const Modal = ({ isOpen, setIsOpen, children }: ModalProps) => {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: -20 }}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6 w-full max-w-md sm:max-w-lg md:max-w-2xl relative max-h-[90vh] overflow-y-auto"
+                        className="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6  max-w-md sm:max-w-lg md:max-w-2xl relative max-h-[90vh] overflow-y-auto"
                     >
                         {/* Botón para cerrar con icono X */}
                         <button

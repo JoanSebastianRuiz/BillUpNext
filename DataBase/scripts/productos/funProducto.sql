@@ -69,8 +69,7 @@ LANGUAGE PLPGSQL;
 CREATE OR REPLACE FUNCTION existeProductoNombre(
     _nombreProducto "Producto"."nombreProducto"%TYPE,
     _idEmpresa "Producto"."idEmpresa"%TYPE,    
-    _idCategoria "Producto"."idCategoria"%TYPE,
-    _idProducto "Producto"."idProducto"%TYPE DEFAULT NULL
+    _idCategoria "Producto"."idCategoria"%TYPE
 )
 RETURNS BOOLEAN AS
 $$
@@ -81,7 +80,6 @@ BEGIN
         WHERE LOWER("nombreProducto") = LOWER(_nombreProducto)
             AND "idCategoria" = _idCategoria
             AND "idEmpresa" = _idEmpresa
-            AND (_idProducto IS NULL OR "idProducto" != _idProducto)
     );
 END;
 $$ 

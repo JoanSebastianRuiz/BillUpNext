@@ -50,8 +50,7 @@ LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION existeCategoriaNombre(
     _nombreCategoria "Categoria"."nombreCategoria"%TYPE,
-    _idEmpresa "Categoria"."idEmpresa"%TYPE,
-    _idCategoria "Categoria"."idCategoria"%TYPE DEFAULT NULL
+    _idEmpresa "Categoria"."idEmpresa"%TYPE
 )
 RETURNS BOOLEAN AS
 $BODY$
@@ -61,7 +60,6 @@ BEGIN
         FROM "Categoria"
         WHERE LOWER("nombreCategoria") = LOWER(_nombreCategoria)
         AND "idEmpresa" = _idEmpresa
-        AND (_idCategoria IS NULL OR "idCategoria" != _idCategoria)
     );
 END;
 $BODY$
