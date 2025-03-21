@@ -54,7 +54,7 @@ export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) =
             }
         }
         fetchData();
-    }, [session])
+    }, [session]);
 
     return(
         <CajaContext.Provider value={{
