@@ -47,7 +47,7 @@ const RegistrarTipoMedioPago = ({ idTipoMedioPago, setModalActualizar , setModal
     const onSubmit = async (data: TipoMedioPagoDTO) => {
         try {
             if (idTipoMedioPago) {
-                const respuesta = await axios.put(`/api/tipo-medio-pago${idTipoMedioPago}`, data);
+                const respuesta = await axios.put(`/api/tipo-medio-pago/${idTipoMedioPago}`, data);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerTiposMediosPago();

@@ -17,11 +17,10 @@ import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAcc
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
-import RegistrarCategoria from "@/components/categorias/RegistrarCategoria";
-import ControlesPaginacion from "@/components/common/ControlesPaginacion";
+
 import Table from "@/components/common/Table";
 import { TipoMedioPago } from "@/models/TipoMedioPago";
-import Titulo from "@/components/common/Titulo";
+
 import RegistrarTipoMedioPago from "@/components/tipoMedioPago/RegistrarTipoMedioPago";
 
 const TiposMediosPagoPage: React.FC = () => {

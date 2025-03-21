@@ -46,9 +46,8 @@ export class TipoMedioPagoDAOImpl implements TipoMedioPagoDAO {
     public create = async(tipoMedioPago: TipoMedioPagoDTO): Promise<boolean> => {
         try {
             const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-                `SELECT insertarEmpresa($1,$2,$3) as resultado;`,
+                `SELECT insertarTipoMedioPago($1,$2) as resultado;`,
                 [
-                    tipoMedioPago.idTipoMedioPago,
                     tipoMedioPago.nombreTipoMedioPago,
                     tipoMedioPago.estadoTipoMedioPago
                 ]
@@ -66,7 +65,7 @@ export class TipoMedioPagoDAOImpl implements TipoMedioPagoDAO {
     public update = async(tipoMedioPago: TipoMedioPagoDTO): Promise<boolean> => {
         try {
             const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-                `SELECT actualizarEmpresa($1,$2,$3) as resultado;`,
+                `SELECT actualizarTipoMedioPago($1,$2,$3) as resultado;`,
                 [
                     tipoMedioPago.idTipoMedioPago,
                     tipoMedioPago.nombreTipoMedioPago,
@@ -95,4 +94,15 @@ export class TipoMedioPagoDAOImpl implements TipoMedioPagoDAO {
         }
 
     }
-}
+
+
+    public existNombreTipoMedioPago = async (nombreTipoMedioPago: string): Promise<boolean> => {
+        try {
+            const respuesta = await ejecutarQuery(`SELECT validarExistNombreTipoMedioPago ($1) as resultado;`, [nombreTipoMedioPago]);
+            return respuesta.length > 0 ? respuesta[0].resultado : false;
+        } catch (error) {
+            throw new Error(`Error en TipoMedioPagoDAO.existNombreTipoMedioPago: ${error}`);
+        }
+    }
+
+};
