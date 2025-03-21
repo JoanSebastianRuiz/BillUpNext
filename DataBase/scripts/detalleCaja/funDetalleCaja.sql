@@ -17,7 +17,7 @@ BEGIN
         "fechaAperturaDetalleCaja"= COALESCE(_fechaAperturaDetalleCaja, "fechaAperturaDetalleCaja"),
         "fechaCierreDetalleCaja" = COALESCE(_fechaCierreDetalleCaja, "fechaCierreDetalleCaja"),
         "dineroAperturaDetalleCaja" = COALESCE(_dineroAperturaDetalleCaja, "dineroAperturaDetalleCaja"),
-        "dineroCierreDetalleCaja"= COALESCE(_dineroCierreDetalleCaja, "dineroCierreDetalleCaja")
+        "dineroCierreDetalleCaja"= COALESCE(_dineroCierreDetalleCaja, "dineroCierreDetalleCaja"),
         "dineroCierreSistemaDetalleCaja"= COALESCE(_dineroCierreSistemaDetalleCaja, "dineroCierreSistemaDetalleCaja")
     WHERE "idDetalleCaja" = _idDetalleCaja;
 

@@ -27,11 +27,12 @@ LANGUAGE PLPGSQL;
 
 
 CREATE OR REPLACE FUNCTION validarValorVenta(
-    _valorTotalVenta "venta","valorTotalVenta"%TYPE
+    _valorTotalVenta "Venta"."valorTotalVenta"%TYPE
 )
 RETURNS BOOLEAN AS
 $$
 BEGIN 
     RETURN _valorTotalVenta > 0;
 END;
+$$
 LANGUAGE PLPGSQL;

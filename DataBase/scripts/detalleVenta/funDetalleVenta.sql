@@ -32,6 +32,7 @@ $$
 BEGIN
     RETURN _cantidadDetalleVenta > 0;
 END;
+$$
 LANGUAGE PLPGSQL;
 
 
@@ -43,6 +44,7 @@ $$
 BEGIN
     RETURN _valorDescuentoDetalleVenta > 0;
 END;
+$$
 LANGUAGE PLPGSQL;
 
 
@@ -54,4 +56,5 @@ $$
 BEGIN
     RETURN _valorTotalDetalleVenta > 0;
 END;
+$$
 LANGUAGE PLPGSQL;

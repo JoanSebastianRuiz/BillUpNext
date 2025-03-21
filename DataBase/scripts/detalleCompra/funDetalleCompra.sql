@@ -2,15 +2,14 @@ CREATE OR REPLACE FUNCTION insertarDetalleCompra(
     _idCompra "DetalleCompra"."idCompra"%TYPE,
     _idProducto "DetalleCompra"."idProducto"%TYPE,
     _cantidadDetalleCompra "DetalleCompra"."cantidadDetalleCompra"%TYPE,
-    _valorDetalleCompra "DetalleCompra"."valorDetalleCompra"%TYPE,
-    _fechaVencimientoDetalleCompra "DetalleCompra"."fechaVencimientoDetalleCompra"%TYPE)
+    _valorDetalleCompra "DetalleCompra"."valorDetalleCompra"%TYPE)
     RETURNS BOOLEAN AS
 $$
 DECLARE
     _idDetalleCompra "DetalleCompra"."idDetalleCompra"%TYPE;
 BEGIN
-    INSERT INTO "DetalleCompra" ("idCompra", "idProducto", "cantidadDetalleCompra", "valorDetalleCompra", "fechaVencimientoDetalleCompra")
-    VALUES (_idCompra, _idProducto, _cantidadDetalleCompra, _valorDetalleCompra, _fechaVencimientoDetalleCompra);
+    INSERT INTO "DetalleCompra" ("idCompra", "idProducto", "cantidadDetalleCompra", "valorDetalleCompra")
+    VALUES (_idCompra, _idProducto, _cantidadDetalleCompra, _valorDetalleCompra);
 
     IF FOUND THEN
         RAISE NOTICE 'Se insertó correctamente el detalle de la compra';
@@ -29,8 +28,7 @@ CREATE OR REPLACE FUNCTION actualizarDetalleCompra(
     _idCompra "DetalleCompra"."idCompra"%TYPE,
     _idProducto "DetalleCompra"."idProducto"%TYPE,
     _cantidadDetalleCompra "DetalleCompra"."cantidadDetalleCompra"%TYPE,
-    _valorDetalleCompra "DetalleCompra"."valorDetalleCompra"%TYPE,
-    _fechaVencimientoDetalleCompra "DetalleCompra"."fechaVencimientoDetalleCompra"%TYPE)
+    _valorDetalleCompra "DetalleCompra"."valorDetalleCompra"%TYPE)
     RETURNS BOOLEAN AS
 $$
 BEGIN
@@ -38,8 +36,7 @@ BEGIN
     SET "idCompra" = _idCompra,
         "idProducto" = _idProducto,
         "cantidadDetalleCompra" = _cantidadDetalleCompra,
-        "valorDetalleCompra" = _valorDetalleCompra,
-        "fechaVencimientoDetalleCompra" = _fechaVencimientoDetalleCompra
+        "valorDetalleCompra" = _valorDetalleCompra
     WHERE "idDetalleCompra" = _idDetalleCompra;
 
     IF FOUND THEN
@@ -62,6 +59,7 @@ $$
 BEGIN
     RETURN _cantidadDetalleCompra > 0;
 END;
+$$
 LANGUAGE PLPGSQL;
 
 
@@ -73,4 +71,5 @@ $$
 BEGIN
     RETURN _valorDetalleCompra > 0;
 END;
+$$
 LANGUAGE PLPGSQL;

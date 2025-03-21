@@ -110,6 +110,7 @@ $$
 BEGIN
     RETURN _precioVentaProducto > 0;
 END;
+$$
 LANGUAGE PLPGSQL;
 
 
@@ -121,4 +122,5 @@ $$
 BEGIN
     RETURN _porcentajeDescuentoProducto > 0;
 END;
+$$
 LANGUAGE PLPGSQL;
