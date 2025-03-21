@@ -13,8 +13,6 @@ import BotonFiltro from "@/components/filtros/BotonFiltro";
 import ContenedorSelectores from "@/components/filtros/ContenedorSelectores";
 import InputFiltro from "@/components/filtros/InputFiltro";
 import SelectFiltro from "@/components/filtros/SelectFiltro";
-import GravamenCard from "@/components/gravamenes/GravamenCard";
-import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAccionCard";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
@@ -69,6 +67,7 @@ const GravamenesPage: React.FC = () => {
 
   const limpiarFiltros = () => {
     if (nombreGravamenRef.current) nombreGravamenRef.current.value = "";
+    if (estadoGravamenRef.current) estadoGravamenRef.current.value = "true";
     filtrarGravamenes();
   };
 
@@ -78,7 +77,6 @@ const GravamenesPage: React.FC = () => {
 
   const titulosTabla = [
     { titulo: "Nombre", center: false },
-    { titulo: "Estado", center: true },
     { titulo: "Acciones", center: true },
   ];
 
@@ -129,9 +127,6 @@ const GravamenesPage: React.FC = () => {
             gravamenesActuales.map((gravamen) => (
               <tr className="hover:bg-gray-100 dark:hover:bg-gray-700" key={gravamen.idGravamen}>
                 <td className="px-4 py-3">{gravamen.nombreGravamen}</td>
-                <td className="text-center px-4 py-3">
-                  {gravamen.estadoGravamen ? "Activo" : "Inactivo"}
-                </td>
                 <td className="text-center px-4 py-3">
                   <BotonAccionCard
                     Symbol={Pencil}

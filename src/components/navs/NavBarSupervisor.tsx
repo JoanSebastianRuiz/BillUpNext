@@ -11,6 +11,9 @@ const NavBarSupervisor = () => {
             <LinkNav href="/categorias" name="Categorías" />
             <LinkNav href="/proveedores" name="Proveedores" />
             <LinkNav href="/clientes" name="Clientes" />
+            <LinkNav href="cajas" name="Cajas" />
+            <LinkNav href="/ubicacion-venta" name="Ubicaciones" />
+
         </ContenedorNav>
     );
 };

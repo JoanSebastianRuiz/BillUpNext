@@ -3,6 +3,5 @@ export interface DetalleCompraDTO {
     idCompra: number,
     idProducto: number,
     cantidadDetalleCompra: number,
-    valorDetalleCompra: number,
-    fechaVencimientoDetalleCompra: Date
+    valorDetalleCompra: number
 }

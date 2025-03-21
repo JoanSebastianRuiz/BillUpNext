@@ -1,9 +1,7 @@
 "use client";
 
-import axios from "axios";
-
 import React, { useEffect, useRef, useState } from "react";
-import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
+import { Pencil, PlusCircle, XCircle } from "lucide-react";
 
 import { CajaDTO } from "@/dto/CajaDTO";
 
@@ -15,9 +13,8 @@ import BotonFiltro from "@/components/filtros/BotonFiltro";
 import ContenedorSelectores from "@/components/filtros/ContenedorSelectores";
 import InputFiltro from "@/components/filtros/InputFiltro";
 import SelectFiltro from "@/components/filtros/SelectFiltro";
-
-import CajaCard from "@/components/caja/CajaCard";
-import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAccionCard";
+import ControlesPaginacion from "@/components/common/ControlesPaginacion";
+import Table from "@/components/common/Table";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
 
@@ -25,33 +22,33 @@ import Modal from "@/components/modal/Modal";
 import { useCajaContext } from "@/context/CajaContext";
 
 const CajasPage: React.FC = () => {
-    
+
     const [modalRegistrar, setModalRegistrar] = useState(false);
     const [modalActualizar, setModalActualizar] = useState(false);
     const [cajaSeleccionada, setCajaSeleccionada] = useState<CajaDTO | null>(null);
     const [cajasFiltradas, setCajasFiltradas] = useState<CajaDTO[]>([]);
 
-    const {empresas, cajas, obtenerCajas} = useCajaContext();
-   // const [cajas, setCajas] = useState<CajaDTO[]>([]);
-   
+    const { cajas } = useCajaContext();
+
 
     const nombreCajaRef = useRef<HTMLInputElement>(null);
-    const idEmpresaRef = useRef<HTMLSelectElement>(null);
     const estadoCajaRef = useRef<HTMLSelectElement>(null);
 
+    // Paginacion
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(6); // Número de categorias por página
+    const indexOfLastCategoria = currentPage * itemsPerPage;
+    const indexOfFirstCategoria = indexOfLastCategoria - itemsPerPage;
+    const cajasActuales = cajasFiltradas.slice(indexOfFirstCategoria, indexOfLastCategoria);
+    const totalPages = Math.ceil(cajasFiltradas.length / itemsPerPage);
 
     const filtrarCajas = () => {
-        
-        const idEmpresa = idEmpresaRef.current?.value;
+
         const nombreCaja = nombreCajaRef.current?.value;
         const estadoCaja = estadoCajaRef.current?.value;
-        
+
 
         let cajasFiltradas = [...cajas];
-
-        if (idEmpresa && idEmpresa !== ""){
-            cajasFiltradas = cajasFiltradas.filter((caja) => caja.idEmpresa === Number(idEmpresa));
-        }
 
         if (estadoCaja !== undefined && estadoCaja !== "") {
             cajasFiltradas = cajasFiltradas.filter((caja) => caja.estadoCaja === (estadoCaja === "true"));
@@ -71,15 +68,19 @@ const CajasPage: React.FC = () => {
     }, [cajas]);
 
     const limpiarFiltros = () => {
-        if (idEmpresaRef.current) idEmpresaRef.current.value = "0";
-        if (nombreCajaRef.current) nombreCajaRef.current.value ="";
+        if (nombreCajaRef.current) nombreCajaRef.current.value = "";
+        if (estadoCajaRef.current) estadoCajaRef.current.value = "true";
         filtrarCajas();
     };
 
+    const titulosTabla = [
+        { titulo: "Nombre", center: false },
+        { titulo: "Acciones", center: true }
+    ]
 
     return (
         <ContenedorPrincipal>
-            <ContenedorFiltros title= "Cajas">
+            <ContenedorFiltros title="Cajas">
                 {/* Botones de filtros */}
                 <ContenedorBotonesFiltros>
                     <BotonFiltro
@@ -112,35 +113,55 @@ const CajasPage: React.FC = () => {
                     >
                         <option value="true">Activo </option>
                         <option value="false">Inactivo </option>
-                    </SelectFiltro> 
+                    </SelectFiltro>
                 </ContenedorSelectores>
             </ContenedorFiltros>
 
-             {/* Grid de Cajas */}
-            <div className="grid gap-4 md:grid-cols-3">
-                {cajasFiltradas.map((caja) => (
-                    <CajaCard caja={caja} key={caja.idCaja}>
-                        <ContenedorBotonesAccionCard>
-                            <BotonAccionCard
-                                Symbol={Pencil}
-                                onClick={() => {
-                                    setCajaSeleccionada(caja);
-                                    setModalActualizar(true);
-                                }}
-                            />
-                        </ContenedorBotonesAccionCard>
-                    </CajaCard>
-                ))}
+            <div className="w-1/2 mx-auto">
+                <Table titulos={titulosTabla}>
+                    {cajasActuales.length > 0 ? (
+                        cajasActuales.map((caja) => (
+                            <tr key={caja.idCaja} className="hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <td className="px-4 py-3">{caja.nombreCaja}</td>
+                                <td className="px-4 py-3 text-center">
+                                    <BotonAccionCard
+                                        Symbol={Pencil}
+                                        onClick={() => {
+                                            setCajaSeleccionada(caja);
+                                            setModalActualizar(true);
+                                        }}
+                                        h={5}
+                                    />
+                                </td>
+                            </tr>
+                        ))) : (
+
+                        <tr>
+                            <td colSpan={3} className="text-center py-4 text-gray-500 dark:text-gray-400">
+                                No se encontraron cajas
+                            </td>
+                        </tr>
+                    )}
+                </Table>
             </div>
 
-                {/* Modal para registrar una caja*/}
+
+
+
+            <ControlesPaginacion
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+            />
+
+            {/* Modal para registrar una caja*/}
             <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
-                <RegistrarCaja obtenerCajas={obtenerCajas} setModalRegistrar={setModalRegistrar} />
+                <RegistrarCaja setModalRegistrar={setModalRegistrar} />
             </Modal>
 
-                {/* Modal para actualizar una caja*/}
+            {/* Modal para actualizar una caja*/}
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)} >
-                <RegistrarCaja idCaja={cajaSeleccionada?.idCaja} obtenerCajas={obtenerCajas} setModalActualizar={setModalActualizar} />
+                <RegistrarCaja cajaSeleccionada={cajaSeleccionada} setModalActualizar={setModalActualizar} />
             </Modal>
 
         </ContenedorPrincipal>

@@ -2,14 +2,11 @@
 
 import { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import { CajaDTO } from "@/dto/CajaDTO";
-import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 
 
 interface CajaContextType {
-    empresas: EmpresaResponseDTO[]
-    setEmpresas: (empresas: EmpresaResponseDTO[]) => void
     cajas: CajaDTO[]
     setCajas: (cajas: CajaDTO[]) => void
     obtenerCajas: () => void
@@ -23,49 +20,41 @@ interface CajaProviderProps {
 }
 
 export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) => {
-    const [empresas, setEmpresas] = useState<EmpresaResponseDTO[]>([]);
-    const [cajas, setCajas]= useState<CajaDTO[]>([]);
+    const [cajas, setCajas] = useState<CajaDTO[]>([]);
     const { data: session, status } = useSession();
+    const idEmpresa = session?.user?.idEmpresa;
+    const idRol = session?.user?.idRol;
+
 
     const obtenerCajas = async () => {
         try {
-            const respuesta = await axios.get<CajaDTO[]>("/api/caja")
+            const respuesta = await axios.get<CajaDTO[]>(`/api/empresas/${idEmpresa}/cajas`);
             if (respuesta.status === 200) {
                 setCajas(respuesta.data)
             }
         } catch (error) {
-            console.error("Error obteniendo cajas ", error )
+            console.error("Error obteniendo cajas ", error)
         }
     }
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!session) return;
-            try {
-                const [empresasRes, cajaRes] = await Promise.all([
-                    axios.get<EmpresaResponseDTO[]>("/api/empresas"),
-                    axios.get<CajaDTO[]>("/api/caja")
-                ])
-
-                if (empresasRes.status === 200) setEmpresas(empresasRes.data)
-                if (cajaRes.status === 200) setCajas(cajaRes.data)
-            } catch (error) {
-                console.error("Error al obtener los datos de Caja Context: ", error)
+            if (status !== "authenticated" || idEmpresa == undefined) return;
+            if (idRol === 2 || idRol === 3) {
+                obtenerCajas();
             }
         }
         fetchData();
-    }, [session]);
+    }, [status])
 
-    return(
+    return (
         <CajaContext.Provider value={{
-            empresas,
-            setEmpresas,
             cajas,
-            setCajas, 
+            setCajas,
             obtenerCajas
         }}>
-            { children}
-        </CajaContext.Provider>    
+            {children}
+        </CajaContext.Provider>
     );
 };
 

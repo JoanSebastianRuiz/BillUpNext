@@ -2,6 +2,7 @@ import { CategoriaService } from "@/services/CategoriaService";
 import { CategoriaDAOImpl } from "@/dao/impl/CategoriaDAOImpl";
 import { NextResponse } from "next/server";
 import { CategoriaDTO } from "@/dto/CategoriaDTO";
+import { isValidLength } from "@/util/validators/validators";
 
 export class CategoriaServiceImpl implements CategoriaService {
   private static instancia: CategoriaServiceImpl;
@@ -33,6 +34,13 @@ export class CategoriaServiceImpl implements CategoriaService {
         );
       }
 
+      if (!isValidLength(nombreCategoria, 50)) {
+        return NextResponse.json(
+          { message: "Nombre invalido" },
+          { status: 400 }
+        );
+      }
+
       const respuesta = await this.categoriaDAOImpl.create(categoria);
       if (respuesta) {
         return NextResponse.json(
@@ -55,18 +63,35 @@ export class CategoriaServiceImpl implements CategoriaService {
       const { idCategoria, idEmpresa, nombreCategoria, estadoCategoria } = categoria;
       console.log(categoria);
 
-      if (!idCategoria || !idEmpresa || !nombreCategoria || estadoCategoria=== undefined) {
+      if (!idCategoria || !idEmpresa || !nombreCategoria || estadoCategoria === undefined) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
           { status: 400 }
         );
       }
 
-      if (await this.categoriaDAOImpl.existCategoriaNombre(nombreCategoria, idEmpresa, idCategoria)) {
+      const categoriaExistente = await this.categoriaDAOImpl.getById(idCategoria);
+      if (!categoriaExistente) {
         return NextResponse.json(
-          { message: "El nombre de la categoría ya existe" },
+          { message: "La categoría no existe" },
           { status: 400 }
         );
+      }
+
+      if (!isValidLength(nombreCategoria, 50)) {
+        return NextResponse.json(
+          { message: "Nombre invalido" },
+          { status: 400 }
+        );
+      }
+
+      if (nombreCategoria !== categoriaExistente.nombreCategoria) {
+        if (await this.categoriaDAOImpl.existCategoriaNombre(nombreCategoria, idEmpresa)) {
+          return NextResponse.json(
+            { message: "El nombre de la categoría ya existe" },
+            { status: 400 }
+          );
+        }
       }
 
       const respuesta = await this.categoriaDAOImpl.update(categoria);

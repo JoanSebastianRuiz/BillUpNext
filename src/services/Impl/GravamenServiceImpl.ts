@@ -2,6 +2,7 @@ import { GravamenService } from "@/services/GravamenService";
 import { GravamenDAOImpl } from "@/dao/impl/GravamenDAOImpl";
 import { NextResponse } from "next/server";
 import { GravamenDTO } from "@/dto/GravamenDTO";
+import { isValidLength } from "@/util/validators/validators";
 
 export class GravamenServiceImpl implements GravamenService {
   private static instancia: GravamenServiceImpl;
@@ -27,77 +28,101 @@ export class GravamenServiceImpl implements GravamenService {
         estadoGravamen === undefined
       ) {
         return NextResponse.json(
-            { message: "Faltan campos por llenar" },
-            { status: 400 }
+          { message: "Faltan campos por llenar" },
+          { status: 400 }
+        );
+      }
+
+      if (!isValidLength(nombreGravamen, 50)) {
+        return NextResponse.json(
+          { message: "Nombre invalido" },
+          { status: 400 }
         );
       }
 
       if (await this.gravamenDAOImpl.existGravamenNombre(nombreGravamen)) {
         return NextResponse.json(
-            { message: "El nombre del gravamen ya existe" },
-            { status: 400 }
+          { message: "El nombre del gravamen ya existe" },
+          { status: 400 }
         );
       }
 
       const respuesta = await this.gravamenDAOImpl.create(gravamen);
       if (respuesta) {
         return NextResponse.json(
-            { message: "Gravamen creado correctamente" },
-            { status: 200 }
+          { message: "Gravamen creado correctamente" },
+          { status: 200 }
         );
       } else {
         return NextResponse.json(
-            { message: "Error al crear el gravamen" },
-            {status: 500 }
+          { message: "Error al crear el gravamen" },
+          { status: 500 }
         )
       }
     } catch (error) {
-        throw new Error(`Error en GravamenService.create: ${error}`);
+      throw new Error(`Error en GravamenService.create: ${error}`);
     }
   };
 
   public update = async (gravamen: GravamenDTO): Promise<NextResponse> => {
     try {
-        const { idGravamen, nombreGravamen, estadoGravamen } = gravamen;
-        console.log(gravamen);
+      const { idGravamen, nombreGravamen, estadoGravamen } = gravamen;
+      console.log(gravamen);
 
-        if (!idGravamen || !nombreGravamen || estadoGravamen=== undefined ) {
-            return NextResponse.json(
-                { message: "Faltan campos por llenar" },
-                { status: 400 }
-            );
-        } 
+      if (!idGravamen || !nombreGravamen || estadoGravamen === undefined) {
+        return NextResponse.json(
+          { message: "Faltan campos por llenar" },
+          { status: 400 }
+        );
+      }
 
-        if (await this.gravamenDAOImpl.existGravamenNombre(nombreGravamen, idGravamen)) {
-            return NextResponse.json(
-                { message: "El nombre del gravamen ya existe "},
-                { status: 400 }
-            );
+      const GravamenExistente = await this.gravamenDAOImpl.getById(idGravamen);
+      if (!GravamenExistente) {
+        return NextResponse.json(
+          { message: "El gravamen no existe" },
+          { status: 400 }
+        );
+      }
+
+      if (!isValidLength(nombreGravamen, 50)) {
+        return NextResponse.json(
+          { message: "Nombre invalido" },
+          { status: 400 }
+        );
+      }
+
+      if (GravamenExistente.nombreGravamen !== nombreGravamen) {
+        if (await this.gravamenDAOImpl.existGravamenNombre(nombreGravamen)) {
+          return NextResponse.json(
+            { message: "El nombre del gravamen ya existe " },
+            { status: 400 }
+          );
         }
+      }
 
-        const respuesta = await this.gravamenDAOImpl.update(gravamen);
-        if (respuesta) {
-            return NextResponse.json(
-                { message: "Gravamen actualizado correctamente"},
-                {status: 200 }
-            );
-        } else {
-            return NextResponse.json(
-                { message: "Error al actualizar el gravamen"},
-                { status: 500 }
-            );
-        }
+      const respuesta = await this.gravamenDAOImpl.update(gravamen);
+      if (respuesta) {
+        return NextResponse.json(
+          { message: "Gravamen actualizado correctamente" },
+          { status: 200 }
+        );
+      } else {
+        return NextResponse.json(
+          { message: "Error al actualizar el gravamen" },
+          { status: 500 }
+        );
+      }
     } catch (error) {
-        throw new Error(`Error en GravamenService.update: ${error}`);
+      throw new Error(`Error en GravamenService.update: ${error}`);
     }
   };
 
   public getAll = async (): Promise<Array<GravamenDTO>> => {
     try {
-        const respuesta: GravamenDTO[] = await this.gravamenDAOImpl.getAll();
-        return respuesta;
+      const respuesta: GravamenDTO[] = await this.gravamenDAOImpl.getAll();
+      return respuesta;
     } catch (error) {
-        throw new Error(`Error en GravamenService.getAll: ${error}`);
+      throw new Error(`Error en GravamenService.getAll: ${error}`);
     }
   };
 
@@ -105,14 +130,14 @@ export class GravamenServiceImpl implements GravamenService {
     idGravamen: number
   ): Promise<GravamenDTO | null> => {
     try {
-        const respuesta = await this.gravamenDAOImpl.getById(idGravamen);
+      const respuesta = await this.gravamenDAOImpl.getById(idGravamen);
 
-        if (!respuesta) {
-            return null;
-        }
-        return respuesta;
+      if (!respuesta) {
+        return null;
+      }
+      return respuesta;
     } catch (error) {
-        throw new Error(`Error en GravamenService.getById: ${error}`);
+      throw new Error(`Error en GravamenService.getById: ${error}`);
     }
   };
 }

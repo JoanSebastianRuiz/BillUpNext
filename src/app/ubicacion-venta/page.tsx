@@ -1,13 +1,12 @@
 "use client";
 
-import axios from "axios";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
+import { Pencil, PlusCircle, XCircle } from "lucide-react";
+import { useVentaContext } from "@/context/VentaContext";
 
 import { UbicacionVentaDTO } from "@/dto/UbicacionVentaDTO";
 
-import MostrarInfoUbicacionVenta from "@/components/ubicacionVenta/MostrarInfoUbicacionVenta";  
 import RegistrarUbicacionVenta from "@/components/ubicacionVenta/RegistrarUbicacionVenta";
 import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
 import ContenedorBotonesFiltros from "@/components/filtros/ContenedorBotonesFiltros";
@@ -15,41 +14,30 @@ import BotonFiltro from "@/components/filtros/BotonFiltro";
 import ContenedorSelectores from "@/components/filtros/ContenedorSelectores";
 import InputFiltro from "@/components/filtros/InputFiltro";
 import SelectFiltro from "@/components/filtros/SelectFiltro";
-import UbicacionVentaCard from "@/components/ubicacionVenta/UbicacionVentaCard";
-import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAccionCard";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
-import { requestToBodyStream } from "next/dist/server/body-streams";
+import Table from "@/components/common/Table";
+import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 
 const UbicacionVentaPage: React.FC = () => {
-    const [modalInfo, setModalInfo] = useState(false);
     const [modalRegistrar, setModalRegistrar] = useState(false);
     const [modalActualizar, setModalActualizar] = useState(false);
     const [ubicacionVentaSeleccionada, setUbicacionVentaSeleccionada] = useState<UbicacionVentaDTO | null>(null);
-    const [ubicacionesVenta, setUbicacionesVenta] = useState<UbicacionVentaDTO[]>([]);
     const [ubicacionesVentaFiltradas, setUbicacionesVentaFiltradas] = useState<UbicacionVentaDTO[]>([]);
 
     const nombreUbicacionVentaRef = useRef<HTMLInputElement>(null);
     const estadoUbicacionVentaRef = useRef<HTMLSelectElement>(null);
 
-    const obtenerUbicacionesVenta = async () => {
-        try {
-            const respuesta = await axios.get<UbicacionVentaDTO[]>("/api/ubicacion-venta");
-            if (respuesta.status === 200) {
-                setUbicacionesVenta(respuesta.data);
-                setUbicacionesVentaFiltradas(respuesta.data);
-            }
-        } catch (error) {
-            console.error("Error obteniendo ubicaciones de venta", error);
-        }
-    };
+    const { ubicacionesVenta } = useVentaContext();
 
-    useEffect(() => {
-        if (!ubicacionesVenta.length) {
-            obtenerUbicacionesVenta();
-        }
-    }, [ubicacionesVenta.length]);
+    // Paginacion
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(6); // Número de categorias por página
+    const indexOfLastCategoria = currentPage * itemsPerPage;
+    const indexOfFirstCategoria = indexOfLastCategoria - itemsPerPage;
+    const ubicacionesVentaActuales = ubicacionesVentaFiltradas.slice(indexOfFirstCategoria, indexOfLastCategoria);
+    const totalPages = Math.ceil(ubicacionesVentaFiltradas.length / itemsPerPage);
 
     const filtrarUbicacionesVenta = () => {
         const nombreUbicacionVenta = nombreUbicacionVentaRef.current?.value;
@@ -57,21 +45,20 @@ const UbicacionVentaPage: React.FC = () => {
 
         let ubicacionesVentaFiltradas = [...ubicacionesVenta];
 
-        if (estadoUbicacionVenta && estadoUbicacionVenta !== "true") {
+        if (estadoUbicacionVenta !== undefined && estadoUbicacionVenta !== "") {
             ubicacionesVentaFiltradas = ubicacionesVentaFiltradas.filter((ubicacionVenta) => ubicacionVenta.estadoUbicacionVenta === (estadoUbicacionVenta === "true"));
         }
 
         if (nombreUbicacionVenta) {
             ubicacionesVentaFiltradas = ubicacionesVentaFiltradas.filter((ubicacionVenta) => {
-                return  ubicacionVenta.nombreUbicacionVenta.toLowerCase().includes(nombreUbicacionVenta.toLowerCase());
-            });  
+                return ubicacionVenta.nombreUbicacionVenta.toLowerCase().includes(nombreUbicacionVenta.toLowerCase());
+            });
         }
 
         setUbicacionesVentaFiltradas(ubicacionesVentaFiltradas);
-
     };
 
-    useEffect( () => {
+    useEffect(() => {
         filtrarUbicacionesVenta();
     }, [ubicacionesVenta]);
 
@@ -80,6 +67,11 @@ const UbicacionVentaPage: React.FC = () => {
         if (estadoUbicacionVentaRef.current) estadoUbicacionVentaRef.current.value = "true";
         filtrarUbicacionesVenta();
     }
+
+    const titulosTabla = [
+        { titulo: "Nombre", center: false },
+        { titulo: "Acciones", center: true }
+    ];
 
     return (
         <ContenedorPrincipal>
@@ -98,12 +90,12 @@ const UbicacionVentaPage: React.FC = () => {
                 </ContenedorBotonesFiltros>
                 <ContenedorSelectores>
                     <InputFiltro
-                        id= "nombreUbicacionVenta"
-                        name= "Nombre"
+                        id="nombreUbicacionVenta"
+                        name="Nombre"
                         ref={nombreUbicacionVentaRef}
                         onChange={filtrarUbicacionesVenta}
                     />
-                    <SelectFiltro 
+                    <SelectFiltro
                         id="estadoUbicacionVenta"
                         name="Estado"
                         onChange={filtrarUbicacionesVenta}
@@ -115,35 +107,49 @@ const UbicacionVentaPage: React.FC = () => {
                     </SelectFiltro>
                 </ContenedorSelectores>
             </ContenedorFiltros>
-                        
-            <div className="grid gap-4 md:grid-cols-3">
-                {ubicacionesVentaFiltradas.map((ubicacionesVenta) => (
-                    <UbicacionVentaCard ubicacionVenta={ubicacionesVenta} key={ubicacionesVenta.idUbicacionVenta }>
-                        <ContenedorBotonesAccionCard>
-                            <BotonAccionCard
-                                Symbol={Pencil}
-                                onClick={() => {
-                                    setUbicacionVentaSeleccionada(ubicacionesVenta);
-                                    setModalActualizar(true);
-                                }}
-                            />
-                          
-                        </ContenedorBotonesAccionCard>
-                    </UbicacionVentaCard>
-                )
-                )}
+
+            <div className="w-1/2 mx-auto">
+                <Table titulos={titulosTabla}>
+                    {ubicacionesVentaActuales.length > 0 ? (
+                        ubicacionesVentaActuales.map((ubicacion) => (
+                            <tr key={ubicacion.idUbicacionVenta} className="hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <td className="px-4 py-3">{ubicacion.nombreUbicacionVenta}</td>
+                                <td className="px-4 py-3 text-center">
+                                    <BotonAccionCard
+                                        Symbol={Pencil}
+                                        onClick={() => {
+                                            setUbicacionVentaSeleccionada(ubicacion);
+                                            setModalActualizar(true);
+                                        }}
+                                        h={5}
+                                    />
+                                </td>
+                            </tr>
+                        ))) : (
+
+                        <tr>
+                            <td colSpan={3} className="text-center py-4 text-gray-500 dark:text-gray-400">
+                                No se encontraron ubicaciones
+                            </td>
+                        </tr>
+                    )}
+                </Table>
             </div>
 
-            <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>
-                {ubicacionVentaSeleccionada && < MostrarInfoUbicacionVenta ubicacionVenta={ubicacionVentaSeleccionada}/>}
-            </Modal>
+
+            <ControlesPaginacion
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+            />
+
 
             <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)} >
-                <RegistrarUbicacionVenta obtenerUbicacionesVenta={obtenerUbicacionesVenta} setModalRegistrar={setModalRegistrar} />
+                <RegistrarUbicacionVenta setModalRegistrar={setModalRegistrar} />
             </Modal>
 
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)} >
-                <RegistrarUbicacionVenta idUbicacionVenta={ubicacionVentaSeleccionada?.idUbicacionVenta} obtenerUbicacionesVenta={obtenerUbicacionesVenta} setModalActualizar={setModalActualizar} />
+                <RegistrarUbicacionVenta ubicacionVentaSeleccionada={ubicacionVentaSeleccionada} setModalActualizar={setModalActualizar} />
             </Modal>
 
         </ContenedorPrincipal>

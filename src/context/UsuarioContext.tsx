@@ -21,7 +21,7 @@ interface UserContextType {
     setTiposDocumento: (tiposDocumento: TipoDocumentoResponseDTO[]) => void;
     roles: RolDTO[];
     setRoles: (roles: RolDTO[]) => void;
-    usuarios: UsuarioResponseDTO[]; 
+    usuarios: UsuarioResponseDTO[];
     setUsuarios: (usuarios: UsuarioResponseDTO[]) => void;
     obtenerUsuarios: () => void;
     loading: boolean; // Estado de carga
@@ -39,7 +39,7 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
     const [municipios, setMunicipios] = useState<MunicipioResponseDTO[]>([]);
     const [tiposDocumento, setTiposDocumento] = useState<TipoDocumentoResponseDTO[]>([]);
     const [roles, setRoles] = useState<RolDTO[]>([]);
-    const [usuarios, setUsuarios] = useState<UsuarioResponseDTO[]>([]); 
+    const [usuarios, setUsuarios] = useState<UsuarioResponseDTO[]>([]);
     const [loading, setLoading] = useState(true); // Estado de carga
 
     const { data: session, status } = useSession();
@@ -48,7 +48,7 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
     const idUsuario = session?.user?.idUsuario;
 
     const obtenerUsuarios = async () => {
-        if (!session || idRol === undefined || idEmpresa === undefined) return;
+        if (status !== "authenticated" || idRol === undefined || idEmpresa === undefined) return;
         setLoading(true);
         try {
             const endpoint = idRol === 2 ? `/api/empresas/${idEmpresa}/usuarios` : "/api/usuarios";
@@ -67,8 +67,8 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
     };
 
     useEffect(() => {
+        if (status !== "authenticated" || !idRol || !idEmpresa) return; // Esperar a que la sesión esté lista
         const fetchData = async () => {
-            if (!session || idRol === undefined || idEmpresa === undefined) return;
 
             setLoading(true); // Iniciar carga antes de la petición
             try {
@@ -98,9 +98,9 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
                 setLoading(false); // Finalizar carga después de obtener los datos
             }
         };
-
-        fetchData();
-    }, [session, idRol, idEmpresa]);
+        
+        if (idRol === 1 || idRol === 2) fetchData();
+    }, [status, idRol, idEmpresa]);
 
     return (
         <UsuarioContext.Provider value={{

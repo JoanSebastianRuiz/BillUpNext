@@ -77,8 +77,10 @@ END;
 $$
 LANGUAGE PLPGSQL;
 
+
 CREATE OR REPLACE FUNCTION validarExistCajaNombre(
-    _nombreCaja "Caja"."nombreCaja"%TYPE
+    _nombreCaja "Caja"."nombreCaja"%TYPE,
+    _idEmpresa "Caja"."idEmpresa"%TYPE
 )
 RETURNS BOOLEAN AS
 $$
@@ -87,7 +89,7 @@ BEGIN
     RETURN EXISTS(
         SELECT 3
         FROM "Caja"
-        WHERE "nombreCaja" = _nombreCaja
+        WHERE "nombreCaja" = _nombreCaja AND "idEmpresa" = _idEmpresa
     );
 END;
 $$

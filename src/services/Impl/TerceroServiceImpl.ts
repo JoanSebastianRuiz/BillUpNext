@@ -226,8 +226,10 @@ export class TerceroServiceImpl implements TerceroService {
                 return NextResponse.json({ message: 'El nit no es valido' }, { status: 400 });
             }
 
-            if (await this.terceroDAO.existTerceroNit(nitTercero, idEmpresa, proveedorTercero) && nitTercero !== empresaExiste?.nitTercero) {
-                return NextResponse.json({ message: 'El nit ya existe' }, { status: 400 });
+            if (nitTercero !== empresaExiste?.nitTercero) {
+                if (await this.terceroDAO.existTerceroNit(nitTercero, idEmpresa, proveedorTercero)) {
+                    return NextResponse.json({ message: 'El nit ya existe' }, { status: 400 });
+                }
             }
 
             if (!isValidDigitoVerificacion(digitoVerificacionTercero)) {
@@ -238,18 +240,21 @@ export class TerceroServiceImpl implements TerceroService {
                 return NextResponse.json({ message: 'El correo no es valido' }, { status: 400 });
             }
 
-            if (await this.terceroDAO.existTerceroCorreo(correoTercero, idEmpresa, proveedorTercero) && correoTercero !== empresaExiste?.correoTercero) {
-                return NextResponse.json({ message: 'El correo ya existe' }, { status: 400 });
+            if (correoTercero !== empresaExiste?.correoTercero) {
+                if (await this.terceroDAO.existTerceroCorreo(correoTercero, idEmpresa, proveedorTercero)) {
+                    return NextResponse.json({ message: 'El correo ya existe' }, { status: 400 });
+                }
             }
 
             if (!isValidPhoneNumber(telefonoTercero)) {
                 return NextResponse.json({ message: 'El telefono no es valido' }, { status: 400 });
             }
 
-            if (await this.terceroDAO.existTerceroTelefono(telefonoTercero, idEmpresa, proveedorTercero) && telefonoTercero !== empresaExiste?.telefonoTercero) {
-                return NextResponse.json({ message: 'El telefono ya existe' }, { status: 400 });
+            if (telefonoTercero !== empresaExiste?.telefonoTercero) {
+                if (await this.terceroDAO.existTerceroTelefono(telefonoTercero, idEmpresa, proveedorTercero)) {
+                    return NextResponse.json({ message: 'El telefono ya existe' }, { status: 400 });
+                }
             }
-
             const response = await this.terceroDAO.updateEmpresa(tercero);
 
             return NextResponse.json(response, { status: 200 });
@@ -317,18 +322,23 @@ export class TerceroServiceImpl implements TerceroService {
                 return NextResponse.json({ message: 'El correo no es valido' }, { status: 400 });
             }
 
-            if (await this.terceroDAO.existTerceroCorreo(correoTercero, idEmpresa, proveedorTercero) && correoTercero !== personaExiste?.correoTercero) {
-                return NextResponse.json({ message: 'El correo ya existe' }, { status: 400 });
+            if (correoTercero !== personaExiste?.correoTercero) {
+                if (await this.terceroDAO.existTerceroCorreo(correoTercero, idEmpresa, proveedorTercero)) {
+                    return NextResponse.json({ message: 'El correo ya existe' }, { status: 400 });
+                }
             }
 
-            if (await this.terceroDAO.existTerceroDoc(numeroDocumentoTercero, idEmpresa, proveedorTercero) && numeroDocumentoTercero !== personaExiste?.numeroDocumentoTercero) {
-                return NextResponse.json({ message: 'El documento ya existe' }, { status: 400 });
+            if (numeroDocumentoTercero !== personaExiste?.numeroDocumentoTercero) {
+                if (await this.terceroDAO.existTerceroDoc(numeroDocumentoTercero, idEmpresa, proveedorTercero)) {
+                    return NextResponse.json({ message: 'El documento ya existe' }, { status: 400 });
+                }
             }
 
-            if (await this.terceroDAO.existTerceroTelefono(telefonoTercero, idEmpresa, proveedorTercero) && telefonoTercero !== personaExiste?.telefonoTercero) {
-                return NextResponse.json({ message: 'El telefono ya existe' }, { status: 400 });
+            if (telefonoTercero !== personaExiste?.telefonoTercero) {
+                if (await this.terceroDAO.existTerceroTelefono(telefonoTercero, idEmpresa, proveedorTercero)) {
+                    return NextResponse.json({ message: 'El telefono ya existe' }, { status: 400 });
+                }
             }
-
             const response = await this.terceroDAO.updatePersona(tercero);
 
             return NextResponse.json(response, { status: 200 });

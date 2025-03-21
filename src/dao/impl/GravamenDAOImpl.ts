@@ -77,13 +77,12 @@ export class GravamenDAOImpl implements GravamenDAO {
   };
 
   public existGravamenNombre = async (
-    nombreGravamen: string,
-    idGravamen?: number
+    nombreGravamen: string
   ): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT existeGravamenNombre($1,$2) as resultado;`,
-        [nombreGravamen, idGravamen]
+        `SELECT existeGravamenNombre($1) as resultado;`,
+        [nombreGravamen]
       );
 
       return respuesta.length > 0 ? respuesta[0].resultado : false;

@@ -45,7 +45,7 @@ export const TerceroContextProvider: React.FC<TerceroProviderProps> = ({ childre
     const idEmpresa = session?.user?.idEmpresa;
 
     const obtenerPersonas = async (tipoPersonas: string) => {
-        if (!session || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
+        if (status !== "authenticated" || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
         try {
             const respuestaPersonas = await axios.get(`/api/empresas/${idEmpresa}/${tipoPersonas}?tipo=persona`);
             if (respuestaPersonas.status === 200) {
@@ -65,7 +65,7 @@ export const TerceroContextProvider: React.FC<TerceroProviderProps> = ({ childre
     }
 
     const obtenerEmpresas = async (tipoEmpresas: string) => {
-        if (!session || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
+        if (status !== "authenticated" || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
         try {
             const respuestaEmpresas = await axios.get(`/api/empresas/${idEmpresa}/${tipoEmpresas}?tipo=empresa`);
             if (respuestaEmpresas.status === 200) {
@@ -85,7 +85,7 @@ export const TerceroContextProvider: React.FC<TerceroProviderProps> = ({ childre
     }
 
     const obtenerProveedoresProducto = async () => {
-        if (!session || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
+        if (status !== "authenticated" || idEmpresa === undefined) return; // Esperar a que la sesión esté lista
         try {
             const respuesta = await axios.get(`/api/empresas/${idEmpresa}/tercero-producto`);
             if (respuesta.status === 200) {
@@ -102,7 +102,7 @@ export const TerceroContextProvider: React.FC<TerceroProviderProps> = ({ childre
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!session || idRol === undefined || idEmpresa === undefined) return;
+            if (status !== "authenticated" || idRol === undefined || idEmpresa === undefined) return;
 
             setLoading(true); // Iniciar carga antes de la petición
             try {
@@ -139,7 +139,7 @@ export const TerceroContextProvider: React.FC<TerceroProviderProps> = ({ childre
         };
 
         fetchData();
-    }, [session, idRol, idEmpresa]);
+    }, [status, idRol, idEmpresa]);
 
     return (
         <TerceroContext.Provider value={{

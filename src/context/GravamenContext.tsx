@@ -37,11 +37,12 @@
         };
 
         useEffect(() => {
+            if (status !== "authenticated" || idRol === undefined) return;
             if (idRol === 1 || idRol === 2) {
                 if (!session || idRol === undefined || idEmpresa === undefined) return;
                 obtenerGravamenes();
             };
-        }, [session, idRol, idEmpresa]);
+        }, [status, idRol, idEmpresa]);
 
         return (
             <GravamenContext.Provider value={{ gravamenes, setGravamenes, obtenerGravamenes }}>

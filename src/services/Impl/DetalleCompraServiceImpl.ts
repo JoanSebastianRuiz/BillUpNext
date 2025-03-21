@@ -25,15 +25,13 @@ export class DetalleCompraServiceImpl implements DetalleCompraService {
         idProducto,
         cantidadDetalleCompra,
         valorDetalleCompra,
-        fechaVencimientoDetalleCompra,
       } = detalleCompra;
 
       if (
         !idCompra ||
         !idProducto ||
         !cantidadDetalleCompra ||
-        !valorDetalleCompra ||
-        !fechaVencimientoDetalleCompra
+        !valorDetalleCompra 
       ) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
@@ -90,7 +88,6 @@ export class DetalleCompraServiceImpl implements DetalleCompraService {
         idProducto,
         cantidadDetalleCompra,
         valorDetalleCompra,
-        fechaVencimientoDetalleCompra,
       } = detalleCompra;
 
       if (
@@ -98,8 +95,7 @@ export class DetalleCompraServiceImpl implements DetalleCompraService {
         !idCompra ||
         !idProducto ||
         !cantidadDetalleCompra ||
-        !valorDetalleCompra ||
-        !fechaVencimientoDetalleCompra
+        !valorDetalleCompra 
       ) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },

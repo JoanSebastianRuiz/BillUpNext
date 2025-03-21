@@ -4,7 +4,7 @@ const isValidEmail = (email: string): boolean => {
 }
 
 const isValidLength = (value: string, maxLength: number): boolean => {
-  return value.length >0 && value.length <= maxLength;
+  return value.length > 0 && value.length <= maxLength;
 }
 
 const isValidPhoneNumber = (phone: string): boolean => {
@@ -34,8 +34,13 @@ const isValidCodigoPostal = (codigoPostal: string): boolean => {
 
 // Verifica que sea un número positivo, con o sin decimales
 const isValidDinero = (Dinero: string): boolean => {
-  const regex = /^\d+(\.\d+)?$/; 
+  const regex = /^\d+(\.\d+)?$/;
   return regex.test(Dinero);
+}
+
+const isValidNum = (num: string): boolean => {
+  const regex = /^\d+$/;
+  return regex.test(num);
 }
 
 const isValidPassword = (password: string): boolean => {
@@ -64,4 +69,4 @@ const isValidPassword = (password: string): boolean => {
   return hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar && hasNoSpaces;
 };
 
-export { isValidEmail, isValidPhoneNumber, isValidDocument, isValidPassword, isValidNit, isValidDigitoVerificacion, isValidCodigoPostal, isValidLength, isValidDinero };
+export { isValidEmail, isValidPhoneNumber, isValidDocument, isValidPassword, isValidNit, isValidDigitoVerificacion, isValidCodigoPostal, isValidLength, isValidDinero, isValidNum };

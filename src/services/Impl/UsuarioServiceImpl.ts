@@ -63,6 +63,10 @@ export class UsuarioServiceImpl implements UsuarioService {
         }
 
         try {
+            if (!isValidDocument(numeroDocumentoUsuario)) {
+                return NextResponse.json({ message: "Documento inválido" }, { status: 400 });
+            }
+
             if (await this.usuarioDAOImpl.existUsuarioDoc(numeroDocumentoUsuario)) {
                 return NextResponse.json({ message: "El numero de documento ya se encuentra registrado" }, { status: 400 });
             }
@@ -81,10 +85,6 @@ export class UsuarioServiceImpl implements UsuarioService {
 
             if (await this.usuarioDAOImpl.existUsuarioTelefono(telefonoUsuario)) {
                 return NextResponse.json({ message: "El teléfono ya se encuentra registrado" }, { status: 400 });
-            }
-
-            if (!isValidDocument(numeroDocumentoUsuario)) {
-                return NextResponse.json({ message: "Documento inválido" }, { status: 400 });
             }
 
             // Encriptar clave
@@ -134,36 +134,37 @@ export class UsuarioServiceImpl implements UsuarioService {
                 return NextResponse.json({ message: "El usuario no existe" }, { status: 404 });
             }
 
-            const existeDocumento = await this.usuarioDAOImpl.existUsuarioDoc(numeroDocumentoUsuario);
-            if (existeDocumento && usuarioExistente.numeroDocumentoUsuario !== numeroDocumentoUsuario) {
-                return NextResponse.json({ message: "El número de documento ya se encuentra registrado" }, { status: 400 });
+            if (!isValidDocument(numeroDocumentoUsuario)) {
+                return NextResponse.json({ message: "Documento inválido" }, { status: 400 });
+            }
+
+            if (numeroDocumentoUsuario !== usuarioExistente.numeroDocumentoUsuario) {
+                if (await this.usuarioDAOImpl.existUsuarioDoc(numeroDocumentoUsuario)) {
+                    return NextResponse.json({ message: "El número de documento ya se encuentra registrado" }, { status: 400 });
+                }
             }
 
             if (!isValidEmail(correoUsuario)) {
                 return NextResponse.json({ message: "Correo inválido" }, { status: 400 });
             }
 
-            const existeCorreo = await this.usuarioDAOImpl.existUsuarioCorreo(correoUsuario);
-            if (existeCorreo && usuarioExistente.correoUsuario !== correoUsuario) {
-                return NextResponse.json({ message: "El correo electrónico ya se encuentra registrado" }, { status: 400 });
+            if (correoUsuario !== usuarioExistente.correoUsuario) {
+                if (await this.usuarioDAOImpl.existUsuarioCorreo(correoUsuario)) {
+                    return NextResponse.json({ message: "El correo electrónico ya se encuentra registrado" }, { status: 400 });
+                }
             }
 
             if (!isValidPhoneNumber(telefonoUsuario)) {
                 return NextResponse.json({ message: "Teléfono inválido" }, { status: 400 });
             }
 
-            const existeTelefono = await this.usuarioDAOImpl.existUsuarioTelefono(telefonoUsuario);
-            if (existeTelefono && usuarioExistente.telefonoUsuario !== telefonoUsuario) {
-                return NextResponse.json({ message: "El teléfono ya se encuentra registrado" }, { status: 400 });
+            if (telefonoUsuario !== usuarioExistente.telefonoUsuario) {
+                if (await this.usuarioDAOImpl.existUsuarioTelefono(telefonoUsuario)) {
+                    return NextResponse.json({ message: "El teléfono ya se encuentra registrado" }, { status: 400 });
+                }
             }
 
-            if (!isValidDocument(numeroDocumentoUsuario)) {
-                return NextResponse.json({ message: "Documento inválido" }, { status: 400 });
-            }
-
-            let dataFinal: UsuarioRequestDTO = { ...data };
-
-            const respuesta = await this.usuarioDAOImpl.update(dataFinal);
+            const respuesta = await this.usuarioDAOImpl.update(data);
 
             if (respuesta) {
                 return NextResponse.json({ message: "Usuario actualizado correctamente" }, { status: 200 });

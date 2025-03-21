@@ -146,6 +146,7 @@ const EmpresasPage: React.FC = () => {
         if (idRegimenContribuyenteRef.current) idRegimenContribuyenteRef.current.value = "0";
         if (idDepartamentoRef.current) idDepartamentoRef.current.value = "0";
         if (idMunicipioRef.current) idMunicipioRef.current.value = "0";
+        if (estadoEmpresaRef.current) estadoEmpresaRef.current.value = "true";
         filtrarEmpresas();
     }
 

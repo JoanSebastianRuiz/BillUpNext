@@ -12,8 +12,6 @@ import BotonFiltro from "@/components/filtros/BotonFiltro";
 import ContenedorSelectores from "@/components/filtros/ContenedorSelectores";
 import InputFiltro from "@/components/filtros/InputFiltro";
 import SelectFiltro from "@/components/filtros/SelectFiltro";
-import CategoriaCard from "@/components/categorias/CategoriaCard";
-import ContenedorBotonesAccionCard from "@/components/cards/ContenedorBotonesAccionCard";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
@@ -61,6 +59,7 @@ const CategoriasPage: React.FC = () => {
 
     const limpiarFiltros = () => {
         if (nombreCategoriaRef.current) nombreCategoriaRef.current.value = "";
+        if (estadoCategoriaRef.current) estadoCategoriaRef.current.value = "true";
         filtrarCategorias();
     };
 
@@ -70,7 +69,6 @@ const CategoriasPage: React.FC = () => {
 
     const titulosTabla = [
         { titulo: "Nombre", center: false },
-        { titulo: "Estado", center: true },
         { titulo: "Acciones", center: true }
     ]
 
@@ -120,7 +118,6 @@ const CategoriasPage: React.FC = () => {
                         categoriasActuales.map((categoria) => (
                             <tr key={categoria.idCategoria} className="hover:bg-gray-100 dark:hover:bg-gray-700">
                                 <td className="px-4 py-3">{categoria.nombreCategoria}</td>
-                                <td className="px-4 py-3 text-center">{categoria.estadoCategoria ? "Activo" : "Inactivo"}</td>
                                 <td className="px-4 py-3 text-center">
                                     <BotonAccionCard
                                         Symbol={Pencil}

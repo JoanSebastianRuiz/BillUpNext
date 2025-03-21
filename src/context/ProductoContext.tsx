@@ -72,7 +72,7 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
     useEffect(() => {
         const fetchData = async () => {
             try {
-                if (!session || idRol === undefined || idEmpresa === undefined) return;
+                if (status !== "authenticated" || idRol === undefined || idEmpresa === undefined) return;
 
                 if (idRol === 2) {
                     const [categoriasRes, productosRes, gravamenesProductoRes] = await Promise.all([
@@ -98,6 +98,14 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
                     } else {
                         console.error("Error al obtener gravamenes producto", gravamenesProductoRes.data.message);
                     }
+                } else if (idRol === 3 || idRol === 4) {
+                    const productosRes = await axios.get(`/api/empresas/${idEmpresa}/productos`);
+
+                    if (productosRes.status === 200) {
+                        setProductos(productosRes.data);
+                    } else {
+                        console.error("Error al obtener productos:", productosRes.data.message);
+                    }
                 }
             } catch (error) {
                 console.error("Error al obtener productos:", error);
@@ -105,7 +113,7 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
         };
 
         fetchData();
-    }, [session, idRol, idEmpresa]);
+    }, [status, idRol, idEmpresa]);
 
     return (
         <ProductoContext.Provider value={{ productos, setProductos, categorias, setCategorias, gravamenesProducto, setGravamenesProducto, obtenerCategorias, obtenerProductos, obtenerGravamenesProducto }}>

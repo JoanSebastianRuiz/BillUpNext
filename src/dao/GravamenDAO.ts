@@ -5,5 +5,5 @@ export interface GravamenDAO{
     getById(idGravamen: number): Promise<GravamenDTO | null>;
     create(gravamen: GravamenDTO): Promise<boolean>;
     update(gravamen: GravamenDTO): Promise<boolean>;
-    existGravamenNombre(nombreGravamen: string, idGravamen?: number): Promise<boolean>;
+    existGravamenNombre(nombreGravamen: string): Promise<boolean>;
 }

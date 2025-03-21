@@ -49,7 +49,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
     const idTipoPersonaRef = useRef<HTMLSelectElement>(null)
     const idDepartamentoRef = useRef<HTMLSelectElement>(null)
     const idMunicipioRef = useRef<HTMLSelectElement>(null)
-    const estadoPersonaRef = useRef<HTMLSelectElement>(null)
+    const estadoEmpresaRef = useRef<HTMLSelectElement>(null)
 
 
     // Paginacion
@@ -66,7 +66,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
         const idTipoPersona = idTipoPersonaRef.current?.value;
         const nombreEmpresa = nombreEmpresaRef.current?.value;
         const nitEmpresa = nitEmpresaRef.current?.value;
-        const estadoEmpresa = estadoPersonaRef.current?.value;
+        const estadoEmpresa = estadoEmpresaRef.current?.value;
         const idDepartamento = idDepartamentoRef.current?.value;
         const idMunicipio = idMunicipioRef.current?.value;
 
@@ -142,6 +142,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
         if (nitEmpresaRef.current) nitEmpresaRef.current.value = "";
         if (idDepartamentoRef.current) idDepartamentoRef.current.value = "0";
         if (idMunicipioRef.current) idMunicipioRef.current.value = "0";
+        if (estadoEmpresaRef.current) estadoEmpresaRef.current.value = "";
         filtrarEmpresas();
     }
 
@@ -239,7 +240,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
                         id="estadoEmpresa"
                         name="Estado"
                         onChange={filtrarEmpresas}
-                        ref={estadoPersonaRef}
+                        ref={estadoEmpresaRef}
                         selectEstado={true}
                         defaultValue="true"
                     >
