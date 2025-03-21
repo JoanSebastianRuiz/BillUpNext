@@ -9,9 +9,7 @@ export class TipoMedioPagoServiceImpl implements TipoMedioPagoService {
     private tipoMedioPagoDAOImpl: TipoMedioPagoDAOImpl = TipoMedioPagoDAOImpl.getInstance();
     private constructor() { }
     
-    getByid(idTipoMediopago: number): Promise<TipoMedioPagoDTO | null> {
-        return this.getById(idTipoMediopago);
-    }
+    
 
     public static getInstance(): TipoMedioPagoServiceImpl {
         if (!TipoMedioPagoServiceImpl.instancia) {

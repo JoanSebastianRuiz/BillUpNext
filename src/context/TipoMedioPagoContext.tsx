@@ -20,7 +20,7 @@ interface tiposMediosPagoProviderProps {
     children: ReactNode;
 }
 
-export const tiposMediosPagoProvider: React.FC<tiposMediosPagoProviderProps> = ({ children }) => {
+export const TipoMedioPagoContextProvider: React.FC<tiposMediosPagoProviderProps> = ({ children }) => {
     const [tiposMediosPago, setTiposMediosPago] = useState<TipoMedioPagoDTO[]>([]);
     const { data: session, status } = useSession();
 
@@ -49,7 +49,7 @@ export const tiposMediosPagoProvider: React.FC<tiposMediosPagoProviderProps> = (
            }
         }
         fetchData();
-    })
+    }, [session]);
 
     return(
         <tiposMediosPagoContext.Provider value={{

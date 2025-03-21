@@ -11,10 +11,13 @@ import Notificacion from "@/components/form/Notificacion";
 import ContenedorRegistrar from "@/components/modal/ContenedorRegistrar";
 import ButtonForm from "@/components/form/ButtonForm";
 import SelectForm from "@/components/form/SelectForm";
+import { useTiposMediosPagoContext } from "@/context/TipoMedioPagoContext";
 
-const RegistrarTipoMedioPago = ({ idTipoMedioPago, obtenerTiposMedioPago, setModalActualizar , setModalRegistrar }: { idTipoMedioPago? : number, obtenerTiposMedioPago: () => void, setModalActualizar? : (value: boolean) => void, setModalRegistrar? : (value: boolean) => void}) => {
+const RegistrarTipoMedioPago = ({ idTipoMedioPago, setModalActualizar , setModalRegistrar }: 
+    { idTipoMedioPago? : number, setModalActualizar? : (value: boolean) => void, setModalRegistrar? : (value: boolean) => void}) => {
     const [error, setError] = useState<string | null> (null);
     const [success, setSuccess] = useState<string | null> (null);
+    const {obtenerTiposMediosPago } = useTiposMediosPagoContext();
 
     const { register, handleSubmit, formState: {errors}, setValue} = useForm<TipoMedioPagoDTO>();
 
@@ -47,13 +50,13 @@ const RegistrarTipoMedioPago = ({ idTipoMedioPago, obtenerTiposMedioPago, setMod
                 const respuesta = await axios.put(`/api/tipo-medio-pago${idTipoMedioPago}`, data);
                 setError(null);
                 setSuccess(respuesta.data.message);
-                obtenerTiposMedioPago();
+                obtenerTiposMediosPago();
                 setModalActualizar?.(false);
             } else {
                 const respuesta = await axios.post(`/api/tipo-medio-pago`, { ...data, estadoTipoMedioPago : true});
                 setError(null);
                 setSuccess(respuesta.data.message);
-                obtenerTiposMedioPago();
+                obtenerTiposMediosPago();
                 setModalRegistrar?.(false);
             }
         } catch (error: unknown) {
@@ -80,7 +83,7 @@ const RegistrarTipoMedioPago = ({ idTipoMedioPago, obtenerTiposMedioPago, setMod
                         required: {value: true, message: "Este campo es obligatorio"},
                         maxLength: {value: 50, message: "Máximo 50 caracteres"}
                     }}
-                    errors={error}
+                    errors={errors}
                 />
 
                 {idTipoMedioPago && (
