@@ -3,7 +3,7 @@ import { TipoMedioPagoServiceImpl } from "@/services/Impl/TipoMedioPagoServiceIm
 
 export const PUT = async (request: Request, { params }: { params: { idTipoMedioPago: string } }) => {
     const tipoMedioPagoService = TipoMedioPagoServiceImpl.getInstance();
-    const { idTipoMedioPago } = params;
+    const { idTipoMedioPago } = await params;
     const data = await request.json();
 
     if (!idTipoMedioPago) {
