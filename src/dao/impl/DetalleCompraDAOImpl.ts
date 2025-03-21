@@ -17,7 +17,7 @@ export class DetalleCompraDAOImpl implements DetalleCompraDAO {
   public getAll = async (): Promise<Array<DetalleCompraDTO>> => {
     try {
       const detalleCompraDatabase: DetalleCompraDTO[] = await ejecutarQuery(
-        `SELECT dc.\"idDetalleCompra\", dc.\"idCompra\", dc.\"idProducto\", dc.\"cantidadDetalleCompra\", dc.\"valorDetalleCompra\", dc.\"fechaVencimientoDetalleCompra\"
+        `SELECT dc.\"idDetalleCompra\", dc.\"idCompra\", dc.\"idProducto\", dc.\"cantidadDetalleCompra\", dc.\"valorDetalleCompra\"
                 FROM \"DetalleCompra\" dc;`,
         []
       );
@@ -33,7 +33,7 @@ export class DetalleCompraDAOImpl implements DetalleCompraDAO {
   ): Promise<DetalleCompraDTO | null> => {
     try {
       const respuesta: DetalleCompraDTO[] = await ejecutarQuery(
-        `SELECT dc.\"idDetalleCompra\", dc.\"idCompra\", dc.\"idProducto\", dc.\"cantidadDetalleCompra\", dc.\"valorDetalleCompra\", dc.\"fechaVencimientoDetalleCompra\"
+        `SELECT dc.\"idDetalleCompra\", dc.\"idCompra\", dc.\"idProducto\", dc.\"cantidadDetalleCompra\", dc.\"valorDetalleCompra\"
                 FROM \"DetalleCompra\" dc
                 WHERE dc.\"idDetalleCompra\" = $1;`,
         [idDetalleCompra]
@@ -48,13 +48,12 @@ export class DetalleCompraDAOImpl implements DetalleCompraDAO {
   public create = async (detalleCompra: DetalleCompraDTO): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT insertarDetalleCompra($1,$2,$3,$4,$5) as resultado;`,
+        `SELECT insertarDetalleCompra($1,$2,$3,$4) as resultado;`,
         [
           detalleCompra.idCompra,
           detalleCompra.idProducto,
           detalleCompra.cantidadDetalleCompra,
-          detalleCompra.valorDetalleCompra,
-          detalleCompra.fechaVencimientoDetalleCompra
+          detalleCompra.valorDetalleCompra
         ]
       );
 
@@ -67,14 +66,13 @@ export class DetalleCompraDAOImpl implements DetalleCompraDAO {
   public update = async (detalleCompra: DetalleCompraDTO): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT actualizarDetalleCompra($1,$2,$3,$4,$5,$6) as resultado;`,
+        `SELECT actualizarDetalleCompra($1,$2,$3,$4,$5) as resultado;`,
         [
           detalleCompra.idDetalleCompra,
           detalleCompra.idCompra,
           detalleCompra.idProducto,
           detalleCompra.cantidadDetalleCompra,
-          detalleCompra.valorDetalleCompra,
-          detalleCompra.fechaVencimientoDetalleCompra
+          detalleCompra.valorDetalleCompra
         ]
       );
 
