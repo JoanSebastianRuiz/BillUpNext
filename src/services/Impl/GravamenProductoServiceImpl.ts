@@ -23,18 +23,31 @@ export class GravamenProductoServiceImpl implements GravamenProductoService {
       const {
         idProducto,
         idGravamen,
-        porcentajeGravamenProducto
+        porcentajeGravamenProducto,
+        estadoGravamenProducto
       } = gravamenProducto;
 
       if (
         !idProducto ||
         !idGravamen ||
-        !porcentajeGravamenProducto 
+        !porcentajeGravamenProducto ||
+        estadoGravamenProducto === undefined
       ) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
           { status: 400 }
         );
+      }
+
+      if (
+        !(await this.gravamenProductoDAOImpl.validarPorcentaje(
+          porcentajeGravamenProducto)
+        )
+      ) {
+        return NextResponse.json(
+          { message: "El porcentaje no es valido" },
+          { status: 400 }
+        )
       }
 
       const respuesta = await this.gravamenProductoDAOImpl.create(
@@ -64,14 +77,16 @@ export class GravamenProductoServiceImpl implements GravamenProductoService {
         idGravamenProducto,
         idProducto,
         idGravamen,
-        porcentajeGravamenProducto
+        porcentajeGravamenProducto,
+        estadoGravamenProducto
       } = gravamenProducto;
 
       if (
         !idGravamenProducto ||
         !idProducto ||
         !idGravamen ||
-        !porcentajeGravamenProducto 
+        !porcentajeGravamenProducto ||
+        estadoGravamenProducto === undefined
       ) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },

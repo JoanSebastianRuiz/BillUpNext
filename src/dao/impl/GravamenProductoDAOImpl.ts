@@ -18,7 +18,7 @@ export class GravamenProductoDAOImpl implements GravamenProductoDAO {
     try {
       const gravamenProductoDatabase: GravamenProductoDTO[] =
         await ejecutarQuery(
-          `SELECT gp.\"idGravamenProducto\", gp.\"idProducto"\, gp."\idGravamen"\, gp.\"porcentajeGravamenProducto\"
+          `SELECT gp.\"idGravamenProducto\", gp.\"idProducto"\, gp."\idGravamen"\, gp.\"porcentajeGravamenProducto\", gp.\"estadoGravamenProducto\"
                     FROM \"GravamenProducto\" gp
                     JOIN \"Producto\" p ON p.\"idProducto\"=gp.\"idProducto\"
                     WHERE p.\"idEmpresa\"=$1;`,
@@ -36,7 +36,7 @@ export class GravamenProductoDAOImpl implements GravamenProductoDAO {
   ): Promise<GravamenProductoDTO | null> => {
     try {
       const respuesta: GravamenProductoDTO[] = await ejecutarQuery(
-        `SELECT gp.\"idGravamenProducto\", gp.\"idProducto"\, gp."\idGravamen"\, gp.\"porcentajeGravamenProducto\"
+        `SELECT gp.\"idGravamenProducto\", gp.\"idProducto"\, gp."\idGravamen"\, gp.\"porcentajeGravamenProducto\", gp.\"estadoGravamenProducto\"
                     FROM \"GravamenProducto\" gp 
                     WHERE gp.\"idGravamenProducto\" = $1;`,
         [idGravamenProducto]
@@ -53,11 +53,12 @@ export class GravamenProductoDAOImpl implements GravamenProductoDAO {
   ): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT insertarGravamenProducto($1,$2,$3) as resultado;`,
+        `SELECT insertarGravamenProducto($1,$2,$3,$4) as resultado;`,
         [
           gravamenProducto.idProducto,
           gravamenProducto.idGravamen,
-          gravamenProducto.porcentajeGravamenProducto
+          gravamenProducto.porcentajeGravamenProducto,
+          gravamenProducto.estadoGravamenProducto
         ]
       );
 
@@ -72,18 +73,33 @@ export class GravamenProductoDAOImpl implements GravamenProductoDAO {
   ): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT actualizarGravamenProducto($1,$2,$3,$4) as resultado;`,
+        `SELECT actualizarGravamenProducto($1,$2,$3,$4,$5) as resultado;`,
         [
           gravamenProducto.idGravamenProducto,
           gravamenProducto.idProducto,
           gravamenProducto.idGravamen,
-          gravamenProducto.porcentajeGravamenProducto
+          gravamenProducto.porcentajeGravamenProducto,
+          gravamenProducto.estadoGravamenProducto
         ]
       );
 
       return respuesta.length > 0 ? respuesta[0].resultado : false;
     } catch (error) {
       throw new Error(`Error en GravamenProductoDAO.update: ${error}`);
+    }
+  };
+
+  public validarPorcentaje = async (
+    porcentajeGravamenProducto: number
+  ): Promise<boolean> => {
+    try {
+      const respuesta = await ejecutarQuery(
+        `SELECT validarPorcentajeGravamenProducto ($1) as resultado;`,
+        [porcentajeGravamenProducto]
+      );
+      return respuesta.length > 0 ? respuesta[0].resultado : false;
+    } catch (error) {
+      throw new Error(`Error en GravamenProducto.validarPorcentaje: ${error}`);
     }
   };
 }

@@ -49,6 +49,7 @@ const SublistaGravamenes = ({ producto}: { producto: ProductoResponseDTO | Produ
     const [idGravamenProductoSeleccionado, setIdGravamenProductoSeleccionado] = useState<number>(0);
 
     const nombreGravamenRef = useRef<HTMLInputElement>(null);
+    const estadoGravamenProductoRef = useRef<HTMLSelectElement>(null);
 
      // Paginacion
      const [currentPage, setCurrentPage] = useState(1);
@@ -60,8 +61,15 @@ const SublistaGravamenes = ({ producto}: { producto: ProductoResponseDTO | Produ
 
     const filtrarProductosGravamen = () => {
         const nombreGravamen = nombreGravamenRef.current?.value;
+        const estadoGravamenProducto = estadoGravamenProductoRef.current?.value;
 
         let gravamenesFiltrados = [ ...gravamenesMostrar];
+
+        if (estadoGravamenProducto !== undefined && estadoGravamenProducto !== "") {
+            gravamenesFiltrados = gravamenesFiltrados.filter(
+                (gravamen) => gravamen.estadoGravamenProducto === (estadoGravamenProducto === "true")
+            );
+        }
 
         if (nombreGravamen) {
             gravamenesFiltrados = gravamenesFiltrados.filter((gravamen) => {
@@ -80,6 +88,8 @@ const SublistaGravamenes = ({ producto}: { producto: ProductoResponseDTO | Produ
 
     const limpiarFiltros = () => {
         if (nombreGravamenRef.current) nombreGravamenRef.current.value = "";
+        if (estadoGravamenProductoRef.current) estadoGravamenProductoRef.current.value = "true";
+        filtrarProductosGravamen();
     };
 
     const titulosTabla= [
@@ -113,6 +123,17 @@ const SublistaGravamenes = ({ producto}: { producto: ProductoResponseDTO | Produ
                         ref={nombreGravamenRef}
                         onChange={filtrarProductosGravamen}
                     />
+                    <SelectFiltro
+                        id="estadoGravamenProducto"
+                        name="Estado"
+                        onChange={filtrarProductosGravamen}
+                        ref={estadoGravamenProductoRef}
+                        defaultValue="true"
+                        selectEstado={true}
+                        >
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </SelectFiltro>
                 </ContenedorSelectores>
             </ContenedorFiltros>
 
