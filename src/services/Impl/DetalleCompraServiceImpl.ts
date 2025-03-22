@@ -40,8 +40,8 @@ export class DetalleCompraServiceImpl implements DetalleCompraService {
       }
 
       if (
-        await this.detalleCompraDAOImpl.validarCantidad(
-          cantidadDetalleCompra
+        !(await this.detalleCompraDAOImpl.validarCantidad(
+          cantidadDetalleCompra)
         )
       ) {
         return NextResponse.json(
@@ -51,8 +51,8 @@ export class DetalleCompraServiceImpl implements DetalleCompraService {
       }
 
       if (
-        await this.detalleCompraDAOImpl.validarValor(
-          valorDetalleCompra
+        !(await this.detalleCompraDAOImpl.validarValor(
+          valorDetalleCompra)
         )
       ) {
         return NextResponse.json(
@@ -104,8 +104,8 @@ export class DetalleCompraServiceImpl implements DetalleCompraService {
       }
 
       if (
-        await this.detalleCompraDAOImpl.validarCantidad(
-          cantidadDetalleCompra
+        !(await this.detalleCompraDAOImpl.validarCantidad(
+          cantidadDetalleCompra)
         )
       ) {
         return NextResponse.json(
@@ -115,8 +115,8 @@ export class DetalleCompraServiceImpl implements DetalleCompraService {
       }
 
       if (
-        await this.detalleCompraDAOImpl.validarValor(
-          valorDetalleCompra
+        !(await this.detalleCompraDAOImpl.validarValor(
+          valorDetalleCompra)
         )
       ) {
         return NextResponse.json(
