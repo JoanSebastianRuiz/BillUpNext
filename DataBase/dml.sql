@@ -68,24 +68,24 @@ VALUES
 
 INSERT INTO "Producto" ("idEmpresa", "idCategoria", "nombreProducto", "descripcionProducto", "precioVentaProducto", "porcentajeDescuentoProducto", "stockMinimoProducto", "stockMaximoProducto", "stockProducto", "estadoProducto")
 VALUES 
-(1,1,'Manzana','Manzana verde', 2000, 0, 10, 100, 50, TRUE),
-(1,1,'Pera','Pera verde', 1500, 0, 10, 100, 50, TRUE),
-(1,1,'Banano','Banano maduro', 1000, 0, 10, 100, 50, TRUE),
-(1,2,'Lechuga','Lechuga crespa', 2000, 0, 10, 100, 50, TRUE),
-(1,2,'Tomate','Tomate chonto', 1500, 0, 10, 100, 50, TRUE),
-(1,2,'Zanahoria','Zanahoria', 1000, 0, 10, 100, 50, TRUE),
-(1,3,'Res','Carne de res', 20000, 0, 10, 100, 50, TRUE),
-(1,3,'Pollo','Carne de pollo', 15000, 0, 10, 100, 50, TRUE),
-(1,3,'Cerdo','Carne de cerdo', 10000, 0, 10, 100, 50, TRUE),
-(2,4,'Leche','Leche deslactosada', 3000, 0, 10, 100, 50, TRUE),
-(2,4,'Queso','Queso campesino', 5000, 0, 10, 100, 50, TRUE),
-(2,4,'Yogurt','Yogurt natural', 2000, 0, 10, 100, 50, TRUE),
-(2,5,'Jabon','Jabon en barra', 2000, 0, 10, 100, 50, TRUE),
-(2,5,'Detergente','Detergente en polvo', 5000, 0, 10, 100, 50, TRUE),
-(2,5,'Desinfectante','Desinfectante', 3000, 0, 10, 100, 50, TRUE),
-(2,6,'Escoba','Escoba de palma', 2000, 0, 10, 100, 50, TRUE),
-(2,6,'Recogedor','Recogedor de plastico', 5000, 0, 10, 100, 50, TRUE),
-(2,6,'Cubeta','Cubeta de plastico', 3000, 0, 10, 100, 50, TRUE);
+(1,1,'Manzana','Manzana verde', 2000, 0, 10, 100, 0, TRUE),
+(1,1,'Pera','Pera verde', 1500, 0, 10, 100, 0, TRUE),
+(1,1,'Banano','Banano maduro', 1000, 0, 10, 100, 0, TRUE),
+(1,2,'Lechuga','Lechuga crespa', 2000, 0, 10, 100, 0, TRUE),
+(1,2,'Tomate','Tomate chonto', 1500, 0, 10, 100, 0, TRUE),
+(1,2,'Zanahoria','Zanahoria', 1000, 0, 10, 100, 0, TRUE),
+(1,3,'Res','Carne de res', 20000, 0, 10, 100, 0, TRUE),
+(1,3,'Pollo','Carne de pollo', 15000, 0, 10, 100, 0, TRUE),
+(1,3,'Cerdo','Carne de cerdo', 10000, 0, 10, 100, 0, TRUE),
+(2,4,'Leche','Leche deslactosada', 3000, 0, 10, 100, 0, TRUE),
+(2,4,'Queso','Queso campesino', 5000, 0, 10, 100, 0, TRUE),
+(2,4,'Yogurt','Yogurt natural', 2000, 0, 10, 100, 0, TRUE),
+(2,5,'Jabon','Jabon en barra', 2000, 0, 10, 100, 0, TRUE),
+(2,5,'Detergente','Detergente en polvo', 5000, 0, 10, 100, 0, TRUE),
+(2,5,'Desinfectante','Desinfectante', 3000, 0, 10, 100, 0, TRUE),
+(2,6,'Escoba','Escoba de palma', 2000, 0, 10, 100, 0, TRUE),
+(2,6,'Recogedor','Recogedor de plastico', 5000, 0, 10, 100, 0, TRUE),
+(2,6,'Cubeta','Cubeta de plastico', 3000, 0, 10, 100, 0, TRUE);
 
 
 -- clientes persona
