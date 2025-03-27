@@ -8,7 +8,7 @@ import { GravamenContextProvider } from "@/context/GravamenContext";
 import AuthProvider from "@/context/AuthProvider";
 import { ThemeProvider } from "next-themes";
 import { CajaContextProvider } from "@/context/CajaContext";
-import { VentaContextProvider } from "@/context/VentaContext";
+import { TipoMedioPagoContextProvider } from "@/context/TipoMedioPagoContext";
 import { CompraContextProvider } from "@/context/CompraContext";
 
 
@@ -33,11 +33,11 @@ export default function RootLayout({
                   <TerceroContextProvider>
                     <GravamenContextProvider>
                       <CajaContextProvider>
-                        <VentaContextProvider>
+                        <TipoMedioPagoContextProvider>
                           <CompraContextProvider>
                             {children}
                           </CompraContextProvider>
-                        </VentaContextProvider>
+                        </TipoMedioPagoContextProvider>
                       </CajaContextProvider>
                     </GravamenContextProvider>
                   </TerceroContextProvider>

@@ -9,9 +9,7 @@ export class TipoMedioPagoServiceImpl implements TipoMedioPagoService {
     private tipoMedioPagoDAOImpl: TipoMedioPagoDAOImpl = TipoMedioPagoDAOImpl.getInstance();
     private constructor() { }
     
-    getByid(idTipoMediopago: number): Promise<TipoMedioPagoDTO | null> {
-        return this.getById(idTipoMediopago);
-    }
+    
 
     public static getInstance(): TipoMedioPagoServiceImpl {
         if (!TipoMedioPagoServiceImpl.instancia) {
@@ -31,6 +29,10 @@ export class TipoMedioPagoServiceImpl implements TipoMedioPagoService {
             if(!nombreTipoMedioPago || !estadoTipoMedioPago){
                 return NextResponse.json({message: 'Faltan campos por llenar'}, {status: 400});
             }
+
+           if (await this.tipoMedioPagoDAOImpl.existNombreTipoMedioPago(nombreTipoMedioPago)) {
+            return NextResponse.json({ "message": "El nombre del tipo de pago ya se encuentra registrado " }, {status:400 } );
+           }
 
             const respuesta = await this.tipoMedioPagoDAOImpl.create(tipoMedioPago);
 
@@ -54,6 +56,19 @@ export class TipoMedioPagoServiceImpl implements TipoMedioPagoService {
              if (!idTipoMedioPago || !nombreTipoMedioPago || !estadoTipoMedioPago) {
                 return NextResponse.json({message: 'Faltan campos por llenar'}, {status: 400});
              }
+
+             //validar Nombre
+             const tipoMedioPagoExistente = await this.tipoMedioPagoDAOImpl.getById(idTipoMedioPago);
+             if (!tipoMedioPagoExistente) {
+                return NextResponse.json({ message: 'El tipo de Medio Pago no existe' }, { status: 404 });
+             }
+
+             if(nombreTipoMedioPago !== tipoMedioPagoExistente.nombreTipoMedioPago) {
+                if ( await this.tipoMedioPagoDAOImpl.existNombreTipoMedioPago(nombreTipoMedioPago)){
+                    return NextResponse.json({ message: 'El nombre ya se encuentra registrado '}, {status: 400 });
+                }
+             }
+
 
              const respuesta = await this.tipoMedioPagoDAOImpl.update(tipoMedioPago);
              if ( respuesta) {

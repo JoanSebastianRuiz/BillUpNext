@@ -57,6 +57,10 @@ const RegistrarGravamenProducto = ({
         "porcentajeGravamenProducto",
         gravamenesProductoSeleccionado?.porcentajeGravamenProducto ?? 0
       );
+      setValue(
+        "estadoGravamenProducto",
+        gravamenesProductoSeleccionado?.estadoGravamenProducto ?? true
+      );
     }
   }, [gravamenesProductoSeleccionado, setValue]);
 
@@ -67,6 +71,8 @@ const RegistrarGravamenProducto = ({
           ...data,
           idProducto: idProducto ? parseInt(idProducto.toString()) : undefined,
           idGravamen: gravamenesProductoSeleccionado.idGravamen,
+          estadoGravamenProducto:
+            String(data.estadoGravamenProducto) === "true",
           porcentajeGravamenProducto: parseFloat(
             data.porcentajeGravamenProducto.toString()
           ),
@@ -85,6 +91,7 @@ const RegistrarGravamenProducto = ({
         const datosModificados = {
           ...data,
           idProducto: idProducto ? parseInt(idProducto.toString()) : undefined,
+          estadoGravamenProducto: true,
           porcentajeGravamenProducto: parseFloat(
             data.porcentajeGravamenProducto.toString()
           ),
@@ -175,6 +182,24 @@ const RegistrarGravamenProducto = ({
           }}
           errors={errors}
         />
+
+        {gravamenesProductoSeleccionado && (
+          <SelectForm
+            label="Estado"
+            register={register}
+            name="estadoGravamenProducto"
+            validationRules={{
+              required: { value: true, message: "Este campo es obligatorio" },
+            }}
+            errors={errors}
+          >
+            <option value="" disabled>
+              Seleccione un estado
+            </option>
+            <option value="true">Activo</option>
+            <option value="false">Inactivo</option>
+          </SelectForm>
+        )}
 
         <div className="col-span-1 sm:col-span-1 flex justify-center mt-4">
           <ButtonForm

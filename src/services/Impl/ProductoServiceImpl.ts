@@ -118,8 +118,8 @@ export class ProductoServiceImpl implements ProductoService {
       }
 
       if (
-        await this.productoDAOImpl.validarPrecio(
-          precioVentaProducto
+       !( await this.productoDAOImpl.validarPrecio(
+          precioVentaProducto)
         )
       ) {
         return NextResponse.json(
@@ -129,8 +129,8 @@ export class ProductoServiceImpl implements ProductoService {
       }
 
       if (
-        await this.productoDAOImpl.validarPorcentaje(
-          porcentajeDescuentoProducto
+        !(await this.productoDAOImpl.validarPorcentaje(
+          porcentajeDescuentoProducto)
         )
       ) {
         return NextResponse.json(

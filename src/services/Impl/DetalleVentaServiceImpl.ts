@@ -42,8 +42,8 @@ export class DetalleVentaServiceImpl implements DetalleVentaService {
       }
 
       if (
-        await this.detalleVentaDAOImpl.validarCantidad(
-          cantidadDetalleVenta
+        !(await this.detalleVentaDAOImpl.validarCantidad(
+          cantidadDetalleVenta)
         )
       ) {
         return NextResponse.json(
@@ -53,8 +53,8 @@ export class DetalleVentaServiceImpl implements DetalleVentaService {
       }
 
       if (
-        await this.detalleVentaDAOImpl.validarDescuento(
-          valorDescuentoDetalleVenta
+        !(await this.detalleVentaDAOImpl.validarDescuento(
+          valorDescuentoDetalleVenta)
         )
       ) {
         return NextResponse.json(
@@ -64,8 +64,8 @@ export class DetalleVentaServiceImpl implements DetalleVentaService {
       }
 
       if (
-        await this.detalleVentaDAOImpl.validarValor(
-          valorTotalDetalleVenta
+        !(await this.detalleVentaDAOImpl.validarValor(
+          valorTotalDetalleVenta)
         )
       ) {
         return NextResponse.json(

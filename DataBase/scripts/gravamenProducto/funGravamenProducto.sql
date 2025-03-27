@@ -1,14 +1,15 @@
 CREATE OR REPLACE FUNCTION insertarGravamenProducto(
     _idProducto "GravamenProducto"."idProducto"%TYPE,
     _idGravamen "GravamenProducto"."idGravamen"%TYPE,
-    _porcentajeGravamenProducto "GravamenProducto"."porcentajeGravamenProducto"%TYPE)
+    _porcentajeGravamenProducto "GravamenProducto"."porcentajeGravamenProducto"%TYPE,
+    _estadoGravamenProducto "GravamenProducto"."estadoGravamenProducto"%TYPE)
     RETURNS BOOLEAN AS
 $$
 DECLARE
     _idGravamenProducto "GravamenProducto"."idGravamenProducto"%TYPE;
 BEGIN
-    INSERT INTO "GravamenProducto" ("idProducto", "idGravamen", "porcentajeGravamenProducto")
-    VALUES (_idProducto, _idGravamen, _porcentajeGravamenProducto);
+    INSERT INTO "GravamenProducto" ("idProducto", "idGravamen", "porcentajeGravamenProducto", "estadoGravamenProducto")
+    VALUES (_idProducto, _idGravamen, _porcentajeGravamenProducto, _estadoGravamenProducto);
 
     IF FOUND THEN
         RAISE NOTICE 'Se insertó correctamente el gravamen del producto';
@@ -26,14 +27,16 @@ CREATE OR REPLACE FUNCTION actualizarGravamenProducto(
     _idGravamenProducto "GravamenProducto"."idGravamenProducto"%TYPE,
     _idProducto "GravamenProducto"."idProducto"%TYPE,
     _idGravamen "GravamenProducto"."idGravamen"%TYPE,
-    _porcentajeGravamenProducto "GravamenProducto"."porcentajeGravamenProducto"%TYPE)
+    _porcentajeGravamenProducto "GravamenProducto"."porcentajeGravamenProducto"%TYPE,
+    _estadoGravamenProducto "GravamenProducto"."estadoGravamenProducto"%TYPE)
     RETURNS BOOLEAN AS
 $$
 BEGIN
     UPDATE "GravamenProducto"
     SET "idProducto" = _idProducto,
         "idGravamen" = _idGravamen,
-        "porcentajeGravamenProducto" = _porcentajeGravamenProducto
+        "porcentajeGravamenProducto" = _porcentajeGravamenProducto,
+        "estadoGravamenProducto" = _estadoGravamenProducto
     WHERE "idGravamenProducto" = _idGravamenProducto;
 
     IF FOUND THEN
@@ -43,6 +46,18 @@ BEGIN
         RAISE NOTICE 'Ocurrió un error al actualizar el gravamen del producto';
         RETURN FALSE;
     END IF;
+END;
+$$
+LANGUAGE PLPGSQL;
+
+
+CREATE OR REPLACE FUNCTION validarPorcentajeGravamenProducto(
+    _porcentajeGravamenProducto "GravamenProducto"."porcentajeGravamenProducto"%TYPE
+)
+RETURNS BOOLEAN AS
+$$
+BEGIN
+    RETURN _porcentajeGravamenProducto > 0;
 END;
 $$
 LANGUAGE PLPGSQL;

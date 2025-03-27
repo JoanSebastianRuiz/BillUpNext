@@ -43,8 +43,8 @@ export class VentaServiceImpl implements VentaService {
       }
 
       if (
-        await this.ventaDAOImpl.validarValor(
-          valorTotalVenta
+        !(await this.ventaDAOImpl.validarValor(
+          valorTotalVenta)
         )
       ) {
         return NextResponse.json(

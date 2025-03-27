@@ -72,3 +72,19 @@ BEGIN
 END;
 $$
 LANGUAGE PLPGSQL;
+
+CREATE OR REPLACE FUNCTION validarExistNombreTipoMedioPago(
+    _nombreTipoMedioPago "TipoMedioPago"."nombreTipoMedioPago"%TYPE
+)
+RETURNS BOOLEAN AS
+$$
+BEGIN
+
+    RETURN EXISTS(
+        SELECT 1
+        FROM "TipoMedioPago"
+        WHERE LOWER("nombreTipoMedioPago") = LOWER(_nombreTipoMedioPago)
+    );
+END;
+$$
+LANGUAGE PLPGSQL;
