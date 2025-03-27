@@ -3,37 +3,45 @@ $$
 DECLARE
     _stockProducto "Producto"."stockProducto"%TYPE;
     diferenciaStock INTEGER;
+    detalle RECORD;
 BEGIN
--- Obtener el stock actual
-    SELECT "stockProducto" INTO _stockProducto FROM "Producto" WHERE "idProducto" = NEW."idProducto";
-
-    IF FOUND THEN
-        -- Calcular la diferencia de stock segun la operación 
-        IF TG_OP = 'INSERT' THEN
-            --Si es un insert, suma la cantidad comprada
-            diferenciaStock = NEW."cantidadDetalleCompra";
-        ELSIF TG_OP = 'UPDATE' THEN
-            --Si es un update, calcula la diferencia entre la nueva y antigua cantidad 
-            diferenciaStock = NEW."cantidadDetalleCompra" - OLD."cantidadDetalleCompra";
+    -- Manejar la inserción de una nueva compra
+    IF TG_OP = 'INSERT' THEN
+        FOR detalle IN SELECT "idProducto", "cantidadDetalleCompra" FROM "detalleCompra" WHERE "idCompra" = NEW."idCompra" LOOP
+            SELECT "stockProducto" INTO _stockProducto FROM "Producto" WHERE "idProducto" = detalle."idProducto";
+            IF FOUND THEN
+                diferenciaStock = detalle."cantidadDetalleCompra";
+                UPDATE "Producto" SET "stockProducto" = _stockProducto + diferenciaStock WHERE "idProducto" = detalle."idProducto";
+                IF NOT FOUND THEN
+                    RAISE NOTICE 'Error al actualizar el stock del producto';
+                END IF;
+            ELSE
+                RAISE NOTICE 'Producto no encontrado';
+            END IF;
+        END LOOP;
+    -- Manejar la actualización del estado a inactivo
+    ELSIF TG_OP = 'UPDATE' AND NEW."estadoCompra" = FALSE AND OLD."estadoCompra" = TRUE THEN
+        FOR detalle IN SELECT "idProducto", "cantidadDetalleCompra" FROM "DetalleCompra" WHERE "idCompra" = NEW."idCompra" LOOP
+            SELECT "stockProducto" INTO _stockProducto FROM "Producto" WHERE "idProducto" = detalle."idProducto";
+            IF FOUND THEN
+                    diferenciaStock = -detalle."cantidadDetalleCompra";
+                    UPDATE "Producto" SET "stockProducto" = _stockProducto + diferenciaStock WHERE "idProducto" = detalle."idProducto";
+                    IF NOT FOUND THEN
+                        RAISE NOTICE 'Error al actualizar el stock del producto';
+                    END IF;
+                ELSE
+                    RAISE NOTICE 'Producto no encontrado';
+                END IF;
+            END LOOP;
         END IF;
 
-        -- Actualizar el stock en la tabla producto
-        UPDATE "Producto" SET "stockProducto" = _stockProducto + diferenciaStock WHERE "idProducto" = NEW."idProducto";
-
-        IF NOT FOUND THEN
-            RAISE NOTICE 'Error al actualizar el stock del producto';
-        END IF;
-    ELSE
-        RAISE NOTICE 'Producto no encontrado';
-    END IF;
-
-    RETURN NEW;
+        RETURN NEW;
 END;
 $$
 LANGUAGE PLPGSQL;
 
 CREATE TRIGGER trgActualizarStockCompra
-AFTER INSERT OR UPDATE ON "DetalleCompra"
+AFTER INSERT OR UPDATE OF "estadoCompra" ON "Compra"
 FOR EACH ROW
 EXECUTE FUNCTION actualizarStockCompra();
 
