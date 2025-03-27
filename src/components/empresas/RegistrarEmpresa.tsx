@@ -17,11 +17,12 @@ import SelectForm from '@/components/form/SelectForm';
 import Notificacion from '@/components/form/Notificacion';
 import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';
+import { EmpresaResponseDTO } from '@/dto/EmpresaResponseDTO';
 
-const RegistrarEmpresa = ({ idEmpresa, obtenerEmpresas, setModalActualizar, setModalRegistrar }: { idEmpresa?: number, obtenerEmpresas: () => void, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+const RegistrarEmpresa = ({ empresa, setModal }: { empresa?: EmpresaResponseDTO | null, setModal?: (value: boolean) => void }) => {
 
     const { departamentos, municipios } = useUsuarioContext();
-    const { tiposPersona, regimenesContribuyente } = useEmpresaContext();
+    const { tiposPersona, regimenesContribuyente, obtenerEmpresas } = useEmpresaContext();
 
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
     const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);
@@ -59,50 +60,35 @@ const RegistrarEmpresa = ({ idEmpresa, obtenerEmpresas, setModalActualizar, setM
 
 
     useEffect(() => {
-        const fetchEmpresa = async () => {
-            if (idEmpresa) {
-                try {
-                    const response = await axios.get(`/api/empresas/${idEmpresa}`);
-                    if (response.status == 200) {
-                        const empresa = response.data;
-
-                        setValue("nombreEmpresa", empresa.nombreEmpresa || '');
-                        setValue("idTipoPersona", empresa.idTipoPersona || 0);
-                        setValue("idRegimenContribuyente", empresa.idRegimenContribuyente || 0);
-                        setValue("idDepartamento", empresa.idDepartamento || 0);
-                        setValue("idMunicipio", empresa.idMunicipio || 0);
-                        setValue("nitEmpresa", empresa.nitEmpresa || "");
-                        setValue("digitoVerificacionEmpresa", empresa.digitoVerificacionEmpresa || "");
-                        setValue("razonSocialEmpresa", empresa.razonSocialEmpresa || '');
-                        setValue("telefonoEmpresa", empresa.telefonoEmpresa || '');
-                        setValue("direccionEmpresa", empresa.direccionEmpresa || '');
-                        setValue("correoEmpresa", empresa.correoEmpresa || '');
-                        setValue("codigoPostalEmpresa", empresa.codigoPostalEmpresa || '');
-                        setValue("estadoEmpresa", empresa.estadoEmpresa ? empresa.estadoEmpresa.toString() : '');
-                    } else {
-                        console.error("Error al obtener datos de la empresa:", response.data.message);
-                    }
-                } catch (error) {
-                    console.error("Error al obtener datos de la empresa:", error);
-                }
-            }
-        };
-
-        fetchEmpresa();
-    }, [idEmpresa, setValue]);
+        if (empresa) {
+            setValue("nombreEmpresa", empresa.nombreEmpresa || '');
+            setValue("idTipoPersona", empresa.idTipoPersona || 0);
+            setValue("idRegimenContribuyente", empresa.idRegimenContribuyente || 0);
+            setValue("idDepartamento", empresa.idDepartamento || 0);
+            setValue("idMunicipio", empresa.idMunicipio || 0);
+            setValue("nitEmpresa", empresa.nitEmpresa || "");
+            setValue("digitoVerificacionEmpresa", empresa.digitoVerificacionEmpresa || "");
+            setValue("razonSocialEmpresa", empresa.razonSocialEmpresa || '');
+            setValue("telefonoEmpresa", empresa.telefonoEmpresa || '');
+            setValue("direccionEmpresa", empresa.direccionEmpresa || '');
+            setValue("correoEmpresa", empresa.correoEmpresa || '');
+            setValue("codigoPostalEmpresa", empresa.codigoPostalEmpresa || '');
+            setValue("estadoEmpresa", empresa.estadoEmpresa);
+        }
+    }, [empresa, setValue]);
 
     const onSubmit = async (data: EmpresaRequestDTO) => {
         try {
-            if (idEmpresa) {
+            if (empresa) {
                 let { idDepartamento, ...datosModificados } = data;
 
-                datosModificados = { ...data, idTipoPersona: parseInt(data.idTipoPersona.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idRegimenContribuyente: parseInt(data.idRegimenContribuyente.toString()), estadoEmpresa:  String(data.estadoEmpresa) === "true" };
+                datosModificados = { ...data, idTipoPersona: parseInt(data.idTipoPersona.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idRegimenContribuyente: parseInt(data.idRegimenContribuyente.toString()), estadoEmpresa: String(data.estadoEmpresa) === "true" };
 
-                const respuesta = await axios.put(`/api/empresas/${idEmpresa}`, datosModificados);
+                const respuesta = await axios.put(`/api/empresas/${empresa.idEmpresa}`, datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerEmpresas();
-                setModalActualizar?.(false);
+                setModal?.(false);
             } else {
                 let { idDepartamento, ...datosModificados } = data;
                 datosModificados = { ...data, idTipoPersona: parseInt(data.idTipoPersona.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idRegimenContribuyente: parseInt(data.idRegimenContribuyente.toString()), estadoEmpresa: true };
@@ -111,7 +97,7 @@ const RegistrarEmpresa = ({ idEmpresa, obtenerEmpresas, setModalActualizar, setM
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerEmpresas();
-                setModalRegistrar?.(false);
+                setModal?.(false);
             }
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response) {
@@ -130,14 +116,14 @@ const RegistrarEmpresa = ({ idEmpresa, obtenerEmpresas, setModalActualizar, setM
 
 
     return (
-        <ContenedorRegistrar name={idEmpresa ? "Actualizar empresa" : "Registrar empresa"}>
+        <ContenedorRegistrar name={empresa ? "Actualizar empresa" : "Registrar empresa"}>
 
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
 
                 <InputForm label="Nombre" register={register} name="nombreEmpresa" type="text"
-                    validationRules={{ 
+                    validationRules={{
                         required: { value: true, message: "Este campo es obligatorio" },
-                        maxLength: { value: 250, message: "Máximo 250 caracteres" } 
+                        maxLength: { value: 250, message: "Máximo 250 caracteres" }
                     }}
                     errors={errors} />
 
@@ -191,9 +177,9 @@ const RegistrarEmpresa = ({ idEmpresa, obtenerEmpresas, setModalActualizar, setM
                 </SelectForm>
 
                 <InputForm label="Razón social" register={register} name="razonSocialEmpresa" type="text"
-                    validationRules={{ 
+                    validationRules={{
                         required: { value: true, message: "Este campo es obligatorio" },
-                        maxLength: { value: 250, message: "Máximo 250 caracteres" } 
+                        maxLength: { value: 250, message: "Máximo 250 caracteres" }
                     }}
                     errors={errors} />
 
@@ -212,7 +198,7 @@ const RegistrarEmpresa = ({ idEmpresa, obtenerEmpresas, setModalActualizar, setM
                 </SelectForm>
 
                 <InputForm label="Código postal" register={register} name="codigoPostalEmpresa" type="text"
-                    validationRules={{ 
+                    validationRules={{
                         required: { value: true, message: "Este campo es obligatorio" },
                         maxLength: { value: 6, message: "Máximo 6 caracteres" }
                     }}
@@ -225,9 +211,9 @@ const RegistrarEmpresa = ({ idEmpresa, obtenerEmpresas, setModalActualizar, setM
                     }} errors={errors} />
 
                 <InputForm label="Dirección" register={register} name="direccionEmpresa" type="text"
-                    validationRules={{ 
+                    validationRules={{
                         required: { value: true, message: "Este campo es obligatorio" },
-                        maxLength: { value: 250, message: "Máximo 250 caracteres" } 
+                        maxLength: { value: 250, message: "Máximo 250 caracteres" }
                     }}
                     errors={errors} />
 
@@ -238,7 +224,7 @@ const RegistrarEmpresa = ({ idEmpresa, obtenerEmpresas, setModalActualizar, setM
                         validate: (value: string) => isValidEmail(value) || "Correo inválido"
                     }} errors={errors} />
 
-                {idEmpresa && (
+                {empresa && (
                     <SelectForm label="Estado" register={register} name="estadoEmpresa"
                         validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
                         errors={errors} >
@@ -249,7 +235,7 @@ const RegistrarEmpresa = ({ idEmpresa, obtenerEmpresas, setModalActualizar, setM
                 )}
 
                 <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
-                    <ButtonForm name={idEmpresa ? "Actualizar" : "Registrar"} type="submit" />
+                    <ButtonForm name={empresa ? "Actualizar" : "Registrar"} type="submit" />
                 </div>
             </form>
 

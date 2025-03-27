@@ -5,7 +5,7 @@ import { ResultadoBooleanDTO } from "@/dto/ResultadoBooleanDTO";
 
 export class DetalleCompraDAOImpl implements DetalleCompraDAO {
   private static instancia: DetalleCompraDAOImpl;
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): DetalleCompraDAOImpl {
     if (!DetalleCompraDAOImpl.instancia) {
@@ -14,12 +14,14 @@ export class DetalleCompraDAOImpl implements DetalleCompraDAO {
     return DetalleCompraDAOImpl.instancia;
   }
 
-  public getAll = async (): Promise<Array<DetalleCompraDTO>> => {
+  public getAll = async (idEmpresa: number): Promise<Array<DetalleCompraDTO>> => {
     try {
       const detalleCompraDatabase: DetalleCompraDTO[] = await ejecutarQuery(
-        `SELECT dc.\"idDetalleCompra\", dc.\"idCompra\", dc.\"idProducto\", dc.\"cantidadDetalleCompra\", dc.\"valorDetalleCompra\"
-                FROM \"DetalleCompra\" dc;`,
-        []
+        `SELECT dc.\"idDetalleCompra\", dc.\"idCompra\", dc.\"idProducto\", dc.\"cantidadDetalleCompra\", dc.\"valorDetalleCompra\", dc.\"idTercero\"
+                FROM \"DetalleCompra\" dc
+                JOIN \"Producto\" p ON dc.\"idProducto\" = p.\"idProducto\"
+                WHERE p.\"idEmpresa\" = $1;`,
+        [idEmpresa]
       );
 
       return detalleCompraDatabase;
@@ -28,85 +30,4 @@ export class DetalleCompraDAOImpl implements DetalleCompraDAO {
     }
   };
 
-  public getById = async (
-    idDetalleCompra: number
-  ): Promise<DetalleCompraDTO | null> => {
-    try {
-      const respuesta: DetalleCompraDTO[] = await ejecutarQuery(
-        `SELECT dc.\"idDetalleCompra\", dc.\"idCompra\", dc.\"idProducto\", dc.\"cantidadDetalleCompra\", dc.\"valorDetalleCompra\"
-                FROM \"DetalleCompra\" dc
-                WHERE dc.\"idDetalleCompra\" = $1;`,
-        [idDetalleCompra]
-      );
-
-      return respuesta.length > 0 ? respuesta[0] : null;
-    } catch (error) {
-      throw new Error(`Error en DetalleCompraDAO.getById: ${error}`);
-    }
-  };
-
-  public create = async (detalleCompra: DetalleCompraDTO): Promise<boolean> => {
-    try {
-      const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT insertarDetalleCompra($1,$2,$3,$4) as resultado;`,
-        [
-          detalleCompra.idCompra,
-          detalleCompra.idProducto,
-          detalleCompra.cantidadDetalleCompra,
-          detalleCompra.valorDetalleCompra
-        ]
-      );
-
-      return respuesta.length > 0 ? respuesta[0].resultado : false;
-    } catch (error) {
-      throw new Error(`Error en DetalleCompraDAO.create: ${error}`);
-    }
-  };
-
-  public update = async (detalleCompra: DetalleCompraDTO): Promise<boolean> => {
-    try {
-      const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT actualizarDetalleCompra($1,$2,$3,$4,$5) as resultado;`,
-        [
-          detalleCompra.idDetalleCompra,
-          detalleCompra.idCompra,
-          detalleCompra.idProducto,
-          detalleCompra.cantidadDetalleCompra,
-          detalleCompra.valorDetalleCompra
-        ]
-      );
-
-      return respuesta.length > 0 ? respuesta[0].resultado : false;
-    } catch (error) {
-      throw new Error(`Error en DetalleCompraDAO.update: ${error}`);
-    }
-  };
-
-  public validarCantidad = async (
-    cantidadDetalleCompra: number
-  ) : Promise<boolean> => {
-    try {
-      const respuesta = await ejecutarQuery(
-        `SELECT validarCantidadDetalleCompra ($1) as resultado;`,
-        [cantidadDetalleCompra]
-      );
-      return respuesta.length > 0 ? respuesta[0].resultado : false;
-    } catch (error) {
-      throw new Error(`Error en DetalleCompraDAO.validarCantidad: ${error}`);
-    }
-  };
-
-  public validarValor = async (
-    valorDetalleCompra: number
-  ): Promise<boolean> => {
-    try {
-      const respuesta = await ejecutarQuery(
-        `SELECT validarValorDetalleCompra ($1) as resultado;`,
-        [valorDetalleCompra]
-      );
-      return respuesta.length > 0 ? respuesta[0].resultado : false;
-    } catch (error) {
-      throw new Error(`Error en DetalleCompraDAO.validarValor: ${error}`);
-    }
-  };
 }

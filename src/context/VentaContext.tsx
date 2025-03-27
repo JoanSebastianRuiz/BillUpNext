@@ -15,11 +15,11 @@ interface VentaContextType {
 const VentaContext = createContext<VentaContextType | undefined>(undefined);
 
 // Proveedor del contexto
-interface UbicacionVentaProviderProps {
+interface CompraProviderProps {
     children: ReactNode;
 }
 
-export const VentaContextProvider: React.FC<UbicacionVentaProviderProps> = ({ children }) => {
+export const VentaContextProvider: React.FC<CompraProviderProps> = ({ children }) => {
     const [ubicacionesVenta, setUbicacionesVenta] = useState<UbicacionVentaDTO[]>([]);
     const { data: session, status } = useSession();
     const idEmpresa = session?.user?.idEmpresa;

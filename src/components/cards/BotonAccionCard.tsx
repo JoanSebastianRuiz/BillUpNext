@@ -9,7 +9,7 @@ interface BotonAccionCardProps {
 const BotonAccionCard: FC<BotonAccionCardProps> = ({ Symbol, onClick, h=5 }) => {
     return (
         <button
-            className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+            className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition" type='button'
         >
             <Symbol className={`w-${h} h-${h} text-gray-600 dark:text-gray-300`}
                 onClick={onClick}

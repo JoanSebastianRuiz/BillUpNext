@@ -5,7 +5,6 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { useProductoContext } from '@/context/ProductoContext';
-import { useEmpresaContext } from '@/context/EmpresaContext';
 import { useSession } from 'next-auth/react';
 
 import { ProductoRequestDTO } from '@/dto/ProductoRequestDTO';

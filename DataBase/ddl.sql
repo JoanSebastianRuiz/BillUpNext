@@ -218,13 +218,17 @@ CREATE TABLE IF NOT EXISTS "Movimiento" (
 
 CREATE TABLE IF NOT EXISTS "Compra" (
     "idCompra" serial,
-    "idTercero" int not null,
     "idUsuario" int not null,
     "fechaCompra" TIMESTAMP not null,
     "observacionCompra" varchar(250),
+    "valorTotalCompra" double precision not null,
+    "estadoCompra" boolean not null,
+    "fechaCancelacionCompra" TIMESTAMP,
+    "idUsuarioCancelacionCompra" int,
+    "motivoCancelacionCompra" varchar(250),
     primary key ("idCompra"),
-    foreign key ("idTercero") references "Tercero" ("idTercero"),
-    foreign key ("idUsuario") references "Usuario" ("idUsuario")
+    foreign key ("idUsuario") references "Usuario" ("idUsuario"),
+    foreign key ("idUsuarioCancelacionCompra") references "Usuario" ("idUsuario")
 );
 
 CREATE TABLE IF NOT EXISTS "Venta" (
@@ -275,12 +279,14 @@ CREATE TABLE IF NOT EXISTS "TerceroProducto" (
 
 CREATE TABLE IF NOT EXISTS "DetalleCompra" (
     "idDetalleCompra" serial,
+    "idTercero" int not null,
     "idCompra" int not null,
     "idProducto" int not null,
     "cantidadDetalleCompra" int not null,
     "valorDetalleCompra" double precision not null,
     primary key ("idDetalleCompra"),
     foreign key ("idCompra") references "Compra" ("idCompra"),
+    foreign key ("idTercero") references "Tercero" ("idTercero"),
     foreign key ("idProducto") references "Producto" ("idProducto")
 );
 

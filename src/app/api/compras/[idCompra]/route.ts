@@ -41,12 +41,12 @@ export const PUT = async (
 
   try {
     const dataWithId = { ...data, idCompra: parseInt(idCompra) };
-    const respuesta = await compraService.update(dataWithId);
+    const respuesta = await compraService.cancel(dataWithId);
     return respuesta;
   } catch (error) {
-    console.error("Error al actualizar la compra", error);
+    console.error("Error al cancelar la compra", error);
     return NextResponse.json(
-      { message: "Error al actualizar la compra" },
+      { message: "Error al cancelar la compra" },
       { status: 500 }
     );
   }

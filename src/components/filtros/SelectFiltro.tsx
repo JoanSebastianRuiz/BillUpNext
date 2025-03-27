@@ -19,7 +19,7 @@ const SelectFiltro = ({ id, name, ref, onChange, children, defaultValue, selectE
             <select
                 id={id}
                 ref={ref}
-                className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-gray-200 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:focus:ring-blue-600 transition-all duration-200"
+                className="mt-1 block w-full h-11 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-10 text-gray-900 dark:text-gray-200 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:focus:ring-blue-600 transition-all duration-200"
                 onChange={onChange}
                 defaultValue={defaultValue}
             >
@@ -27,7 +27,7 @@ const SelectFiltro = ({ id, name, ref, onChange, children, defaultValue, selectE
                 {children}
             </select>
         </div>
-    )
+    );
 }
 
 export default SelectFiltro;

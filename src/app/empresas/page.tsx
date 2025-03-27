@@ -34,8 +34,7 @@ const EmpresasPage: React.FC = () => {
     const {
         tiposPersona,
         regimenesContribuyente,
-        empresas,
-        obtenerEmpresas
+        empresas
     } = useEmpresaContext()
 
     const {departamentos, municipios } = useUsuarioContext()
@@ -299,13 +298,13 @@ const EmpresasPage: React.FC = () => {
 
             {/* Modal para registrar un empresa*/}
             <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
-                <RegistrarEmpresa obtenerEmpresas={obtenerEmpresas} setModalRegistrar={setModalRegistrar} />
+                <RegistrarEmpresa setModal={setModalRegistrar} />
             </Modal>
 
 
             {/* Modal para actualizar un empresa*/}
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
-                <RegistrarEmpresa idEmpresa={empresaSeleccionada?.idEmpresa} obtenerEmpresas={obtenerEmpresas} setModalActualizar={setModalActualizar} />
+                <RegistrarEmpresa empresa={empresaSeleccionada} setModal={setModalActualizar} />
             </Modal>
 
         </ContenedorPrincipal >

@@ -34,14 +34,14 @@ const isValidCodigoPostal = (codigoPostal: string): boolean => {
 
 // Verifica que sea un número positivo, con o sin decimales
 const isValidDinero = (Dinero: string): boolean => {
-  const regex = /^\d+(\.\d+)?$/;
+  const regex = /^(0|[1-9]\d*)(\.\d+)?$/;
   return regex.test(Dinero);
-}
+};
 
 const isValidNum = (num: string): boolean => {
   const regex = /^\d+$/;
-  return regex.test(num);
-}
+  return regex.test(num) && Number(num) >= 0;
+};
 
 const isValidPassword = (password: string): boolean => {
   const minLength = 8;

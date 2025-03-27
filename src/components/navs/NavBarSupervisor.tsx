@@ -13,7 +13,7 @@ const NavBarSupervisor = () => {
             <LinkNav href="/clientes" name="Clientes" />
             <LinkNav href="cajas" name="Cajas" />
             <LinkNav href="/ubicacion-venta" name="Ubicaciones" />
-
+            <LinkNav href="/compras" name="Compras" />
         </ContenedorNav>
     );
 };

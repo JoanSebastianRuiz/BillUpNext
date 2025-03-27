@@ -1,47 +1,61 @@
 CREATE OR REPLACE FUNCTION insertarCompra(
-    _idTercero "Compra"."idTercero"%TYPE,
     _idUsuario "Compra"."idUsuario"%TYPE,
-    _fechaCompra "Compra"."fechaCompra"%TYPE,
-    _observacionCompra "Compra"."observacionCompra"%TYPE)
-    RETURNS BOOLEAN AS
-$$
+    _observacionCompra "Compra"."observacionCompra"%TYPE,
+    _valorTotalCompra "Compra"."valorTotalCompra"%TYPE,
+    p_productos JSONB -- Lista de productos en formato JSON
+) RETURNS BOOLEAN AS $$
 DECLARE
-    _idCompra "Compra"."idCompra"%TYPE;
+    v_compra_id INT;
 BEGIN
-    INSERT INTO "Compra" ("idTercero", "idUsuario", "fechaCompra", "observacionCompra")
-    VALUES (_idTercero, _idUsuario, CURRENT_TIMESTAMP, _observacionCompra);
+    -- Iniciar la transacción
+    BEGIN
+        -- 1. Insertar la compra
+        INSERT INTO "Compra" ("idUsuario", "fechaCompra", "observacionCompra", "valorTotalCompra", "estadoCompra")
+        VALUES (_idUsuario, now(), _observacionCompra, _valorTotalCompra, TRUE)
+        RETURNING "idCompra" INTO v_compra_id;
 
-    IF FOUND THEN
-        RAISE NOTICE 'Se insertó correctamente la compra';
+        -- 2. Insertar productos en DetalleCompra
+        INSERT INTO "DetalleCompra" ("idCompra", "idTercero", "idProducto", "cantidadDetalleCompra", "valorDetalleCompra")
+        SELECT 
+            v_compra_id,
+            (prod->>'idTercero')::INT,
+            (prod->>'idProducto')::INT, 
+            (prod->>'cantidadDetalleCompra')::INT, 
+            (prod->>'valorDetalleCompra')::DECIMAL(10,2)
+        FROM jsonb_array_elements(p_productos) AS prod;
+
+        -- Confirmar la transacción
         RETURN TRUE;
-    ELSE
-        RAISE EXCEPTION 'Ocurrió un error';
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE EXCEPTION 'Error en insertarCompra: %', SQLERRM USING ERRCODE = SQLSTATE;
         RETURN FALSE;
-    END IF;
+    END;
 END;
-$$
-LANGUAGE PLPGSQL;
+$$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION actualizarCompra(
+
+CREATE OR REPLACE FUNCTION cancelarCompra(
     _idCompra "Compra"."idCompra"%TYPE,
-    _idTercero "Compra"."idTercero"%TYPE,
-    _idUsuario "Compra"."idUsuario"%TYPE,
-    _observacionCompra "Compra"."observacionCompra"%TYPE)
+    _idUsuarioCancelacionCompra "Compra"."idUsuarioCancelacionCompra"%TYPE,
+    _motivoCancelacionCompra "Compra"."motivoCancelacionCompra"%TYPE)
     RETURNS BOOLEAN AS
 $$
 BEGIN
     UPDATE "Compra"
-    SET "idTercero" = _idTercero,
-        "idUsuario" = _idUsuario,
-        "observacionCompra" = _observacionCompra
+    SET "idUsuarioCancelacionCompra" = _idUsuarioCancelacionCompra,
+        "estadoCompra" = FALSE,
+        "motivoCancelacionCompra" = _motivoCancelacionCompra,
+        "fechaCancelacionCompra" = now()
     WHERE "idCompra" = _idCompra;
 
     IF FOUND THEN
-        RAISE NOTICE 'Se actualizó correctamente la compra';
+        RAISE NOTICE 'Se cancelo correctamente la compra';
         RETURN TRUE;
     ELSE
-        RAISE NOTICE 'Ocurrió un error al actualizar la compra';
+        RAISE NOTICE 'Ocurrió un error al cancelar la compra';
         RETURN FALSE;
     END IF;
 END;

@@ -100,6 +100,7 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
         };
         
         if (idRol === 1 || idRol === 2) fetchData();
+        console.log(usuarios);
     }, [status, idRol, idEmpresa]);
 
     return (
