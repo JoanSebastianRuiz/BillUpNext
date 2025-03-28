@@ -1,3 +1,5 @@
+import { DetalleVentaDTO } from './DetalleVentaDTO';
+
 export interface VentaDTO {
     idVenta?: number,
     idTercero: number,
@@ -7,5 +9,10 @@ export interface VentaDTO {
     idTipoMedioPago: number,
     fechaVenta?: Date,
     observacionVenta?: string,
-    valorTotalVenta: number
+    valorTotalVenta: number,
+    estadoVenta?: boolean,
+    fechaCancelacionVenta?: Date,
+    idUsuarioCancelacionVenta?: number,
+    motivoCancelacionVenta?: string,
+    detallesVenta?: DetalleVentaDTO[]
 }

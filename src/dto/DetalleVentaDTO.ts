@@ -4,5 +4,6 @@ export interface DetalleVentaDTO {
     idProducto: number,
     cantidadDetalleVenta: number,
     valorDescuentoDetalleVenta: number,
+    valorImpuestosDetalleVenta: number,
     valorTotalDetalleVenta: number
 }

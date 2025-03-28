@@ -113,7 +113,7 @@ export class CompraServiceImpl implements CompraService {
                 );
             }
         } catch (error) {
-            throw new Error(`Error en CompraService.update: ${error}`);
+            throw new Error(`Error en CompraService.cancel: ${error}`);
         }
     };
 

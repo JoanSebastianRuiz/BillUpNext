@@ -16,7 +16,7 @@ const ProductoCard = ({
   const precioFormateado = new Intl.NumberFormat("es-CO", {
     style: "currency",
     currency: "COP",
-  }).format(producto.precioVentaProducto);
+  }).format(producto.valorTotalProducto);
 
   return (
     <ContenedorCard name={producto.nombreProducto}>

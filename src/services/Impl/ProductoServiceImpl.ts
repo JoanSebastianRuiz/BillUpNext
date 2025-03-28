@@ -118,7 +118,7 @@ export class ProductoServiceImpl implements ProductoService {
       }
 
       if (
-       !( await this.productoDAOImpl.validarPrecio(
+        !(await this.productoDAOImpl.validarPrecio(
           precioVentaProducto)
         )
       ) {
@@ -312,15 +312,27 @@ export class ProductoServiceImpl implements ProductoService {
       const gravamenesProducto: GravamenProductoDTO[] = await this.gravamenProductoDAOImpl.getAll(idEmpresa);
 
       const productosModificados = productos.map((producto: ProductoResponseDTO) => {
-        const gravamenes = gravamenesProducto.filter((gp: GravamenProductoDTO) => gp.idProducto === producto.idProducto);
+        const gravamenes = gravamenesProducto.filter(
+          (gp: GravamenProductoDTO) => gp.idProducto === producto.idProducto
+        );
+
+        // Aplicar el descuento primero
+        const precioConDescuento =
+          producto.precioVentaProducto * (1 - producto.porcentajeDescuentoProducto / 100);
+
+        // Calcular los impuestos sobre el precio ya descontado
+        const impuestos =
+          gravamenes.reduce((acc: number, gp: GravamenProductoDTO) => acc + gp.porcentajeGravamenProducto, 0) *
+          (precioConDescuento / 100);
 
         return {
           ...producto, // Copia el objeto sin modificar el original
-          precioVentaProducto: producto.precioVentaProducto +
-            (gravamenes.reduce((acc: number, gp: GravamenProductoDTO) => acc + gp.porcentajeGravamenProducto, 0) * (producto.precioVentaProducto / 100)) -
-            producto.precioVentaProducto * (producto.porcentajeDescuentoProducto / 100),
+          valorTotalProducto: precioConDescuento + impuestos,
+          valorDescuentoProducto: producto.precioVentaProducto - precioConDescuento,
+          valorImpuestoProducto: impuestos,
         };
       });
+
       return productosModificados;
     } catch (error) {
       throw new Error(`Error en ProdcutoService.getAll: ${error}`);

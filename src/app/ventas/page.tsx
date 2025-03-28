@@ -3,9 +3,9 @@
 import { useEffect, useState, useRef } from "react";
 import { List, PlusCircle, XCircle, Ban } from "lucide-react";
 
-import { CompraDTO } from "@/dto/CompraDTO";
+import { VentaDTO } from "@/dto/VentaDTO";
 import { useUsuarioContext } from "@/context/UsuarioContext";
-import { useCompraContext } from "@/context/CompraContext";
+import { useVentaContext } from "@/context/VentaContext";
 
 import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
 import ContenedorBotonesFiltros from "@/components/filtros/ContenedorBotonesFiltros";
@@ -15,92 +15,92 @@ import SelectFiltro from "@/components/filtros/SelectFiltro";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
-import RegistrarCompra from "@/components/compras/RegistarCompra";
-import MostrarInfoCompra from "@/components/compras/MostrarInfoCompra";
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 import Table from "@/components/common/Table";
 import TableRow from "@/components/common/TableRow";
 import TableData from "@/components/common/TableData";
 import TableMessage from "@/components/common/TableMessage";
 import DateInputFiltro from "@/components/filtros/DateInputFiltro";
-import CancelarCompra from "@/components/compras/CancelarCompra";
+import MostrarInfoVenta from "@/components/ventas/MostrarInfoVenta";
+import CancelarVenta from "@/components/ventas/CancelarVenta";
+import RegistrarVenta from "@/components/ventas/RegistrarVenta";
 
 
-const ComprasPage: React.FC = () => {
+const VentasPage: React.FC = () => {
     const [modalRegistrar, setModalRegistrar] = useState(false);
     const [modalInfo, setModalInfo] = useState(false);
     const [modalCancelar, setModalCancelar] = useState(false);
-    const [compraSeleccionada, setCompraSeleccionada] = useState<CompraDTO | null>(null);
-    const { compras } = useCompraContext()
+    const [ventaSeleccionada, setVentaSeleccionada] = useState<VentaDTO | null>(null);
+    const { ventas } = useVentaContext()
     const { usuarios, usuario } = useUsuarioContext()
-    const [comprasFiltradas, setComprasFiltradas] = useState<CompraDTO[]>([]);
+    const [ventasFiltradas, setVentasFiltradas] = useState<VentaDTO[]>([]);
 
-    const fechaCompraRef = useRef<HTMLInputElement | null>(null);
-    const estadoCompraRef = useRef<HTMLSelectElement>(null);
-    const valorTotalCompraRef = useRef<HTMLSelectElement>(null);
+    const fechaVentaRef = useRef<HTMLInputElement | null>(null);
+    const estadoVentaRef = useRef<HTMLSelectElement>(null);
+    const valorTotalVentaRef = useRef<HTMLSelectElement>(null);
 
     // Paginacion
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(10); // Número de compras por página
+    const [itemsPerPage] = useState(10); // Número de ventas por página
     const indexOfLastCategoria = currentPage * itemsPerPage;
     const indexOfFirstCategoria = indexOfLastCategoria - itemsPerPage;
-    const comprasActuales = comprasFiltradas.slice(indexOfFirstCategoria, indexOfLastCategoria);
-    const totalPages = Math.ceil(comprasFiltradas.length / itemsPerPage);
+    const ventasActuales = ventasFiltradas.slice(indexOfFirstCategoria, indexOfLastCategoria);
+    const totalPages = Math.ceil(ventasFiltradas.length / itemsPerPage);
 
-    const filtrarCompras = () => {
-        const fechaCompra = fechaCompraRef.current?.value || "";
-        const estadoCompra = estadoCompraRef.current?.value;
-        const valorTotalCompra = valorTotalCompraRef.current?.value;
+    const filtrarVentas = () => {
+        const fechaVenta = fechaVentaRef.current?.value || "";
+        const estadoVenta = estadoVentaRef.current?.value;
+        const valorTotalVenta = valorTotalVentaRef.current?.value;
 
-        let comprasFiltradas = [...compras];
+        let ventasFiltradas = [...ventas];
 
-        // Filtrar por estado de compra
-        if (estadoCompra !== undefined && estadoCompra !== "") {
-            const estadoBooleano = estadoCompra === "true";
-            comprasFiltradas = comprasFiltradas.filter(compra => compra.estadoCompra === estadoBooleano);
+        // Filtrar por estado de venta
+        if (estadoVenta !== undefined && estadoVenta !== "") {
+            const estadoBooleano = estadoVenta === "true";
+            ventasFiltradas = ventasFiltradas.filter(venta => venta.estadoVenta === estadoBooleano);
         }
 
-        // Filtrar por fecha de compra o cancelación
-        if (fechaCompra !== "") {
-            comprasFiltradas = comprasFiltradas.filter(compra => {
-                const fecha = estadoCompra === "true"
-                    ? compra.fechaCompra
-                    : compra.fechaCancelacionCompra;
+        // Filtrar por fecha de venta o cancelación
+        if (fechaVenta !== "") {
+            ventasFiltradas = ventasFiltradas.filter(venta => {
+                const fecha = estadoVenta === "true"
+                    ? venta.fechaVenta
+                    : venta.fechaCancelacionVenta;
 
                 const fechaFormateada = fecha ? new Date(fecha).toLocaleDateString("sv") : "";
-                return fechaFormateada === fechaCompra;
+                return fechaFormateada === fechaVenta;
             });
         }
 
-        // Filtrar por valor total de compra
-        if (valorTotalCompra && valorTotalCompra !== "0") {
-            comprasFiltradas = comprasFiltradas.filter(compra => {
-                const valor = Number(compra.valorTotalCompra) || 0;
-                const [min, max] = valorTotalCompra.includes("+")
-                    ? [parseInt(valorTotalCompra), Infinity]
-                    : valorTotalCompra.split("-").map(Number);
+        // Filtrar por valor total de venta
+        if (valorTotalVenta && valorTotalVenta !== "0") {
+            ventasFiltradas = ventasFiltradas.filter(venta => {
+                const valor = Number(venta.valorTotalVenta) || 0;
+                const [min, max] = valorTotalVenta.includes("+")
+                    ? [parseInt(valorTotalVenta), Infinity]
+                    : valorTotalVenta.split("-").map(Number);
 
                 return valor >= min && valor <= max;
             });
         }
 
-        setComprasFiltradas(comprasFiltradas);
+        setVentasFiltradas(ventasFiltradas);
     };
 
 
     const limpiarFiltros = () => {
-        if (fechaCompraRef.current) fechaCompraRef.current.value = "";
-        if (estadoCompraRef.current) estadoCompraRef.current.value = "true";
-        if (valorTotalCompraRef.current) valorTotalCompraRef.current.value = "0";
-        filtrarCompras();
+        if (fechaVentaRef.current) fechaVentaRef.current.value = "";
+        if (estadoVentaRef.current) estadoVentaRef.current.value = "true";
+        if (valorTotalVentaRef.current) valorTotalVentaRef.current.value = "0";
+        filtrarVentas();
     };
 
     useEffect(() => {
-        filtrarCompras();
-    }, [compras]);
+        filtrarVentas();
+    }, [ventas]);
 
     const titulosTabla = [
-        { titulo: estadoCompraRef.current?.value == "true" ? "Registrada por" : "Cancelada por", center: false },
+        { titulo: estadoVentaRef.current?.value == "true" ? "Registrada por" : "Cancelada por", center: false },
         { titulo: "Fecha", center: true },
         { titulo: "Valor", center: false },
         { titulo: "Acciones", center: true }
@@ -108,13 +108,15 @@ const ComprasPage: React.FC = () => {
 
     return (
         <ContenedorPrincipal>
-            <ContenedorFiltros title="Compras">
+            <ContenedorFiltros title="Ventas">
                 <ContenedorBotonesFiltros>
-                    <BotonFiltro
-                        onClick={() => setModalRegistrar(true)}
-                        Symbol={PlusCircle}
-                        name="Registrar compra"
-                    />
+                    {usuario.idRol === 3 && (
+                        <BotonFiltro
+                            onClick={() => setModalRegistrar(true)}
+                            Symbol={PlusCircle}
+                            name="Registrar venta"
+                        />)}
+
                     <BotonFiltro
                         onClick={limpiarFiltros}
                         Symbol={XCircle}
@@ -124,18 +126,18 @@ const ComprasPage: React.FC = () => {
 
                 <ContenedorSelectores>
                     <DateInputFiltro
-                        id="fechaCompra"
+                        id="fechaVenta"
                         name="Fecha"
-                        onChange={filtrarCompras}
-                        ref={fechaCompraRef}
+                        onChange={filtrarVentas}
+                        ref={fechaVentaRef}
                     />
 
 
                     <SelectFiltro
-                        id="valorTotalCompra"
+                        id="valorTotalVenta"
                         name="Valor"
-                        onChange={filtrarCompras}
-                        ref={valorTotalCompraRef}
+                        onChange={filtrarVentas}
+                        ref={valorTotalVentaRef}
                     >
                         <option value="0-100000">Menos de $100.000</option>
                         <option value="100000-500000">$100.000 - $500.000</option>
@@ -145,10 +147,10 @@ const ComprasPage: React.FC = () => {
 
 
                     <SelectFiltro
-                        id="estadoCompra"
+                        id="estadoVenta"
                         name="Estado"
-                        onChange={filtrarCompras}
-                        ref={estadoCompraRef}
+                        onChange={filtrarVentas}
+                        ref={estadoVentaRef}
                         selectEstado={true}
                         defaultValue="true"
                     >
@@ -160,30 +162,30 @@ const ComprasPage: React.FC = () => {
 
             <div className="w-1/2 mx-auto">
                 <Table titulos={titulosTabla}>
-                    {comprasActuales.length > 0 ? (
-                        comprasActuales.map((compra) => {
+                    {ventasActuales.length > 0 ? (
+                        ventasActuales.map((venta) => {
                             let u;
                             let fecha;
-                            if (compra.estadoCompra) {
-                                if (usuario.idUsuario === compra.idUsuario) {
+                            if (venta.estadoVenta) {
+                                if (usuario.idUsuario === venta.idUsuario) {
                                     u = usuario;
                                 }
                                 else {
-                                    u = usuarios.find(usuario => usuario.idUsuario === compra.idUsuario)
+                                    u = usuarios.find(usuario => usuario.idUsuario === venta.idUsuario)
                                 }
-                                fecha = compra.fechaCompra;
+                                fecha = venta.fechaVenta;
                             } else {
-                                if (usuario.idUsuario === compra.idUsuarioCancelacionCompra) {
+                                if (usuario.idUsuario === venta.idUsuarioCancelacionVenta) {
                                     u = usuario;
                                 }
                                 else {
-                                    u = usuarios.find(usuario => usuario.idUsuario === compra.idUsuarioCancelacionCompra)
+                                    u = usuarios.find(usuario => usuario.idUsuario === venta.idUsuarioCancelacionVenta)
                                 }
-                                fecha = compra.fechaCancelacionCompra;
+                                fecha = venta.fechaCancelacionVenta;
                             }
 
                             return (
-                                <TableRow key={compra.idCompra}>
+                                <TableRow key={venta.idVenta}>
                                     <TableData center={false}>{`${u?.nombreUsuario} ${u?.apellidoUsuario}`}</TableData>
                                     <TableData center={true}>
                                         {fecha
@@ -197,22 +199,22 @@ const ComprasPage: React.FC = () => {
                                             })
                                             : 'N/A'}
                                     </TableData>
-                                    <TableData center={false}>$ {compra.valorTotalCompra || 'N/A'}</TableData>
+                                    <TableData center={false}>$ {venta.valorTotalVenta || 'N/A'}</TableData>
                                     <TableData center={true}>
                                         <div className="flex justify-center gap-2">
                                             <BotonAccionCard
                                                 Symbol={List}
                                                 onClick={() => {
-                                                    setCompraSeleccionada(compra);
+                                                    setVentaSeleccionada(venta);
                                                     setModalInfo(true);
                                                 }}
                                                 h={5}
                                             />
-                                            {compra.estadoCompra && (
+                                            {usuario.idRol == 2 && venta.estadoVenta && (
                                                 <BotonAccionCard
                                                     Symbol={Ban}
                                                     onClick={() => {
-                                                        setCompraSeleccionada(compra);
+                                                        setVentaSeleccionada(venta);
                                                         setModalCancelar(true);
                                                     }}
                                                     h={5}
@@ -224,7 +226,7 @@ const ComprasPage: React.FC = () => {
                                 </TableRow>)
                         })) : (
 
-                        <TableMessage message="No hay compras registradas" />
+                        <TableMessage message="No hay ventas registradas" />
                     )}
                 </Table>
             </div>
@@ -236,19 +238,19 @@ const ComprasPage: React.FC = () => {
             />
 
             <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
-                <RegistrarCompra setModal={setModalRegistrar} />
+                <RegistrarVenta setModal={setModalRegistrar} />
             </Modal>
 
             <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>
-                <MostrarInfoCompra compra={compraSeleccionada} />
+                <MostrarInfoVenta venta={ventaSeleccionada} />
             </Modal>
 
             <Modal isOpen={modalCancelar} setIsOpen={() => setModalCancelar(false)}>
-                <CancelarCompra compra={compraSeleccionada} setModal={setModalCancelar} />
+                <CancelarVenta venta={ventaSeleccionada} setModal={setModalCancelar} />
             </Modal>
 
         </ContenedorPrincipal>
     );
 };
 
-export default ComprasPage;
+export default VentasPage;

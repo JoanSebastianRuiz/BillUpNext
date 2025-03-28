@@ -77,7 +77,7 @@ export class CompraDAOImpl implements CompraDAO {
 
       return respuesta.length > 0 ? respuesta[0].resultado : false;
     } catch (error) {
-      throw new Error(`Error en CompraDAO.update: ${error}`);
+      throw new Error(`Error en CompraDAO.cancel: ${error}`);
     }
   };
 }

@@ -13,7 +13,7 @@ import { useTerceroContext } from '@/context/TerceroContext';
 import { useProductoContext } from '@/context/ProductoContext';
 import SelectFiltro from '../filtros/SelectFiltro';
 
-interface RegistrarEmpresaProps {
+interface RegistrarDetalleCompraProps {
     detalleCompra?: DetalleCompraDTO | null;
     setModal: (value: boolean) => void;
     detallesCompra: DetalleCompraDTO[];
@@ -22,7 +22,7 @@ interface RegistrarEmpresaProps {
     setContadorDetalles: (numero: number) => void;
 }
 
-const RegistrarEmpresa = ({ detalleCompra, detallesCompra, setDetallesCompra, setModal, contadorDetalles, setContadorDetalles }: RegistrarEmpresaProps) => {
+const RegistrarDetalleCompra = ({ detalleCompra, detallesCompra, setDetallesCompra, setModal, contadorDetalles, setContadorDetalles }: RegistrarDetalleCompraProps) => {
 
     const { proveedoresProducto, proveedoresEmpresa, proveedoresPersona } = useTerceroContext();
     const { productos } = useProductoContext();
@@ -162,5 +162,5 @@ const RegistrarEmpresa = ({ detalleCompra, detallesCompra, setDetallesCompra, se
     )
 };
 
-export default RegistrarEmpresa;
+export default RegistrarDetalleCompra;
 

@@ -9,5 +9,8 @@ export interface ProductoResponseDTO {
     stockMinimoProducto: number,
     stockMaximoProducto: number,
     stockProducto: number,
-    estadoProducto: boolean
+    estadoProducto: boolean,
+    valorDescuentoProducto: number,
+    valorImpuestoProducto: number,
+    valorTotalProducto: number
 }

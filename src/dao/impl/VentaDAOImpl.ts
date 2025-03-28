@@ -5,7 +5,7 @@ import { ResultadoBooleanDTO } from "@/dto/ResultadoBooleanDTO";
 
 export class VentaDAOImpl implements VentaDAO {
   private static instancia: VentaDAOImpl;
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): VentaDAOImpl {
     if (!VentaDAOImpl.instancia) {
@@ -14,12 +14,15 @@ export class VentaDAOImpl implements VentaDAO {
     return VentaDAOImpl.instancia;
   }
 
-  public getAll = async (): Promise<Array<VentaDTO>> => {
+  public getAll = async (idEmpresa: number): Promise<Array<VentaDTO>> => {
     try {
       const ventaDatabase: VentaDTO[] = await ejecutarQuery(
-        `SELECT v.\"idVenta\", v.\"idTecero\", v.\"idCaja\", v.\"idUsuario\", v.\"idUbicacionVenta\", v.\"idTipoMedioPago\", v.\"fechaVenta\", v.\"observacionVenta\", v.\"valorTotalVenta\"
-                FROM \"Venta\" v;`,
-        []
+        `SELECT v.\"idVenta\", v.\"idTecero\", v.\"idCaja\", v.\"idUsuario\", v.\"idUbicacionVenta\", v.\"idTipoMedioPago\", v.\"fechaVenta\", v.\"observacionVenta\", v.\"valorTotalVenta\", v.\"estadoVenta\", v.\"fechaCancelacionVenta\", v.\"idUsuarioCancelacionVenta\", v.\"motivoCancelacionVenta\"
+                FROM \"Venta\" v
+                JOIN \"Usuario\" u ON v.\"idUsuario\" = u.\"idUsuario\"
+                WHERE u.\"idEmpresa\" = $1
+                ORDER BY v.\"fechaVenta\" DESC;;`,
+        [idEmpresa]
       );
 
       return ventaDatabase;
@@ -31,7 +34,7 @@ export class VentaDAOImpl implements VentaDAO {
   public getById = async (idVenta: number): Promise<VentaDTO | null> => {
     try {
       const respuesta: VentaDTO[] = await ejecutarQuery(
-          `SELECT v.\"idVenta\", v.\"idTecero\", v.\"idCaja\", v.\"idUsuario\", v.\"idUbicacionVenta\", v.\"idTipoMedioPago\", v.\"fechaVenta\", v.\"observacionVenta\", v.\"valorTotalVenta\"
+        `SELECT v.\"idVenta\", v.\"idTecero\", v.\"idCaja\", v.\"idUsuario\", v.\"idUbicacionVenta\", v.\"idTipoMedioPago\", v.\"fechaVenta\", v.\"observacionVenta\", v.\"valorTotalVenta\", v.\"estadoVenta\", v.\"fechaCancelacionVenta\", v.\"idUsuarioCancelacionVenta\", v.\"motivoCancelacionVenta\"
                 FROM \"Venta\" v
                 WHERE v.\"idVenta\" = $1;`,
         [idVenta]
@@ -46,15 +49,16 @@ export class VentaDAOImpl implements VentaDAO {
   public create = async (venta: VentaDTO): Promise<boolean> => {
     try {
       const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
-        `SELECT insertarVenta($1,$2,$3,$4,$5,$6,$7) as resultado;`,
+        `SELECT insertarVenta($1,$2,$3,$4,$5,$6,$7,$8) as resultado;`,
         [
+          venta.idUsuario,
           venta.idTercero,
           venta.idCaja,
-          venta.idUsuario,
           venta.idUbicacionVenta,
           venta.idTipoMedioPago,
           venta.observacionVenta,
-          venta.valorTotalVenta
+          venta.valorTotalVenta,
+          JSON.stringify(venta.detallesVenta)
         ]
       );
 
@@ -64,17 +68,20 @@ export class VentaDAOImpl implements VentaDAO {
     }
   };
 
-  public validarValor = async (
-    valorTotalVenta: number
-  ) : Promise<boolean> => {
+  public cancel = async (venta: VentaDTO): Promise<boolean> => {
     try {
-      const respuesta = await ejecutarQuery(
-        `SELECT validarValorVenta ($1) as resultado;`
-        [valorTotalVenta]
+      const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
+        `SELECT cancelarVenta($1,$2,$3) as resultado;`,
+        [
+          venta.idVenta,
+          venta.idUsuarioCancelacionVenta,
+          venta.motivoCancelacionVenta
+        ]
       );
+
       return respuesta.length > 0 ? respuesta[0].resultado : false;
     } catch (error) {
-      throw new Error(`Error en VentaDAO.validarValor: ${error}`);
+      throw new Error(`Error en VentaDAO.cancel: ${error}`);
     }
   };
 }

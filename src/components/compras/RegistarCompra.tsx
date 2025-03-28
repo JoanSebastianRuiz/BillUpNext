@@ -29,8 +29,7 @@ import RegistrarDetalleCompra from './RegistrarDetalleCompra';
 import BotonSeleccion from '../common/BotonSeleccion';
 
 
-const RegistrarCompra = ({ setModalRegistrar }: { setModalRegistrar?: (value: boolean) => void }) => {
-
+const RegistrarCompra = ({ setModal }: { setModal?: (value: boolean) => void }) => {
     const [modalRegistrarDetalle, setModalRegistrarDetalle] = useState(false);
     const [modalActualizarDetalle, setModalActualizarDetalle] = useState(false);
     const [contadorDetalles, setContadorDetalles] = useState(0);
@@ -67,7 +66,7 @@ const RegistrarCompra = ({ setModalRegistrar }: { setModalRegistrar?: (value: bo
             setSuccess(respuesta.data.message);
             obtenerCompras();
             obtenerDetallesCompras();
-            setModalRegistrar?.(false);
+            setModal?.(false);
             setContadorDetalles(0);
 
         } catch (error: unknown) {

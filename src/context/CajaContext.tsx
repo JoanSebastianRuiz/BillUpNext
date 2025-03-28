@@ -10,6 +10,8 @@ interface CajaContextType {
     cajas: CajaDTO[]
     setCajas: (cajas: CajaDTO[]) => void
     obtenerCajas: () => void
+    cajaSeleccionada: CajaDTO | null
+    setCajaSeleccionada: (caja: CajaDTO) => void
 }
 
 const CajaContext = createContext<CajaContextType | undefined>(undefined);
@@ -21,6 +23,7 @@ interface CajaProviderProps {
 
 export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) => {
     const [cajas, setCajas] = useState<CajaDTO[]>([]);
+    const [cajaSeleccionada, setCajaSeleccionada] = useState<CajaDTO | null>(null);
     const { data: session, status } = useSession();
     const idEmpresa = session?.user?.idEmpresa;
     const idRol = session?.user?.idRol;
@@ -51,7 +54,9 @@ export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) =
         <CajaContext.Provider value={{
             cajas,
             setCajas,
-            obtenerCajas
+            obtenerCajas,
+            cajaSeleccionada,
+            setCajaSeleccionada
         }}>
             {children}
         </CajaContext.Provider>

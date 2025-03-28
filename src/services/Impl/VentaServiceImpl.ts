@@ -2,11 +2,12 @@ import { VentaService } from "@/services/VentaService";
 import { VentaDAOImpl } from "@/dao/impl/VentaDAOImpl";
 import { NextResponse } from "next/server";
 import { VentaDTO } from "@/dto/VentaDTO";
+import { isValidLength, isValidDinero } from "@/util/validators/validators";
 
 export class VentaServiceImpl implements VentaService {
   private static instancia: VentaServiceImpl;
   private ventaDAOImpl: VentaDAOImpl = VentaDAOImpl.getInstance();
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): VentaServiceImpl {
     if (!VentaServiceImpl.instancia) {
@@ -25,6 +26,7 @@ export class VentaServiceImpl implements VentaService {
         idTipoMedioPago,
         observacionVenta,
         valorTotalVenta,
+        detallesVenta
       } = venta;
 
       if (
@@ -33,8 +35,8 @@ export class VentaServiceImpl implements VentaService {
         !idUsuario ||
         !idUbicacionVenta ||
         !idTipoMedioPago ||
-        !observacionVenta ||
-        !valorTotalVenta
+        !valorTotalVenta ||
+        !detallesVenta
       ) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
@@ -42,15 +44,49 @@ export class VentaServiceImpl implements VentaService {
         );
       }
 
-      if (
-        !(await this.ventaDAOImpl.validarValor(
-          valorTotalVenta)
-        )
-      ) {
+      if (observacionVenta && !isValidLength(observacionVenta, 250)) {
         return NextResponse.json(
-          { message: "El valor no es valido" },
+          { message: "La observación debe tener entre 1 y 250 caracteres" },
           { status: 400 }
-        )
+        );
+      }
+
+      if (!isValidDinero(valorTotalVenta.toString())) {
+        return NextResponse.json(
+          { message: "El valor total de la venta debe ser un número positivo" },
+          { status: 400 }
+        );
+      }
+
+      for (let detalle of detallesVenta) {
+        const { idProducto, cantidadDetalleVenta, valorTotalDetalleVenta, valorDescuentoDetalleVenta, valorImpuestosDetalleVenta } = detalle;
+        if (!idProducto || !cantidadDetalleVenta || !valorTotalDetalleVenta || !valorDescuentoDetalleVenta || !valorImpuestosDetalleVenta) {
+          return NextResponse.json(
+            { message: "Faltan campos por llenar" },
+            { status: 400 }
+          );
+        }
+
+        if (!isValidDinero(valorTotalDetalleVenta.toString())) {
+          return NextResponse.json(
+            { message: "El valor de un producto debe ser un número positivo" },
+            { status: 400 }
+          );
+        }
+
+        if (!isValidDinero(valorDescuentoDetalleVenta.toString())) {
+          return NextResponse.json(
+            { message: "El valor del descuento de un producto debe ser un número positivo" },
+            { status: 400 }
+          );
+        }
+
+        if (!isValidDinero(valorImpuestosDetalleVenta.toString())) {
+          return NextResponse.json(
+            { message: "El valor de los impuestos de un producto debe ser un número positivo" },
+            { status: 400 }
+          );
+        }
       }
 
       const respuesta = await this.ventaDAOImpl.create(venta);
@@ -70,9 +106,9 @@ export class VentaServiceImpl implements VentaService {
     }
   };
 
-  public getAll = async (): Promise<Array<VentaDTO>> => {
+  public getAll = async (idEmpresa: number): Promise<Array<VentaDTO>> => {
     try {
-      const respuesta: VentaDTO[] = await this.ventaDAOImpl.getAll();
+      const respuesta: VentaDTO[] = await this.ventaDAOImpl.getAll(idEmpresa);
       return respuesta;
     } catch (error) {
       throw new Error(`Error en VentaService.getAll: ${error}`);
@@ -89,6 +125,41 @@ export class VentaServiceImpl implements VentaService {
       return respuesta;
     } catch (error) {
       throw new Error(`Error en VentaService.getById: ${error}`);
+    }
+  };
+
+  public cancel = async (venta: VentaDTO): Promise<NextResponse> => {
+    try {
+      const { idVenta, motivoCancelacionVenta, idUsuarioCancelacionVenta } = venta;
+
+      if (!idVenta || !motivoCancelacionVenta || !idUsuarioCancelacionVenta) {
+        return NextResponse.json(
+          { message: "Faltan campos por llenar" },
+          { status: 400 }
+        );
+      }
+
+      if (!isValidLength(motivoCancelacionVenta, 250)) {
+        return NextResponse.json(
+          { message: "El motivo debe tener entre 1 y 250 caracteres" },
+          { status: 400 }
+        );
+      }
+
+      const respuesta = await this.ventaDAOImpl.cancel(venta);
+      if (respuesta) {
+        return NextResponse.json(
+          { message: "Venta cancelada correctamente" },
+          { status: 200 }
+        );
+      } else {
+        return NextResponse.json(
+          { message: "Error al cancelar la venta" },
+          { status: 500 }
+        );
+      }
+    } catch (error) {
+      throw new Error(`Error en VentaService.cancel: ${error}`);
     }
   };
 }

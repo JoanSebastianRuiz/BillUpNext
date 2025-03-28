@@ -18,12 +18,20 @@ const MostrarInfoProducto = ({ producto }: {
         text={producto.descripcionProducto}
       />
       <ParrafoMostrarInfo
-        subtitle="Precio de Venta"
+        subtitle="Precio base"
         text={`${producto.precioVentaProducto}`}
       />
       <ParrafoMostrarInfo
         subtitle="Descuento"
         text={`${producto.porcentajeDescuentoProducto || 0}%`}
+      />
+      <ParrafoMostrarInfo
+        subtitle="Impuesos aplicados"
+        text={`${producto.valorImpuestoProducto}`}
+      />
+      <ParrafoMostrarInfo
+        subtitle="Precio de Venta"
+        text={`${producto.valorTotalProducto}`}
       />
       <ParrafoMostrarInfo
         subtitle="Stock Mínimo"
