@@ -15,13 +15,16 @@ export class DetalleCajaDAOImpl implements DetalleCajaDAO {
         return DetalleCajaDAOImpl.instancia;
     }
 
-    public getAll = async(): Promise<Array<DetalleCajaDTO>> => {
+    public getAll = async(idEmpresa: number): Promise<Array<DetalleCajaDTO>> => {
 
         try {
             const detalleCajaDatabase : DetalleCajaDTO[]= await ejecutarQuery(
-                `SELECT d.\"idDetalleCaja\", d.\"idCaja\", d.\"idUsuario\", d.\"FechaAperturaDetalleCaja\", d.\"FechaCierreDetalleCaja\" d.\"DineroAperturaDetalleCaja\", d.\"DineroCierreDetalleCaja\", d.\"DineroCierreSistemaDetalleCaja\"
-                FROM \"DetalleCaja\" d;`,
-                []
+                `SELECT d.\"idDetalleCaja\", d.\"idCaja\", d.\"idUsuario\", d.\"fechaAperturaDetalleCaja\", d.\"fechaCierreDetalleCaja\", d.\"dineroAperturaDetalleCaja\", d.\"dineroCierreDetalleCaja\", d.\"dineroCierreSistemaDetalleCaja\"
+                FROM \"DetalleCaja\" d
+                JOIN \"Usuario\" u ON u.\"idUsuario\" = d.\"idUsuario\"
+                WHERE u.\"idEmpresa\" = $1
+                ORDER BY d.\"fechaCierreDetalleCaja\" DESC;`,
+                [idEmpresa]
             );
 
             return detalleCajaDatabase;
@@ -36,7 +39,7 @@ export class DetalleCajaDAOImpl implements DetalleCajaDAO {
         try {
             const respuesta : DetalleCajaDTO[] = await ejecutarQuery(
 
-                `SELECT d.\"idDetalleCaja\", d.\"idCaja\", d.\"idUsuario\", d.\"FechaAperturaDetalleCaja\", d.\"FechaCierreDetalleCaja\" d.\"DineroAperturaDetalleCaja\", d.\"DineroCierreDetalleCaja\", d.\"DineroCierreSistemaDetalleCaja\"
+                `SELECT d.\"idDetalleCaja\", d.\"idCaja\", d.\"idUsuario\", d.\"fechaAperturaDetalleCaja\", d.\"fechaCierreDetalleCaja\" d.\"dineroAperturaDetalleCaja\", d.\"dineroCierreDetalleCaja\", d.\"dineroCierreSistemaDetalleCaja\"
                 FROM \"DetalleCaja\" d
                 WHERE \"idDetalleCaja\" = $1;`,
                 [idDetalleCaja]
@@ -53,15 +56,11 @@ export class DetalleCajaDAOImpl implements DetalleCajaDAO {
     public create = async(detalleCaja : DetalleCajaDTO) : Promise<boolean> => {
         try {
             const respuesta  = await ejecutarQuery<ResultadoBooleanDTO>(
-                `SELECT insertarEmpresa($1,$2,$3,$4,$5,$6,$7) as resultado;`,
+                `SELECT insertarDetalleCaja($1,$2,$3) as resultado;`,
                 [
                     detalleCaja.idCaja,
                     detalleCaja.idUsuario,
-                    detalleCaja.fechaAperturaDetalleCaja,
-                    detalleCaja.fechaCierreDetalleCaja,
-                    detalleCaja.dineroAperturaDetalleCaja,
-                    detalleCaja.dineroCierreDetalleCaja,
-                    detalleCaja.dineroCierreSistemaDetalleCaja
+                    detalleCaja.dineroAperturaDetalleCaja
                 ]
             );
 
@@ -76,16 +75,10 @@ export class DetalleCajaDAOImpl implements DetalleCajaDAO {
     public update = async(detalleCaja : DetalleCajaDTO): Promise<boolean> => {
         try {
             const respuesta = await ejecutarQuery<ResultadoBooleanDTO >(
-                `SELECT insertarEmpresa($1,$2,$3,$4,$5,$6,$7,$8) as resultado;`,
+                `SELECT actualizarDetalleCaja($1,$2) as resultado;`,
                 [
                     detalleCaja.idDetalleCaja,
-                    detalleCaja.idCaja,
-                    detalleCaja.idUsuario,
-                    detalleCaja.fechaAperturaDetalleCaja,
-                    detalleCaja.fechaCierreDetalleCaja,
-                    detalleCaja.dineroAperturaDetalleCaja,
-                    detalleCaja.dineroCierreDetalleCaja,
-                    detalleCaja.dineroCierreSistemaDetalleCaja
+                    detalleCaja.dineroCierreDetalleCaja
                 ]
             );
 
@@ -95,5 +88,4 @@ export class DetalleCajaDAOImpl implements DetalleCajaDAO {
             throw new Error(`Error en DetalleCajaDAO.update: ${error}`);
         }
     }
-
 }

@@ -15,7 +15,7 @@ BEGIN
     BEGIN
         -- 1. Insertar la venta
         INSERT INTO "Venta" ("idUsuario", "idTercero", "idCaja", "idUbicacionVenta", "fechaVenta", "observacionVenta", "idTipoMedioPago", "valorTotalVenta", "estadoVenta")
-        VALUES (_idUsuario, _idTercero, _idCaja, _idUbicacionVenta, _idTipoMedioPago, now(), _observacionVenta, _valorTotalVenta, TRUE)
+        VALUES (_idUsuario, _idTercero, _idCaja, _idUbicacionVenta, now(), _observacionVenta, _idTipoMedioPago, _valorTotalVenta, TRUE)
         RETURNING "idVenta" INTO v_venta_id;
 
         -- 2. Insertar productos en DetalleVenta

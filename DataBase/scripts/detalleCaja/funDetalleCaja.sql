@@ -1,99 +1,119 @@
 CREATE OR REPLACE FUNCTION actualizarDetalleCaja(
     _idDetalleCaja "DetalleCaja"."idDetalleCaja"%TYPE,
-    _idCaja "DetalleCaja"."idCaja"%TYPE,
-    _idUsuario "DetalleCaja"."idUsuario"%TYPE,
-    _fechaAperturaDetalleCaja "DetalleCaja"."fechaAperturaDetalleCaja"%TYPE,
-    _fechaCierreDetalleCaja "DetalleCaja"."fechaCierreDetalleCaja"%TYPE,
-    _dineroAperturaDetalleCaja "DetalleCaja"."dineroAperturaDetalleCaja"%TYPE,
-    _dineroCierreDetalleCaja "DetalleCaja"."dineroCierreDetalleCaja"%TYPE,
-    _dineroCierreSistemaDetalleCaja "DetalleCaja"."dineroCierreSistemaDetalleCaja"%TYPE
+    _dineroCierreDetalleCaja "DetalleCaja"."dineroCierreDetalleCaja"%TYPE
 )
 RETURNS BOOLEAN AS
 $$
+DECLARE
+    _idCaja INT;
+    _fechaApertura TIMESTAMP;
+    _dineroApertura DOUBLE PRECISION;
+    _dineroCierreSistemaDetalleCaja DOUBLE PRECISION;
+    _totalVentas DOUBLE PRECISION := 0;
+    _totalIngresos DOUBLE PRECISION := 0;
+    _totalEgresos DOUBLE PRECISION := 0;
+    row_count INT;
 BEGIN
-    UPDATE "DetalleCaja" SET
-        "idCaja" = COALESCE(_idCaja, "idCaja"),
-        "idUsuario" = COALESCE(_idUsuario, "idUsuario"),
-        "fechaAperturaDetalleCaja"= COALESCE(_fechaAperturaDetalleCaja, "fechaAperturaDetalleCaja"),
-        "fechaCierreDetalleCaja" = COALESCE(_fechaCierreDetalleCaja, "fechaCierreDetalleCaja"),
-        "dineroAperturaDetalleCaja" = COALESCE(_dineroAperturaDetalleCaja, "dineroAperturaDetalleCaja"),
-        "dineroCierreDetalleCaja"= COALESCE(_dineroCierreDetalleCaja, "dineroCierreDetalleCaja"),
-        "dineroCierreSistemaDetalleCaja"= COALESCE(_dineroCierreSistemaDetalleCaja, "dineroCierreSistemaDetalleCaja")
+    -- Obtener datos de la caja
+    SELECT "idCaja", "fechaAperturaDetalleCaja", "dineroAperturaDetalleCaja"
+    INTO _idCaja, _fechaApertura, _dineroApertura
+    FROM "DetalleCaja"
     WHERE "idDetalleCaja" = _idDetalleCaja;
 
-    IF FOUND THEN
-        RAISE NOTICE 'Se actualizó correctamente el detalle de la caja';
+    -- Calcular total de ventas en la caja
+    SELECT COALESCE(SUM("valorTotalVenta"), 0)
+    INTO _totalVentas
+    FROM "Venta"
+    WHERE "idCaja" = _idCaja
+    AND "fechaVenta" >= _fechaApertura;
+
+    -- Calcular ingresos en la caja (tipoMovimiento = TRUE)
+    SELECT COALESCE(SUM("valorMovimiento"), 0)
+    INTO _totalIngresos
+    FROM "Movimiento"
+    WHERE "idCaja" = _idCaja
+    AND "tipoMovimiento" = TRUE
+    AND "fechaMovimiento" >= _fechaApertura;
+
+    -- Calcular egresos en la caja (tipoMovimiento = FALSE)
+    SELECT COALESCE(SUM("valorMovimiento"), 0)
+    INTO _totalEgresos
+    FROM "Movimiento"
+    WHERE "idCaja" = _idCaja
+    AND "tipoMovimiento" = FALSE
+    AND "fechaMovimiento" >= _fechaApertura;
+
+    -- Calcular el dinero de cierre del sistema
+    _dineroCierreSistemaDetalleCaja := _dineroApertura + _totalVentas + _totalIngresos - _totalEgresos;
+
+    -- Actualizar el detalle de la caja
+    UPDATE "DetalleCaja" SET
+        "fechaCierreDetalleCaja" = NOW(),
+        "dineroCierreDetalleCaja" = COALESCE(_dineroCierreDetalleCaja, "dineroCierreDetalleCaja"),
+        "dineroCierreSistemaDetalleCaja" = _dineroCierreSistemaDetalleCaja
+    WHERE "idDetalleCaja" = _idDetalleCaja;
+
+    GET DIAGNOSTICS row_count = ROW_COUNT;
+    
+    -- Actualizar el estado de la caja
+    IF row_count > 0 THEN
+        UPDATE "Caja" SET "openCaja" = FALSE WHERE "idCaja" = _idCaja;
+        RAISE NOTICE 'Se actualizó correctamente el detalle de la caja. Dinero cierre sistema: %', _dineroCierreSistemaDetalleCaja;
         RETURN TRUE;
     ELSE
-        RAISE NOTICE 'Ocurrió un error al actualizar el detalle de la caja';
+        RAISE NOTICE 'No se encontró la caja para actualizar';
         RETURN FALSE;
     END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'Error al actualizar detalle de caja: %', SQLERRM;
+        RETURN FALSE;
 END;
 $$
 LANGUAGE PLPGSQL;
 
 
-CREATE OR REPLACE FUNCTION eliminarDetalleCaja(
-    _idDetalleCaja "DetalleCaja"."idDetalleCaja"%TYPE )
-RETURNS BOOLEAN AS
-$$
-BEGIN
-
-    DELETE FROM "DetalleCaja" WHERE "idDetalleCaja" = _idDetalleCaja;
-
-    IF FOUND THEN
-        RAISE NOTICE 'Se eliminó correctamente el detalle de la caja';
-        RETURN TRUE;
-    ELSE
-        RAISE NOTICE 'Ocurrió un error al eliminar el detalle de la caja';
-        RETURN FALSE;
-    END IF;
-END;
-$$
-LANGUAGE PLPGSQL; 
-
 
 CREATE OR REPLACE FUNCTION insertarDetalleCaja(
     _idCaja "DetalleCaja"."idCaja"%TYPE,
     _idUsuario "DetalleCaja"."idUsuario"%TYPE,
-    _fechaAperturaDetalleCaja "DetalleCaja"."fechaAperturaDetalleCaja"%TYPE,
-    _fechaCierreDetalleCaja "DetalleCaja"."fechaCierreDetalleCaja"%TYPE,
-    _dineroAperturaDetalleCaja "DetalleCaja"."dineroAperturaDetalleCaja"%TYPE,
-    _dineroCierreDetalleCaja "DetalleCaja"."dineroCierreDetalleCaja"%TYPE,
-    _dineroCierreSistemaDetalleCaja "DetalleCaja"."dineroCierreSistemaDetalleCaja"%TYPE
+    _dineroAperturaDetalleCaja "DetalleCaja"."dineroAperturaDetalleCaja"%TYPE
 )
 RETURNS BOOLEAN AS
 $$
 DECLARE
-    id INTEGER;
+    row_count INT;
 BEGIN
     INSERT INTO "DetalleCaja"(
         "idCaja",
         "idUsuario",
         "fechaAperturaDetalleCaja",
-        "fechaCierreDetalleCaja",
-        "dineroAperturaDetalleCaja",
-        "dineroCierreDetalleCaja",
-        "dineroCierreSistemaDetalleCaja"
+        "dineroAperturaDetalleCaja"
     )
     VALUES(
         _idCaja,
         _idUsuario,
-        _fechaAperturaDetalleCaja,
-        _fechaCierreDetalleCaja,
-        _dineroAperturaDetalleCaja,
-        _dineroCierreDetalleCaja,
-        _dineroCierreSistemaDetalleCaja
-    )
-    RETURNING "idDetalleCaja" INTO id;
+        NOW(),
+        _dineroAperturaDetalleCaja
+    );
 
-    IF FOUND THEN
-        RAISE NOTICE 'Se insertó correctamente el detalle de la caja';
+    -- Actualizar el estado de la caja
+    UPDATE "Caja" SET "openCaja" = TRUE WHERE "idCaja" = _idCaja;
+
+    -- Verificar si el UPDATE afectó filas
+    GET DIAGNOSTICS row_count = ROW_COUNT;
+
+    IF row_count > 0 THEN
+        RAISE NOTICE 'Se insertó correctamente el detalle de la caja y se actualizó la caja';
         RETURN TRUE;
     ELSE
-        RAISE NOTICE 'Ocurrió un error al insertar el detalle de la caja';
+        RAISE NOTICE 'Se insertó el detalle, pero no se encontró la caja para actualizar';
         RETURN FALSE;
     END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'Error al insertar detalle de caja: %', SQLERRM;
+        RETURN FALSE;
 END;
 $$
 LANGUAGE PLPGSQL;

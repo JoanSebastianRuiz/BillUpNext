@@ -100,7 +100,10 @@ const RegistrarProducto = ({ productoSeleccionado, setModalActualizar, setModalR
                     errors={errors} />
 
                 <InputForm label="Precio de venta" register={register} name="precioVentaProducto" type="number"
-                    validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
+                    validationRules={{ 
+                        required: { value: true, message: "Este campo es obligatorio" },
+                        min: { value: 0, message: "El valor debe ser mayor o igual a 0" }
+                    }}
                     errors={errors} />
 
                 <InputForm label="Porcentaje de descuento" register={register} name="porcentajeDescuentoProducto" type="number"

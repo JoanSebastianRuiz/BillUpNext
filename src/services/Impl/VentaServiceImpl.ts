@@ -30,13 +30,13 @@ export class VentaServiceImpl implements VentaService {
       } = venta;
 
       if (
-        !idTercero ||
-        !idCaja ||
-        !idUsuario ||
-        !idUbicacionVenta ||
-        !idTipoMedioPago ||
-        !valorTotalVenta ||
-        !detallesVenta
+        idTercero == null || // Acepta 0 como válido
+        idCaja == null ||
+        idUsuario == null ||
+        idUbicacionVenta == null ||
+        idTipoMedioPago == null ||
+        valorTotalVenta == null ||
+        !Array.isArray(detallesVenta) || detallesVenta.length === 0
       ) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
@@ -59,31 +59,23 @@ export class VentaServiceImpl implements VentaService {
       }
 
       for (let detalle of detallesVenta) {
-        const { idProducto, cantidadDetalleVenta, valorTotalDetalleVenta, valorDescuentoDetalleVenta, valorImpuestosDetalleVenta } = detalle;
-        if (!idProducto || !cantidadDetalleVenta || !valorTotalDetalleVenta || !valorDescuentoDetalleVenta || !valorImpuestosDetalleVenta) {
+        const {
+          idProducto,
+          cantidadDetalleVenta,
+          valorTotalDetalleVenta,
+          valorDescuentoDetalleVenta,
+          valorImpuestosDetalleVenta
+        } = detalle;
+
+        if (
+          idProducto == null ||
+          cantidadDetalleVenta == null ||
+          valorTotalDetalleVenta == null ||
+          valorDescuentoDetalleVenta == null ||
+          valorImpuestosDetalleVenta == null
+        ) {
           return NextResponse.json(
             { message: "Faltan campos por llenar" },
-            { status: 400 }
-          );
-        }
-
-        if (!isValidDinero(valorTotalDetalleVenta.toString())) {
-          return NextResponse.json(
-            { message: "El valor de un producto debe ser un número positivo" },
-            { status: 400 }
-          );
-        }
-
-        if (!isValidDinero(valorDescuentoDetalleVenta.toString())) {
-          return NextResponse.json(
-            { message: "El valor del descuento de un producto debe ser un número positivo" },
-            { status: 400 }
-          );
-        }
-
-        if (!isValidDinero(valorImpuestosDetalleVenta.toString())) {
-          return NextResponse.json(
-            { message: "El valor de los impuestos de un producto debe ser un número positivo" },
             { status: 400 }
           );
         }

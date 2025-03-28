@@ -218,6 +218,7 @@ const ProductosPage: React.FC = (gravamenProducto) => {
       <Modal
         isOpen={modalGravamenes}
         setIsOpen={() => setModalGravamenes(false)}
+        size="large"
       >
         <SublistaGravamenes producto={productoSeleccionado} />
       </Modal>

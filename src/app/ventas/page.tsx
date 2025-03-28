@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { List, PlusCircle, XCircle, Ban } from "lucide-react";
+import { List, PlusCircle, XCircle, Ban, Unlock, Lock } from "lucide-react";
 
 import { VentaDTO } from "@/dto/VentaDTO";
 import { useUsuarioContext } from "@/context/UsuarioContext";
@@ -24,15 +24,21 @@ import DateInputFiltro from "@/components/filtros/DateInputFiltro";
 import MostrarInfoVenta from "@/components/ventas/MostrarInfoVenta";
 import CancelarVenta from "@/components/ventas/CancelarVenta";
 import RegistrarVenta from "@/components/ventas/RegistrarVenta";
+import { useCajaContext } from "@/context/CajaContext";
+import AbrirCaja from "@/components/cajas/AbrirCaja";
+import CerrarCaja from "@/components/cajas/CerrarCaja";
 
 
 const VentasPage: React.FC = () => {
     const [modalRegistrar, setModalRegistrar] = useState(false);
     const [modalInfo, setModalInfo] = useState(false);
     const [modalCancelar, setModalCancelar] = useState(false);
+    const [modalAbrirCaja, setModalAbrirCaja] = useState(false);
+    const [modalCerrarCaja, setModalCerrarCaja] = useState(false);
     const [ventaSeleccionada, setVentaSeleccionada] = useState<VentaDTO | null>(null);
     const { ventas } = useVentaContext()
     const { usuarios, usuario } = useUsuarioContext()
+    const { cajaSeleccionada } = useCajaContext()
     const [ventasFiltradas, setVentasFiltradas] = useState<VentaDTO[]>([]);
 
     const fechaVentaRef = useRef<HTMLInputElement | null>(null);
@@ -111,11 +117,27 @@ const VentasPage: React.FC = () => {
             <ContenedorFiltros title="Ventas">
                 <ContenedorBotonesFiltros>
                     {usuario.idRol === 3 && (
-                        <BotonFiltro
-                            onClick={() => setModalRegistrar(true)}
-                            Symbol={PlusCircle}
-                            name="Registrar venta"
-                        />)}
+                        cajaSeleccionada == null ?
+                            <BotonFiltro
+                                onClick={() => setModalAbrirCaja(true)}
+                                Symbol={Unlock}
+                                name="Abrir caja"
+                            />
+                            :
+                            (<>
+                                    <BotonFiltro
+                                        onClick={() => setModalCerrarCaja(true)}
+                                        Symbol={Lock}
+                                        name="Cerrar caja"
+                                    />
+
+                                    <BotonFiltro
+                                        onClick={() => setModalRegistrar(true)}
+                                        Symbol={PlusCircle}
+                                        name="Registrar venta"
+                                    />
+                                </>)
+                            )}
 
                     <BotonFiltro
                         onClick={limpiarFiltros}
@@ -187,7 +209,7 @@ const VentasPage: React.FC = () => {
                             return (
                                 <TableRow key={venta.idVenta}>
                                     <TableData center={false}>{`${u?.nombreUsuario} ${u?.apellidoUsuario}`}</TableData>
-                                    <TableData center={true}>
+                                    <TableData center={true} noWrap={true}>
                                         {fecha
                                             ? new Date(fecha).toLocaleString('es-ES', {
                                                 day: '2-digit',
@@ -226,7 +248,7 @@ const VentasPage: React.FC = () => {
                                 </TableRow>)
                         })) : (
 
-                        <TableMessage message="No hay ventas registradas" />
+                        <TableMessage message="No hay ventas registradas" colSpan={4} />
                     )}
                 </Table>
             </div>
@@ -237,11 +259,11 @@ const VentasPage: React.FC = () => {
                 setCurrentPage={setCurrentPage}
             />
 
-            <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
+            <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)} size="large">
                 <RegistrarVenta setModal={setModalRegistrar} />
             </Modal>
 
-            <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>
+            <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)} size="large">
                 <MostrarInfoVenta venta={ventaSeleccionada} />
             </Modal>
 
@@ -249,7 +271,15 @@ const VentasPage: React.FC = () => {
                 <CancelarVenta venta={ventaSeleccionada} setModal={setModalCancelar} />
             </Modal>
 
-        </ContenedorPrincipal>
+            <Modal isOpen={modalAbrirCaja} setIsOpen={() => setModalAbrirCaja(false)}>
+                <AbrirCaja setModal={setModalAbrirCaja} />
+            </Modal>
+
+            <Modal isOpen={modalCerrarCaja} setIsOpen={() => setModalCerrarCaja(false)}>
+                <CerrarCaja setModal={setModalCerrarCaja} />
+            </Modal>
+
+        </ContenedorPrincipal >
     );
 };
 

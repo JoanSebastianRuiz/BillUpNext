@@ -77,7 +77,7 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
                     axios.get("/api/municipios"),
                     axios.get("/api/roles"),
                     axios.get("/api/tipos-documento"),
-                    idRol === 2 ? axios.get(`/api/empresas/${idEmpresa}/usuarios`) : axios.get("/api/usuarios")
+                    idRol === 2 || idRol === 3 ? axios.get(`/api/empresas/${idEmpresa}/usuarios`) : axios.get("/api/usuarios")
                 ]);
 
                 if (departamentosRes.status === 200) setDepartamentos(departamentosRes.data);
@@ -98,8 +98,9 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
                 setLoading(false); // Finalizar carga después de obtener los datos
             }
         };
-        
-        if (idRol === 1 || idRol === 2) fetchData();
+
+
+        if (idRol === 1 || idRol === 2 || idRol === 3) fetchData();
         console.log(usuarios);
     }, [status, idRol, idEmpresa]);
 

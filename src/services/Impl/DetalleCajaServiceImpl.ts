@@ -16,32 +16,29 @@ export class DetalleCajaServiceImpl implements DetalleCajaService {
         return DetalleCajaServiceImpl.instancia;
     }
 
-    public create = async (detalleCaja: DetalleCajaDTO):  Promise<NextResponse> => {
+    public create = async (detalleCaja: DetalleCajaDTO): Promise<NextResponse> => {
         try {
-            const { idCaja,
+            const {
+                idCaja,
                 idUsuario,
-                fechaAperturaDetalleCaja,
-                fechaCierreDetalleCaja,
-                dineroAperturaDetalleCaja,
-                dineroCierreDetalleCaja,
-                dineroCierreSistemaDetalleCaja
+                dineroAperturaDetalleCaja
             } = detalleCaja;
 
-            if(!idCaja || !idUsuario || !fechaAperturaDetalleCaja || !fechaCierreDetalleCaja || !dineroAperturaDetalleCaja || !dineroCierreDetalleCaja || !dineroCierreSistemaDetalleCaja){
+            if (!idCaja || !idUsuario || !dineroAperturaDetalleCaja) {
                 return NextResponse.json({ message: 'Faltan campos por llenar' }, { status: 400 });
-               
+
             }
 
-            if(!isValidDinero(dineroAperturaDetalleCaja.toString()) || !isValidDinero(dineroCierreDetalleCaja.toString())){
+            if (!isValidDinero(dineroAperturaDetalleCaja.toString())) {
                 return NextResponse.json({ message: 'El dinero debe ser un número positivo' }, { status: 400 });
             }
 
             const respuesta = await this.detalleCajaDAOImpl.create(detalleCaja);
 
             if (respuesta) {
-                return NextResponse.json({ message: 'El detalle de caja fue creado correctamente' }, { status: 200 });
+                return NextResponse.json({ message: 'Se abrio la caja correctamente' }, { status: 200 });
             } else {
-                return NextResponse.json({ message: 'Error al crear el detalle de caja' }, { status: 500 });
+                return NextResponse.json({ message: 'Error al abrir la caja' }, { status: 500 });
             }
         } catch (error) {
             throw new Error(`Error en DetalleCajaService.create: ${error}`);
@@ -50,39 +47,34 @@ export class DetalleCajaServiceImpl implements DetalleCajaService {
 
     public update = async (detalleCaja: DetalleCajaDTO): Promise<NextResponse> => {
         try {
-            const { idDetalleCaja,
-                idCaja,
-                idUsuario,
-                fechaAperturaDetalleCaja,
-                fechaCierreDetalleCaja,
-                dineroAperturaDetalleCaja,
-                dineroCierreDetalleCaja,
-                dineroCierreSistemaDetalleCaja
+            const {
+                idDetalleCaja,
+                dineroCierreDetalleCaja
             } = detalleCaja;
 
-            if(!idDetalleCaja || !idCaja || !idUsuario || !fechaAperturaDetalleCaja || !fechaCierreDetalleCaja || !dineroAperturaDetalleCaja || !dineroCierreDetalleCaja || !dineroCierreSistemaDetalleCaja){
+            if (!idDetalleCaja || !dineroCierreDetalleCaja) {
                 return NextResponse.json({ message: 'Faltan campos por llenar' }, { status: 400 });
             }
 
-            if(!isValidDinero(dineroAperturaDetalleCaja.toString()) || !isValidDinero(dineroCierreDetalleCaja.toString())){
+            if (!isValidDinero(dineroCierreDetalleCaja.toString())) {
                 return NextResponse.json({ message: 'El dinero debe ser un número positivo' }, { status: 400 });
             }
 
             const respuesta = await this.detalleCajaDAOImpl.update(detalleCaja);
 
             if (respuesta) {
-                return NextResponse.json({ message: 'El detalle de caja fue actualizado correctamente' }, { status: 200 });
+                return NextResponse.json({ message: 'Se cerro la caja correctamente' }, { status: 200 });
             } else {
-                return NextResponse.json({ message: 'Error al actualizar el detalle de caja' }, { status: 500 });
+                return NextResponse.json({ message: 'Error al cerrar la caja' }, { status: 500 });
             }
         } catch (error) {
             throw new Error(`Error en DetalleCajaService.update: ${error}`);
         }
     }
 
-    public getAll = async (): Promise<Array<DetalleCajaDTO>> => {
+    public getAll = async (idEmpresa: number): Promise<Array<DetalleCajaDTO>> => {
         try {
-            const respuesta: DetalleCajaDTO[] = await this.detalleCajaDAOImpl.getAll();
+            const respuesta: DetalleCajaDTO[] = await this.detalleCajaDAOImpl.getAll(idEmpresa);
             return respuesta;
         } catch (error) {
             throw new Error(`Error en DetalleCajaService.getAll: ${error}`);
@@ -92,7 +84,7 @@ export class DetalleCajaServiceImpl implements DetalleCajaService {
     public getById = async (idDetalleCaja: number): Promise<DetalleCajaDTO | null> => {
         try {
             const respuesta = await this.detalleCajaDAOImpl.getById(idDetalleCaja);
-            
+
             if (!respuesta) {
                 return null;
             }

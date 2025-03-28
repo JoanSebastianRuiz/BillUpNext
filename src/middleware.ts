@@ -22,13 +22,18 @@ export default withAuth(
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
-    const supervisorRoutes = ["/productos", "/proveedores", "/clientes", "/categorias", "/cajas", "/ubicacion-venta", "/compras", "/ventas"];
+    const supervisorRoutes = ["/productos", "/proveedores", "/clientes", "/categorias", "/cajas", "/ubicacion-venta", "/compras"];
     if (supervisorRoutes.some((route) => req.nextUrl.pathname.startsWith(route)) && userRole !== 2) {
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
-    const adminSupervisorRoutes = ["/dashboard", "/usuarios", "/gravamenes"];
+    const adminSupervisorRoutes = ["/usuarios", "/gravamenes"];
     if (adminSupervisorRoutes.some((route) => req.nextUrl.pathname.startsWith(route)) && userRole !== 1 && userRole !== 2) {
+      return NextResponse.redirect(new URL("/unauthorized", req.url));
+    }
+
+    const supervisorCajeroRoutes = ["/ventas"];
+    if (supervisorCajeroRoutes.some((route) => req.nextUrl.pathname.startsWith(route)) && userRole !== 2 && userRole !== 3) {
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
@@ -44,7 +49,6 @@ export default withAuth(
 // Definir en qué rutas se aplica el middleware
 export const config = {
   matcher: [
-    "/dashboard/:path*",
     "/usuarios/:path*",
     "/api/:path*",
     "/productos/:path*",

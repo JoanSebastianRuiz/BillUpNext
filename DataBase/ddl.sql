@@ -136,6 +136,7 @@ CREATE TABLE IF NOT EXISTS "Caja" (
     "idEmpresa" int not null,
     "nombreCaja" varchar(50) not null,
     "estadoCaja" boolean not null,
+    "openCaja" boolean not null,
     primary key ("idCaja"),
     foreign key ("idEmpresa") references "Empresa" ("idEmpresa")
 );
@@ -193,10 +194,10 @@ CREATE TABLE IF NOT EXISTS "DetalleCaja" (
     "idCaja" int not null,
     "idUsuario" int not null,
     "fechaAperturaDetalleCaja" TIMESTAMP not null,
-    "fechaCierreDetalleCaja" TIMESTAMP not null,
+    "fechaCierreDetalleCaja" TIMESTAMP,
     "dineroAperturaDetalleCaja" double precision not null,
-    "dineroCierreDetalleCaja" double precision not null,
-    "dineroCierreSistemaDetalleCaja" double precision not null,
+    "dineroCierreDetalleCaja" double precision,
+    "dineroCierreSistemaDetalleCaja" double precision,
     primary key ("idDetalleCaja"),
     foreign key ("idCaja") references "Caja" ("idCaja"),
     foreign key ("idUsuario") references "Usuario" ("idUsuario")
@@ -299,7 +300,7 @@ CREATE TABLE IF NOT EXISTS "DetalleVenta" (
     "idVenta" int not null,
     "idProducto" int not null,
     "cantidadDetalleVenta" int not null,
-    "valorDescuentoDetalleVenta" double precision, not null,
+    "valorDescuentoDetalleVenta" double precision not null,
     "valorImpuestosDetalleVenta" double precision not null,
     "valorTotalDetalleVenta" double precision not null,
     primary key ("idDetalleVenta"),

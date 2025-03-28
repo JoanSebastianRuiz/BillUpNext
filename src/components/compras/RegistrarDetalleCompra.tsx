@@ -11,7 +11,6 @@ import ButtonForm from '../form/ButtonForm';
 import { DetalleCompraDTO } from '@/dto/DetalleCompraDTO';
 import { useTerceroContext } from '@/context/TerceroContext';
 import { useProductoContext } from '@/context/ProductoContext';
-import SelectFiltro from '../filtros/SelectFiltro';
 
 interface RegistrarDetalleCompraProps {
     detalleCompra?: DetalleCompraDTO | null;

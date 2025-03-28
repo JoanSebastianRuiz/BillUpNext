@@ -45,6 +45,7 @@ const MostrarInfoVenta = ({ venta }: { venta: VentaDTO | null }) => {
     }
 
     for (let detalle of detallesVenta) {
+        console.log(detalle);
         descuentosTotales += detalle?.valorDescuentoDetalleVenta;
         impuestosTotales += detalle?.valorImpuestosDetalleVenta;
     }
@@ -52,10 +53,8 @@ const MostrarInfoVenta = ({ venta }: { venta: VentaDTO | null }) => {
     const titulosTabla = [
         { titulo: "Producto", center: false },
         { titulo: "Cantidad", center: false },
-        { titulo: "Descuento", center: false },
-        { titulo: "Impuestos", center: false },
-        { titulo: "Valor", center: false }
-    ]
+        { titulo: "Detalles", center: false },
+    ];
 
     // Paginacion
     const [currentPage, setCurrentPage] = useState(1);
@@ -155,14 +154,19 @@ const MostrarInfoVenta = ({ venta }: { venta: VentaDTO | null }) => {
 
                             return (
                                 <TableRow key={detalle.idDetalleVenta}>
-                                    <TableData center={false} width='25%' smallText={true}> {producto?.nombreProducto}</TableData>
-                                    <TableData center={true} width='25%' smallText={true}>{detalle.cantidadDetalleVenta}</TableData>
-                                    <TableData center={false} width='25%' smallText={true}>{`$ ${detalle.valorDescuentoDetalleVenta}`}</TableData>
-                                    <TableData center={false} width='25%' smallText={true}>{`$ ${detalle.valorImpuestosDetalleVenta}`}</TableData>
-                                    <TableData center={false} width='25%' smallText={true}>{`$ ${detalle.valorTotalDetalleVenta}`}</TableData>
-                                </TableRow>)
-                        })) : (
-
+                                    <TableData center={false} width='33%' smallText={true}>{producto?.nombreProducto}</TableData>
+                                    <TableData center={false} width='33%' smallText={true}>{detalle.cantidadDetalleVenta}</TableData>
+                                    <TableData center={false} width='33%' smallText={true}>
+                                        <div className="flex flex-col">
+                                            <span>Descuento: ${detalle.valorDescuentoDetalleVenta}</span>
+                                            <span>Impuestos: ${detalle.valorImpuestosDetalleVenta}</span>
+                                            <span>Valor: ${detalle.valorTotalDetalleVenta}</span>
+                                        </div>
+                                    </TableData>
+                                </TableRow>
+                            );
+                        })
+                    ) : (
                         <TableMessage message="No hay productos relacionados a la venta" />
                     )}
                 </Table>

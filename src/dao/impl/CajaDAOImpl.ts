@@ -4,39 +4,36 @@ import { ejecutarQuery } from "@/connection/conexion";
 import { ResultadoBooleanDTO } from "@/dto/ResultadoBooleanDTO";
 
 export class CajaDAOImpl implements CajaDAO {
-    getEmpresas(idEmpresa: number) {
-       throw new Error("Method not implemented.");
-    }
     private static instancia: CajaDAOImpl;
     private constructor() { }
-    
+
 
     public static getInstance(): CajaDAOImpl {
-        if ( !CajaDAOImpl.instancia){
+        if (!CajaDAOImpl.instancia) {
             CajaDAOImpl.instancia = new CajaDAOImpl();
         }
         return CajaDAOImpl.instancia;
     }
 
-    public getAll = async(idEmpresa: number): Promise<Array<CajaDTO>> => {
+    public getAll = async (idEmpresa: number): Promise<Array<CajaDTO>> => {
         try {
-            const cajaDatabase : CajaDTO[] = await ejecutarQuery(
+            const cajaDatabase: CajaDTO[] = await ejecutarQuery(
                 `SELECT * FROM \"Caja\" c
                 JOIN \"Empresa\" e ON e.\"idEmpresa\"=c.\"idEmpresa\"
                 WHERE c.\"idEmpresa\"=$1;`,
                 [idEmpresa]
             );
 
-            return  cajaDatabase;
+            return cajaDatabase;
         } catch (error) {
             throw new Error(`Error en CajaDAO.getAll: ${error}`);
         }
     }
 
 
-    public getById = async(idCaja : number): Promise<CajaDTO | null> => {
+    public getById = async (idCaja: number): Promise<CajaDTO | null> => {
         try {
-            const respuesta : CajaDTO[] = await ejecutarQuery(
+            const respuesta: CajaDTO[] = await ejecutarQuery(
                 `SELECT * FROM \"Caja\" WHERE \"idCaja\" = $1;`,
                 [idCaja]
             );
@@ -48,7 +45,7 @@ export class CajaDAOImpl implements CajaDAO {
         }
     }
 
-    public create = async (caja: CajaDTO): Promise<boolean>=> {
+    public create = async (caja: CajaDTO): Promise<boolean> => {
         try {
             const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
                 `SELECT insertarCaja($1,$2,$3) as resultado;`,
@@ -87,10 +84,36 @@ export class CajaDAOImpl implements CajaDAO {
 
     public existCajaNombre = async (nombreCaja: string, idEmpresa: number): Promise<boolean> => {
         try {
-            const respuesta = await ejecutarQuery( `SELECT validarExistCajaNombre ($1,$2) as resultado;`,[nombreCaja,idEmpresa]);
+            const respuesta = await ejecutarQuery(`SELECT validarExistCajaNombre($1,$2) as resultado;`, [nombreCaja, idEmpresa]);
             return respuesta.length > 0 ? respuesta[0].resultado : false;
         } catch (error) {
             throw new Error(`Error en CajaDAO.existCajaNombre: ${error}`);
+        }
+    }
+
+    public close = async (idCaja: number): Promise<boolean> => {
+        try {
+            const respuesta = await ejecutarQuery(`SELECT cerrarCaja($1) as resultado;`, [idCaja]);
+            return respuesta.length > 0 ? respuesta[0].resultado : false;
+        } catch (error) {
+            throw new Error(`Error en CajaDAO.close: ${error}`);
+        }
+    }
+
+    public getDetalleCajaActual = async (idCaja: number): Promise<CajaDTO | null> => {
+        try {
+            const respuesta: CajaDTO[] = await ejecutarQuery(
+                `SELECT *
+                FROM \"DetalleCaja\"
+                WHERE \"idCaja\" = $1
+                ORDER BY \"fechaAperturaDetalleCaja\" DESC
+                LIMIT 1;`,
+                [idCaja]
+            );
+
+            return respuesta.length > 0 ? respuesta[0] : null;
+        } catch (error) {
+            throw new Error(`Error en CajaDAO.getDetalleCajaActual: ${error}`);
         }
     }
 

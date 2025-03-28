@@ -1,11 +1,13 @@
 "use client";
 
+import axios from "axios";
+
 import React, { useEffect, useRef, useState } from "react";
-import { Pencil, PlusCircle, XCircle } from "lucide-react";
+import { Pencil, PlusCircle, XCircle, Lock } from "lucide-react";
 
 import { CajaDTO } from "@/dto/CajaDTO";
 
-import RegistrarCaja from "@/components/caja/RegistrarCaja";
+import RegistrarCaja from "@/components/cajas/RegistrarCaja";
 
 import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
 import ContenedorBotonesFiltros from "@/components/filtros/ContenedorBotonesFiltros";
@@ -17,6 +19,7 @@ import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 import Table from "@/components/common/Table";
 import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
+import Notificacion from '@/components/form/Notificacion';
 
 import Modal from "@/components/modal/Modal";
 import { useCajaContext } from "@/context/CajaContext";
@@ -27,12 +30,14 @@ const CajasPage: React.FC = () => {
     const [modalActualizar, setModalActualizar] = useState(false);
     const [cajaSeleccionada, setCajaSeleccionada] = useState<CajaDTO | null>(null);
     const [cajasFiltradas, setCajasFiltradas] = useState<CajaDTO[]>([]);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
 
-    const { cajas } = useCajaContext();
-
+    const { cajas, obtenerCajas } = useCajaContext();
 
     const nombreCajaRef = useRef<HTMLInputElement>(null);
     const estadoCajaRef = useRef<HTMLSelectElement>(null);
+    const openCajaRef = useRef<HTMLSelectElement>(null);
 
     // Paginacion
     const [currentPage, setCurrentPage] = useState(1);
@@ -46,12 +51,17 @@ const CajasPage: React.FC = () => {
 
         const nombreCaja = nombreCajaRef.current?.value;
         const estadoCaja = estadoCajaRef.current?.value;
+        const openCaja = openCajaRef.current?.value;
 
 
         let cajasFiltradas = [...cajas];
 
         if (estadoCaja !== undefined && estadoCaja !== "") {
             cajasFiltradas = cajasFiltradas.filter((caja) => caja.estadoCaja === (estadoCaja === "true"));
+        }
+
+        if (openCaja !== undefined && openCaja !== "0") {
+            cajasFiltradas = cajasFiltradas.filter((caja) => caja.openCaja === (openCaja === "true"));
         }
 
         if (nombreCaja) {
@@ -70,8 +80,29 @@ const CajasPage: React.FC = () => {
     const limpiarFiltros = () => {
         if (nombreCajaRef.current) nombreCajaRef.current.value = "";
         if (estadoCajaRef.current) estadoCajaRef.current.value = "true";
+        if (openCajaRef.current) openCajaRef.current.value = "0";
         filtrarCajas();
     };
+
+    const handleCerrarCaja = async (caja: CajaDTO) => {
+        try {
+            const respuesta = await axios.put(`/api/cajas/${caja.idCaja}/cerrar`);
+            setError(null);
+            setSuccess(respuesta.data.message);
+            obtenerCajas();
+
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response) {
+                const mensajeError = error.response.data?.message;
+                setSuccess(null);
+                setError(mensajeError);
+                console.error("Error de Axios:", mensajeError, error);
+            } else {
+                setError("Ocurrió un error inesperado");
+                console.error("Error desconocido:", error);
+            }
+        }
+    }
 
     const titulosTabla = [
         { titulo: "Nombre", center: false },
@@ -105,14 +136,25 @@ const CajasPage: React.FC = () => {
                     {/* Estado */}
                     <SelectFiltro
                         id="estadoCaja"
-                        name="Estado"
+                        name="Disponibilidad"
                         onChange={filtrarCajas}
                         ref={estadoCajaRef}
                         selectEstado={true}
                         defaultValue="true"
                     >
-                        <option value="true">Activo </option>
-                        <option value="false">Inactivo </option>
+                        <option value="true">Disponible</option>
+                        <option value="false">No disponible</option>
+                    </SelectFiltro>
+
+                    <SelectFiltro
+                        id="openCaja"
+                        name="Estado"
+                        onChange={filtrarCajas}
+                        ref={openCajaRef}
+                        defaultValue="true"
+                    >
+                        <option value="true">Abierta</option>
+                        <option value="false">Cerrada</option>
                     </SelectFiltro>
                 </ContenedorSelectores>
             </ContenedorFiltros>
@@ -124,28 +166,36 @@ const CajasPage: React.FC = () => {
                             <tr key={caja.idCaja} className="hover:bg-gray-100 dark:hover:bg-gray-700">
                                 <td className="px-4 py-3">{caja.nombreCaja}</td>
                                 <td className="px-4 py-3 text-center">
-                                    <BotonAccionCard
-                                        Symbol={Pencil}
-                                        onClick={() => {
-                                            setCajaSeleccionada(caja);
-                                            setModalActualizar(true);
-                                        }}
-                                        h={5}
-                                    />
+                                    <div className="flex justify-center items-center gap-x-2">
+                                        <BotonAccionCard
+                                            Symbol={Pencil}
+                                            onClick={() => {
+                                                setCajaSeleccionada(caja);
+                                                setModalActualizar(true);
+                                            }}
+                                            h={5}
+                                        />
+                                        {caja.openCaja && (
+                                            <BotonAccionCard
+                                                Symbol={Lock}
+                                                onClick={() => handleCerrarCaja(caja)}
+                                                h={5}
+                                            />
+                                        )}
+                                    </div>
                                 </td>
                             </tr>
+
                         ))) : (
 
                         <tr>
-                            <td colSpan={3} className="text-center py-4 text-gray-500 dark:text-gray-400">
+                            <td colSpan={2} className="text-center py-4 text-gray-500 dark:text-gray-400">
                                 No se encontraron cajas
                             </td>
                         </tr>
                     )}
                 </Table>
             </div>
-
-
 
 
             <ControlesPaginacion
@@ -163,6 +213,9 @@ const CajasPage: React.FC = () => {
             <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)} >
                 <RegistrarCaja cajaSeleccionada={cajaSeleccionada} setModalActualizar={setModalActualizar} />
             </Modal>
+
+            {error && <Notificacion type="error" message={error} />}
+            {success && <Notificacion type="success" message={success} />}
 
         </ContenedorPrincipal>
 

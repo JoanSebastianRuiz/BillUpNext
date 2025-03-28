@@ -6,4 +6,6 @@ export interface CajaService {
     create(caja: CajaDTO): Promise<NextResponse>;
     update(caja: CajaDTO): Promise<NextResponse>;
     getById(idCaja: number): Promise<CajaDTO | null>;
+    close(idCaja: number): Promise<NextResponse>;
+    getDetalleCajaActual(idCaja: number): Promise<CajaDTO | null>;
 }

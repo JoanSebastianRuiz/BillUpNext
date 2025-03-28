@@ -53,7 +53,7 @@ const RegistrarCaja = ({ cajaSeleccionada, setModalActualizar, setModalRegistrar
                     estadoCaja: String(data.estadoCaja) === "true"
                 };
 
-                const respuesta = await axios.put(`/api/caja/${cajaSeleccionada.idCaja}`, datosModificados);
+                const respuesta = await axios.put(`/api/cajas/${cajaSeleccionada.idCaja}`, datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 setModalActualizar?.(false);
@@ -65,7 +65,7 @@ const RegistrarCaja = ({ cajaSeleccionada, setModalActualizar, setModalRegistrar
                     estadoCaja: true
                 };
 
-                const respuesta = await axios.post('/api/caja', datosModificados);
+                const respuesta = await axios.post('/api/cajas', datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 setModalRegistrar?.(false);

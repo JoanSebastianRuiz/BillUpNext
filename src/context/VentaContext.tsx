@@ -94,10 +94,10 @@ export const VentaContextProvider: React.FC<CompraProviderProps> = ({ children }
                     axios.get<DetalleVentaDTO[]>(`/api/empresas/${idEmpresa}/detalles-ventas`),
                     axios.get<TipoMedioPagoDTO[]>("/api/tipos-medio-pago")
                 ]);
-                if (ubicacionesVentaRes.status === 200) setUbicacionesVenta(ubicacionesVentaRes.data);
+                if (ubicacionesVentaRes.status === 200) setUbicacionesVenta(ubicacionesVentaRes.data.filter(ubicacion => ubicacion.estadoUbicacionVenta === true));
                 if (ventasRes.status === 200) setVentas(ventasRes.data.filter(venta => venta.idUsuario === session?.user?.idUsuario));
                 if (detallesVentasRes.status === 200) setDetallesVentas(detallesVentasRes.data);
-                if (tiposMedioPagoRes.status === 200) setTiposMedioPago(tiposMedioPagoRes.data);
+                if (tiposMedioPagoRes.status === 200) setTiposMedioPago(tiposMedioPagoRes.data.filter(tipo => tipo.estadoTipoMedioPago === true));
 
             } else if (idRol === 2) {
                 const [ubicacionesVentaRes, ventasRes, detallesVentasRes] = await Promise.all([

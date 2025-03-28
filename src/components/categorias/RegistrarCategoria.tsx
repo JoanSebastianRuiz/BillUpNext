@@ -2,9 +2,8 @@
 
 import axios from 'axios';
 
-import { set, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import { useEmpresaContext } from '@/context/EmpresaContext';
 import { useSession } from 'next-auth/react';
 
 import { CategoriaDTO } from '@/dto/CategoriaDTO';

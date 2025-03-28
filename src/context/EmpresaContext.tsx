@@ -47,20 +47,24 @@ export const EmpresaContextProvider: React.FC<EmpresaProviderProps> = ({ childre
         if (status !== "authenticated") return;
         const fetchData = async () => {
             try {
-                const [tiposPersonaRes, regimenesContribuyenteRes, empresasRes] = await Promise.all([
-                    axios.get<TipoPersonaDTO[]>("/api/tipos-persona"),
-                    axios.get<RegimenContribuyenteResponseDTO[]>("/api/regimenes-contribuyente"),
-                    axios.get<EmpresaResponseDTO[]>("/api/empresas")
-                ])
+                if (idRol == 1) {
+                    const [tiposPersonaRes, regimenesContribuyenteRes, empresasRes] = await Promise.all([
+                        axios.get<TipoPersonaDTO[]>("/api/tipos-persona"),
+                        axios.get<RegimenContribuyenteResponseDTO[]>("/api/regimenes-contribuyente"),
+                        axios.get<EmpresaResponseDTO[]>("/api/empresas")
+                    ])
 
-                if (tiposPersonaRes.status === 200) setTiposPersona(tiposPersonaRes.data)
-                if (regimenesContribuyenteRes.status === 200) setRegimenesContribuyente(regimenesContribuyenteRes.data)
-                if (empresasRes.status === 200) setEmpresas(empresasRes.data)
+                    if (tiposPersonaRes.status === 200) setTiposPersona(tiposPersonaRes.data)
+                    if (regimenesContribuyenteRes.status === 200) setRegimenesContribuyente(regimenesContribuyenteRes.data)
+                    if (empresasRes.status === 200) setEmpresas(empresasRes.data)
+                } else {
+                    obtenerEmpresas()
+                }
             } catch (error) {
                 console.error("Error al obtener los datos de Empresa Context:", error);
             }
         }
-        if (idRol === 1) fetchData();
+        fetchData();
     }, [status])
 
 

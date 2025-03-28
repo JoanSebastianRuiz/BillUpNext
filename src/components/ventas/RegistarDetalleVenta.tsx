@@ -27,6 +27,7 @@ const RegistrarDetalleVenta = ({ detalleVenta, detallesVenta, setDetallesVenta, 
     const [success, setSuccess] = useState<string | null>(null);
 
     const { register, handleSubmit, formState: { errors }, watch, setValue, reset } = useForm<DetalleVentaDTO>();
+
     const idProducto = watch("idProducto");
     const cantidadDetalleVenta = watch("cantidadDetalleVenta");
 
@@ -36,10 +37,10 @@ const RegistrarDetalleVenta = ({ detalleVenta, detallesVenta, setDetallesVenta, 
             filtrados = filtrados.filter(producto => producto.idProducto !== detalle.idProducto);
         }
         setProductosFiltrados(filtrados);
-
-        const valor = cantidadDetalleVenta * (productos.find(producto => producto.idProducto === idProducto)?.valorTotalProducto || 0);
+    
+        const valor = cantidadDetalleVenta * (productos.find(producto => producto.idProducto == idProducto)?.precioVentaProducto || 0);
         setValue("valorTotalDetalleVenta", valor);
-    }, [productos, idProducto, cantidadDetalleVenta]);
+    }, [productos, idProducto, cantidadDetalleVenta, detallesVenta, setValue]);
 
     useEffect(() => {
         if (detalleVenta) {
@@ -101,8 +102,7 @@ const RegistrarDetalleVenta = ({ detalleVenta, detallesVenta, setDetallesVenta, 
 
                 <InputForm label="Valor" register={register} name="valorTotalDetalleVenta" type="number" disabled={true} dinero={true}
                     validationRules={{
-                        required: { value: true, message: "Este campo es obligatorio" },
-                        min: { value: 1, message: "Mínimo 1" }
+                        required: { value: true, message: "Este campo es obligatorio" }
                     }} errors={errors} />
 
 

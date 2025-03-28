@@ -17,7 +17,7 @@ export class VentaDAOImpl implements VentaDAO {
   public getAll = async (idEmpresa: number): Promise<Array<VentaDTO>> => {
     try {
       const ventaDatabase: VentaDTO[] = await ejecutarQuery(
-        `SELECT v.\"idVenta\", v.\"idTecero\", v.\"idCaja\", v.\"idUsuario\", v.\"idUbicacionVenta\", v.\"idTipoMedioPago\", v.\"fechaVenta\", v.\"observacionVenta\", v.\"valorTotalVenta\", v.\"estadoVenta\", v.\"fechaCancelacionVenta\", v.\"idUsuarioCancelacionVenta\", v.\"motivoCancelacionVenta\"
+        `SELECT v.\"idVenta\", v.\"idTercero\", v.\"idCaja\", v.\"idUsuario\", v.\"idUbicacionVenta\", v.\"idTipoMedioPago\", v.\"fechaVenta\", v.\"observacionVenta\", v.\"valorTotalVenta\", v.\"estadoVenta\", v.\"fechaCancelacionVenta\", v.\"idUsuarioCancelacionVenta\", v.\"motivoCancelacionVenta\"
                 FROM \"Venta\" v
                 JOIN \"Usuario\" u ON v.\"idUsuario\" = u.\"idUsuario\"
                 WHERE u.\"idEmpresa\" = $1
@@ -34,7 +34,7 @@ export class VentaDAOImpl implements VentaDAO {
   public getById = async (idVenta: number): Promise<VentaDTO | null> => {
     try {
       const respuesta: VentaDTO[] = await ejecutarQuery(
-        `SELECT v.\"idVenta\", v.\"idTecero\", v.\"idCaja\", v.\"idUsuario\", v.\"idUbicacionVenta\", v.\"idTipoMedioPago\", v.\"fechaVenta\", v.\"observacionVenta\", v.\"valorTotalVenta\", v.\"estadoVenta\", v.\"fechaCancelacionVenta\", v.\"idUsuarioCancelacionVenta\", v.\"motivoCancelacionVenta\"
+        `SELECT v.\"idVenta\", v.\"idTercero\", v.\"idCaja\", v.\"idUsuario\", v.\"idUbicacionVenta\", v.\"idTipoMedioPago\", v.\"fechaVenta\", v.\"observacionVenta\", v.\"valorTotalVenta\", v.\"estadoVenta\", v.\"fechaCancelacionVenta\", v.\"idUsuarioCancelacionVenta\", v.\"motivoCancelacionVenta\"
                 FROM \"Venta\" v
                 WHERE v.\"idVenta\" = $1;`,
         [idVenta]

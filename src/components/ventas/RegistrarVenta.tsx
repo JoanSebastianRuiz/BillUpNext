@@ -29,7 +29,6 @@ import RegistrarDetalleVenta from '@/components/ventas/RegistarDetalleVenta';
 import BotonSeleccion from '../common/BotonSeleccion';
 import SelectForm from '../form/SelectForm';
 import { useTerceroContext } from '@/context/TerceroContext';
-import { TerceroResponsePersonaDTO } from '@/dto/TerceroResponsePersonaDTO';
 
 
 const RegistrarVenta = ({ setModal }: { setModal?: (value: boolean) => void }) => {
@@ -66,7 +65,7 @@ const RegistrarVenta = ({ setModal }: { setModal?: (value: boolean) => void }) =
             });
 
             const valorTotalVenta = detallesVenta.reduce((acc, detalle) => acc + detalle.valorTotalDetalleVenta, 0);
-            const datosModificados = { ...data, idUsuario, valorTotalVenta, detallesVenta: detallesVentaModificados, idCaja: cajaSeleccionada?.idCaja, idUbicacionVenta: Number(data.idUbicacionVenta), idTipoMedioPago: Number(data.idTipoMedioPago) };
+            const datosModificados = { ...data, idUsuario, valorTotalVenta, detallesVenta: detallesVentaModificados, idCaja: cajaSeleccionada?.idCaja, idUbicacionVenta: Number(data.idUbicacionVenta), idTipoMedioPago: Number(data.idTipoMedioPago), idTercero: Number(data.idTercero) };
             const respuesta = await axios.post('/api/ventas', datosModificados);
             setError(null);
             setSuccess(respuesta.data.message);
@@ -91,10 +90,9 @@ const RegistrarVenta = ({ setModal }: { setModal?: (value: boolean) => void }) =
     const titulosTabla = [
         { titulo: "Producto", center: false },
         { titulo: "Cantidad", center: false },
-        { titulo: "Descuento", center: false },
-        { titulo: "Impuestos", center: false },
-        { titulo: "Valor", center: false }
-    ]
+        { titulo: "Detalles", center: false },
+        { titulo: "Acciones", center: true },
+    ];
 
     // Paginacion
     const [currentPage, setCurrentPage] = useState(1);
@@ -114,7 +112,7 @@ const RegistrarVenta = ({ setModal }: { setModal?: (value: boolean) => void }) =
 
 
     return (
-        <ContenedorRegistrar name={"Registrar compra"}>
+        <ContenedorRegistrar name={"Registrar venta"}>
 
             {/* Botón "Agregar producto" alineado a la derecha */}
             <div className="flex justify-end mb-4">
@@ -134,7 +132,7 @@ const RegistrarVenta = ({ setModal }: { setModal?: (value: boolean) => void }) =
                     dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:focus:ring-gray-400"
                         onChange={cambiarTipoProveedor}
                         ref={tipoClienteRef}
-                        defaultValue="true"
+                        defaultValue="false"
                     >
                         <option value="true">Empresa</option>
                         <option value="false">Persona</option>
@@ -165,7 +163,7 @@ const RegistrarVenta = ({ setModal }: { setModal?: (value: boolean) => void }) =
                     {tiposMedioPago.map(tipoMedioPago => <option key={tipoMedioPago.idTipoMedioPago} value={tipoMedioPago.idTipoMedioPago}>{tipoMedioPago.nombreTipoMedioPago}</option>)}
                 </SelectForm>
 
-                <TextareaForm label="Observación" register={register} name="observacionCompra"
+                <TextareaForm label="Observación" register={register} name="observacionVenta"
                     validationRules={{
                         maxLength: { value: 250, message: "Máximo 250 caracteres" }
                     }}
@@ -179,14 +177,20 @@ const RegistrarVenta = ({ setModal }: { setModal?: (value: boolean) => void }) =
 
                                 return (
                                     <TableRow key={detalle.idDetalleVenta}>
-                                        <TableData center={false} width='20%' smallText={true}> {producto?.nombreProducto}</TableData>
-                                        <TableData center={true} width='10%' smallText={true}>{detalle.cantidadDetalleVenta}</TableData>
-                                        <TableData center={false} width='20%' smallText={true}>{`$ ${detalle.valorDescuentoDetalleVenta}`}</TableData>
-                                        <TableData center={false} width='20%' smallText={true}>{`$ ${detalle.valorImpuestosDetalleVenta}`}</TableData>
-                                        <TableData center={false} width='20%' smallText={true}>{`$ ${detalle.valorTotalDetalleVenta}`}</TableData>
-                                        <TableData center={true} width='10%'>
-
-                                            {/* Botones de acción mejor organizados */}
+                                        <TableData center={false} width='20%' smallText={true}>
+                                            {producto?.nombreProducto}
+                                        </TableData>
+                                        <TableData center={true} width='15%' smallText={true}>
+                                            {detalle.cantidadDetalleVenta}
+                                        </TableData>
+                                        <TableData center={false} width='30%' smallText={true}>
+                                            <div className="flex flex-col">
+                                                <span><strong>Valor:</strong> ${detalle.valorTotalDetalleVenta}</span>
+                                                <span><strong>Descuento:</strong> ${detalle.valorDescuentoDetalleVenta}</span>
+                                                <span><strong>Impuestos:</strong> ${detalle.valorImpuestosDetalleVenta}</span>
+                                            </div>
+                                        </TableData>
+                                        <TableData center={true} width='15%'>
                                             <div className="flex justify-center gap-2">
                                                 <BotonAccionCard
                                                     Symbol={Pencil}
@@ -200,18 +204,16 @@ const RegistrarVenta = ({ setModal }: { setModal?: (value: boolean) => void }) =
                                                     Symbol={Trash}
                                                     onClick={() => {
                                                         setDetalleSeleccionado(detalle);
-                                                        setDetallesVenta(detallesVenta.filter((detalleCompra) => detalleCompra.idDetalleVenta !== detalle.idDetalleVenta
-                                                        ));
+                                                        setDetallesVenta(detallesVenta.filter((detalleCompra) => detalleCompra.idDetalleVenta !== detalle.idDetalleVenta));
                                                     }}
                                                     h={5}
                                                 />
                                             </div>
-
                                         </TableData>
                                     </TableRow>)
                             })) : (
 
-                            <TableMessage message="No se han agregado productos" />
+                            <TableMessage message="No se han agregado productos" colSpan={4} />
                         )}
                     </Table>
                 </div>

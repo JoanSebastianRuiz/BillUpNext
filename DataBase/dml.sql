@@ -55,7 +55,8 @@ VALUES
 INSERT INTO "Usuario" ("idEmpresa", "idTipoDocumento", "idMunicipio", "idRol", "numeroDocumentoUsuario", "nombreUsuario", "apellidoUsuario", "correoUsuario", "telefonoUsuario", "direccionUsuario", "claveUsuario", "estadoUsuario")
 VALUES 
 (1,1,1,1,'11111111','Joan','Ruiz','joan@gmail.com','3053724777','Calle 100#44A-14','11111111',TRUE),
-(2,2,7,2,'66666666','Rosalba','Angarita','rosalba@gmail.com','3053888007','Calle 178#33A-13','66666666',TRUE);
+(2,2,7,2,'66666666','Rosalba','Angarita','rosalba@gmail.com','3053888007','Calle 178#33A-13','66666666',TRUE),
+(2,2,7,3,'77777777','Juan','Torres','juant@gmail.com','3053888008','Calle 178#33A-13','77777777',TRUE);
 
 INSERT INTO "Categoria" ("idEmpresa", "nombreCategoria", "estadoCategoria")
 VALUES 
@@ -105,7 +106,7 @@ VALUES
 -- proveedores persona
 INSERT INTO "Tercero" ("idEmpresa", "idTipoDocumento", "idMunicipio", "numeroDocumentoTercero", "nombreTercero", "apellidoTercero", "telefonoTercero", "direccionTercero", "correoTercero", "proveedorTercero", "estadoTercero")
 VALUES
-(2, 1, 1, '77777777', 'Angelica', 'Angarita', '3053724777', 'Calle 100#44A-14', 'angelica@gmail.com', TRUE, TRUE),
+(2, 1, 1, '77777778', 'Angelica', 'Angarita', '3053724777', 'Calle 100#44A-14', 'angelica@gmail.com', TRUE, TRUE),
 (2, 1, 1, '88888888', 'Luis', 'Ruiz', '3053724777', 'Calle 100#44A-14', 'luis@gmail.com', TRUE, TRUE);
 
 
@@ -140,3 +141,21 @@ VALUES
 ('ReteIVA', TRUE),
 ('ReteICA', TRUE);
 
+
+INSERT INTO "TipoMedioPago" ("nombreTipoMedioPago", "estadoTipoMedioPago")
+VALUES
+('Efectivo', TRUE);
+
+
+INSERT INTO "Caja" ("idEmpresa", "nombreCaja", "estadoCaja", "openCaja")
+VALUES
+(2, 'Caja 1', TRUE, FALSE),
+(2, 'Caja 2', TRUE, FALSE),
+(2, 'Caja 3', TRUE, FALSE);
+
+
+INSERT INTO "UbicacionVenta" ("idEmpresa", "nombreUbicacionVenta", "estadoUbicacionVenta")
+VALUES
+(2, 'Ubicacion 1', TRUE),
+(2, 'Ubicacion 2', TRUE),
+(2, 'Ubicacion 3', TRUE);

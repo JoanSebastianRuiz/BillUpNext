@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import NavBarAdmin from '../navs/NavBarAdmin';
 import ThemeSwitcher from './ThemeSwitcher';
 import NavBarSupervisor from '../navs/NavBarSupervisor';
+import NavBarCajero from '../navs/NavBarCajero';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 interface ContenedorPrincipalProps {
@@ -24,6 +25,7 @@ const ContenedorPrincipal = ({ children }: ContenedorPrincipalProps) => {
             <div className="flex justify-between mb-2 mx-2">
                 {idRol === 1 && <NavBarAdmin />}
                 {idRol === 2 && <NavBarSupervisor />}
+                {idRol === 3 && <NavBarCajero />}
                 <ThemeSwitcher />
             </div>
             <div className="flex-1 overflow-auto">

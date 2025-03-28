@@ -1,7 +1,6 @@
 import { DetalleCompraDAO } from "@/dao/DetalleCompraDAO";
 import { ejecutarQuery } from "@/connection/conexion";
 import { DetalleCompraDTO } from "@/dto/DetalleCompraDTO";
-import { ResultadoBooleanDTO } from "@/dto/ResultadoBooleanDTO";
 
 export class DetalleCompraDAOImpl implements DetalleCompraDAO {
   private static instancia: DetalleCompraDAOImpl;

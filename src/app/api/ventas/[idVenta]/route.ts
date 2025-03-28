@@ -26,3 +26,28 @@ export const GET = async (
     );
   }
 };
+
+export const PUT = async (
+  request: Request,
+  { params }: { params: { idVenta: string } }
+) => {
+  const ventaService = VentaServiceImpl.getInstance();
+  const { idVenta } =await params;
+  const data = await request.json();
+
+  if (!idVenta) {
+    return NextResponse.json({ message: "ID inválido" }, { status: 400 });
+  }
+
+  try {
+    const dataWithId = { ...data, idVenta: parseInt(idVenta) };
+    const respuesta = await ventaService.cancel(dataWithId);
+    return respuesta;
+  } catch (error) {
+    console.error("Error al cancelar la venta", error);
+    return NextResponse.json(
+      { message: "Error al cancelar la venta" },
+      { status: 500 }
+    );
+  }
+};

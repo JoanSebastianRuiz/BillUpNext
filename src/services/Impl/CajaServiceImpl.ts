@@ -17,7 +17,6 @@ export class CajaServiceImpl implements CajaService {
       return CajaServiceImpl.instancia;
    }
 
-
    public create = async (caja: CajaDTO): Promise<NextResponse> => {
       try {
          const { idEmpresa,
@@ -77,7 +76,7 @@ export class CajaServiceImpl implements CajaService {
                return NextResponse.json({ message: 'El nombre ya se encuentra registrado' }, { status: 400 });
             }
          }
-         
+
          const respuesta = await this.cajaDAOImpl.update(caja);
 
          if (respuesta) {
@@ -110,6 +109,44 @@ export class CajaServiceImpl implements CajaService {
          return respuesta;
       } catch (error) {
          throw new Error(`Error en CajaService.getAll: ${error}`);
+      }
+   }
+
+   public close = async (idCaja: number): Promise<NextResponse> => {
+      try {
+         const caja = await this.cajaDAOImpl.getById(idCaja);
+
+         if (!caja) {
+            return NextResponse.json({ message: 'La caja no existe' }, { status: 404 });
+         }
+
+         if (caja.openCaja === false) {
+            return NextResponse.json({ message: 'La caja ya se encuentra cerrada' }, { status: 400 });
+         }
+
+         const respuesta = await this.cajaDAOImpl.close(idCaja);
+
+         if (respuesta) {
+            return NextResponse.json({ message: 'Caja cerrada correctamente' }, { status: 200 });
+         } else {
+            return NextResponse.json({ message: 'Error al cerrar la caja' }, { status: 500 });
+         }
+
+      } catch (error) {
+         throw new Error(`Error en CajaService.close: ${error}`);
+      }
+   }
+
+   public getDetalleCajaActual = async (idCaja: number): Promise<CajaDTO | null> => {
+      try {
+         const respuesta = await this.cajaDAOImpl.getDetalleCajaActual(idCaja);
+
+         if (!respuesta) {
+            return null;
+         }
+         return respuesta;
+      } catch (error) {
+         throw new Error(`Error en CajaService.getDetalleCajaActual: ${error}`);
       }
    }
 

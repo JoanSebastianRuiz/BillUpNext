@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { DetalleCajaServiceImpl } from "@/services/Impl/DetalleCajaServiceImpl";
-import { request } from "http";
 
 export const POST = async (request: Request, {params}: {params: {idDetalleCaja: string}}) => {
     const detalleCajaService = DetalleCajaServiceImpl.getInstance();

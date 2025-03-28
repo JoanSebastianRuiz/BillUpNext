@@ -29,7 +29,7 @@ export default function Home() {
       });
 
       if (response?.ok) {
-        router.push("/dashboard");
+        router.push("/perfil");
       } else {
         setError(response?.error || "Usuario o contraseña incorrectos");
       }
