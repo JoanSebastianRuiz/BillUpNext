@@ -5,8 +5,6 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { useUsuarioContext } from '@/context/UsuarioContext';
-import { useEmpresaContext } from '@/context/EmpresaContext';
-import { useSession } from 'next-auth/react';
 
 import { DepartamentoResponseDTO } from '@/dto/DepartamentoResponseDTO';
 import { MunicipioResponseDTO } from '@/dto/MunicipioResponseDTO';
@@ -22,7 +20,7 @@ import ButtonForm from '../form/ButtonForm';
 
 const ActualizarPerfil = ({ setModalActualizarPerfil }: { setModalActualizarPerfil?: (value: boolean) => void }) => {
 
-    const { departamentos, municipios, roles, tiposDocumento, usuario, usuarios } = useUsuarioContext();
+    const { departamentos, municipios, roles, tiposDocumento, usuario, obtenerUsuarios } = useUsuarioContext();
 
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
     const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);
@@ -78,7 +76,7 @@ const ActualizarPerfil = ({ setModalActualizarPerfil }: { setModalActualizarPerf
         try {
             let { idDepartamento, ...datosModificados } = data;
 
-            datosModificados = { ...data, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idEmpresa: parseInt(data.idEmpresa.toString()), idRol: parseInt(data.idRol.toString()), estadoUsuario: Boolean(data.estadoUsuario), claveUsuario: watch('numeroDocumentoUsuario') };
+            datosModificados = { ...data, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idEmpresa: parseInt(usuario.idEmpresa.toString()), idRol: parseInt(data.idRol.toString()), estadoUsuario: true };
 
             const respuesta = await axios.put(`/api/usuarios/${usuario.idUsuario}`, datosModificados);
             setError(null);
@@ -100,9 +98,8 @@ const ActualizarPerfil = ({ setModalActualizarPerfil }: { setModalActualizarPerf
         }
     }
 
-
     return (
-        <ContenedorRegistrar name={idUsuario ? "Actualizar usuario" : "Registrar usuario"}>
+        <ContenedorRegistrar name={"Actualizar perfil"}>
 
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
                 <InputForm label="Nombre" register={register} name="nombreUsuario" type="text"
@@ -147,27 +144,6 @@ const ActualizarPerfil = ({ setModalActualizarPerfil }: { setModalActualizarPerf
                     {municipiosFiltrados.map(mun => <option key={mun.idMunicipio} value={mun.idMunicipio}>{mun.nombreMunicipio}</option>)}
                 </SelectForm>
 
-                {idRol === 1 ? (
-                    <SelectForm label="Empresa" register={register} name="idEmpresa"
-                        validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
-                        errors={errors} >
-                        <option value="" disabled>Seleccione una empresa</option>
-                        {empresas.map(emp => <option key={emp.idEmpresa} value={emp.idEmpresa}>{emp.nombreEmpresa}</option>)}
-                    </SelectForm>
-                ) :
-                    <SelectForm label="Empresa" register={register} name="idEmpresa"
-                        validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
-                        errors={errors} >
-                        {idEmpresa && empresas.find(emp => emp.idEmpresa == idEmpresa) && <option value={idEmpresa}>{empresas.find(emp => emp.idEmpresa == idEmpresa)?.nombreEmpresa}</option>}
-                    </SelectForm>}
-
-                <SelectForm label="Rol" register={register} name="idRol"
-                    validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
-                    errors={errors} >
-                    <option value="" disabled>Seleccione un rol</option>
-                    {roles.map(rol => <option key={rol.idRol} value={rol.idRol}>{rol.nombreRol}</option>)}
-                </SelectForm>
-
                 <InputForm label="Teléfono" register={register} name="telefonoUsuario" type="number"
                     validationRules={{
                         required: { value: true, message: "Este campo es obligatorio" },
@@ -188,18 +164,8 @@ const ActualizarPerfil = ({ setModalActualizarPerfil }: { setModalActualizarPerf
                         validate: (value: string) => isValidEmail(value) || "Correo inválido"
                     }} errors={errors} />
 
-                {idUsuario && (
-                    <SelectForm label="Estado" register={register} name="estadoUsuario"
-                        validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
-                        errors={errors} >
-                        <option value="" disabled>Seleccione un estado</option>
-                        <option value="true">Activo</option>
-                        <option value="false">Inactivo</option>
-                    </SelectForm>
-                )}
-
                 <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
-                    <ButtonForm name={idUsuario ? "Actualizar" : "Registrar"} type="submit" />
+                    <ButtonForm name={"Actualizar"} type="submit" />
                 </div>
             </form>
 
