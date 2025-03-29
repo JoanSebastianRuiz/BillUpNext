@@ -22,7 +22,7 @@ export default withAuth(
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
-    const supervisorRoutes = ["/productos", "/proveedores", "/clientes", "/categorias", "/cajas", "/ubicacion-venta", "/compras"];
+    const supervisorRoutes = ["/productos", "/proveedores", "/clientes", "/categorias", "/cajas", "/ubicacion-venta", "/compras", "/balance-cajas"];
     if (supervisorRoutes.some((route) => req.nextUrl.pathname.startsWith(route)) && userRole !== 2) {
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
@@ -61,6 +61,7 @@ export const config = {
     "/ubicacion-venta/:path*",
     "/perfil/:path*",
     "/compras/:path*",
-    "/ventas/:path*"
+    "/ventas/:path*",
+    "/balance-cajas/:path*",
   ], // Protege estas rutas
 };

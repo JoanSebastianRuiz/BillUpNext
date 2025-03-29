@@ -107,9 +107,9 @@ const VentasPage: React.FC = () => {
 
     const titulosTabla = [
         { titulo: estadoVentaRef.current?.value == "true" ? "Registrada por" : "Cancelada por", center: false },
-        { titulo: "Fecha", center: true },
+        { titulo: "Fecha", center: false },
         { titulo: "Valor", center: false },
-        { titulo: "Acciones", center: true }
+        { titulo: "Acciones", center: false }
     ]
 
     return (
@@ -182,7 +182,7 @@ const VentasPage: React.FC = () => {
                 </ContenedorSelectores>
             </ContenedorFiltros>
 
-            <div className="w-1/2 mx-auto">
+            <div className="">
                 <Table titulos={titulosTabla}>
                     {ventasActuales.length > 0 ? (
                         ventasActuales.map((venta) => {
@@ -208,8 +208,8 @@ const VentasPage: React.FC = () => {
 
                             return (
                                 <TableRow key={venta.idVenta}>
-                                    <TableData center={false}>{`${u?.nombreUsuario} ${u?.apellidoUsuario}`}</TableData>
-                                    <TableData center={true} noWrap={true}>
+                                    <TableData center={false} width="30%">{`${u?.nombreUsuario} ${u?.apellidoUsuario}`}</TableData>
+                                    <TableData center={false} noWrap={true} width="30%">
                                         {fecha
                                             ? new Date(fecha).toLocaleString('es-ES', {
                                                 day: '2-digit',
@@ -221,9 +221,9 @@ const VentasPage: React.FC = () => {
                                             })
                                             : 'N/A'}
                                     </TableData>
-                                    <TableData center={false}>$ {venta.valorTotalVenta || 'N/A'}</TableData>
-                                    <TableData center={true}>
-                                        <div className="flex justify-center gap-2">
+                                    <TableData center={false} noWrap={true} width="20%">$ {venta.valorTotalVenta || 'N/A'}</TableData>
+                                    <TableData center={false} width="20%">
+                                        <div className="flex gap-2">
                                             <BotonAccionCard
                                                 Symbol={List}
                                                 onClick={() => {

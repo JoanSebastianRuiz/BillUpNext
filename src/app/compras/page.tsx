@@ -101,9 +101,9 @@ const ComprasPage: React.FC = () => {
 
     const titulosTabla = [
         { titulo: estadoCompraRef.current?.value == "true" ? "Registrada por" : "Cancelada por", center: false },
-        { titulo: "Fecha", center: true },
+        { titulo: "Fecha", center: false },
         { titulo: "Valor", center: false },
-        { titulo: "Acciones", center: true }
+        { titulo: "Acciones", center: false }
     ]
 
     return (
@@ -158,7 +158,7 @@ const ComprasPage: React.FC = () => {
                 </ContenedorSelectores>
             </ContenedorFiltros>
 
-            <div className="w-1/2 mx-auto">
+            <div className="">
                 <Table titulos={titulosTabla}>
                     {comprasActuales.length > 0 ? (
                         comprasActuales.map((compra) => {
@@ -184,8 +184,8 @@ const ComprasPage: React.FC = () => {
 
                             return (
                                 <TableRow key={compra.idCompra}>
-                                    <TableData center={false}>{`${u?.nombreUsuario} ${u?.apellidoUsuario}`}</TableData>
-                                    <TableData center={true}>
+                                    <TableData center={false} noWrap={true} width="30%">{`${u?.nombreUsuario} ${u?.apellidoUsuario}`}</TableData>
+                                    <TableData center={false} noWrap={true} width="30%">
                                         {fecha
                                             ? new Date(fecha).toLocaleString('es-ES', {
                                                 day: '2-digit',
@@ -197,9 +197,9 @@ const ComprasPage: React.FC = () => {
                                             })
                                             : 'N/A'}
                                     </TableData>
-                                    <TableData center={false}>$ {compra.valorTotalCompra || 'N/A'}</TableData>
-                                    <TableData center={true}>
-                                        <div className="flex justify-center gap-2">
+                                    <TableData center={false} noWrap={true} width="20%">$ {compra.valorTotalCompra || 'N/A'}</TableData>
+                                    <TableData center={false} width="20%">
+                                        <div className="flex gap-2">
                                             <BotonAccionCard
                                                 Symbol={List}
                                                 onClick={() => {
@@ -224,7 +224,7 @@ const ComprasPage: React.FC = () => {
                                 </TableRow>)
                         })) : (
 
-                        <TableMessage message="No hay compras registradas" />
+                        <TableMessage colSpan={4} message="No hay compras registradas" />
                     )}
                 </Table>
             </div>
@@ -235,7 +235,7 @@ const ComprasPage: React.FC = () => {
                 setCurrentPage={setCurrentPage}
             />
 
-            <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
+            <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)} size="large">
                 <RegistrarCompra setModal={setModalRegistrar} />
             </Modal>
 
