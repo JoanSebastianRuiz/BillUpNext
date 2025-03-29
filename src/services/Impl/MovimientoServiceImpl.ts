@@ -2,12 +2,13 @@ import { MovimientoService } from "@/services/MovimientoService";
 import { MovimientoDAOImpl } from "@/dao/impl/MovimientoDAOImpl";
 import { NextResponse } from "next/server";
 import { MovimientoDTO } from "@/dto/MovimientoDTO";
+import { isValidDinero, isValidLength } from "@/util/validators/validators";
 
 export class MovimientoServiceImpl implements MovimientoService {
   private static instancia: MovimientoServiceImpl;
   private movimientoDAOImpl: MovimientoDAOImpl =
     MovimientoDAOImpl.getInstance();
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): MovimientoServiceImpl {
     if (!MovimientoServiceImpl.instancia) {
@@ -21,9 +22,23 @@ export class MovimientoServiceImpl implements MovimientoService {
       const { idUsuario, idCaja, tipoMovimiento, descripcionMovimiento, valorMovimiento } =
         movimiento;
 
-      if (!idUsuario || !idCaja || !tipoMovimiento || !descripcionMovimiento || !valorMovimiento) {
+      if (!idUsuario || !idCaja || tipoMovimiento == undefined || !descripcionMovimiento || !valorMovimiento) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
+          { status: 400 }
+        );
+      }
+
+      if (!isValidLength(descripcionMovimiento, 250)) {
+        return NextResponse.json(
+          { message: "La descripción puede tener máximo 250 caracteres" },
+          { status: 400 }
+        );
+      }
+
+      if (!isValidDinero(valorMovimiento.toString())) {
+        return NextResponse.json(
+          { message: "El valor del movimiento no es válido" },
           { status: 400 }
         );
       }
@@ -45,9 +60,9 @@ export class MovimientoServiceImpl implements MovimientoService {
     }
   };
 
-  public getAll = async (): Promise<Array<MovimientoDTO>> => {
+  public getAll = async (idEmpresa: number): Promise<Array<MovimientoDTO>> => {
     try {
-      const respuesta: MovimientoDTO[] = await this.movimientoDAOImpl.getAll();
+      const respuesta: MovimientoDTO[] = await this.movimientoDAOImpl.getAll(idEmpresa);
       return respuesta;
     } catch (error) {
       throw new Error(`Error en MovimientoService.getAll: ${error}`);

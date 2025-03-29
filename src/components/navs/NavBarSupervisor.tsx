@@ -22,6 +22,7 @@ const NavBarSupervisor = () => {
             {/* Control de cajas y finanzas */}
             <LinkNav href="/cajas" name="Cajas" />
             <LinkNav href="/balance-cajas" name="Balance Cajas" />
+            <LinkNav href="/movimientos" name="Movimientos" />
         </ContenedorNav>
     );
 };

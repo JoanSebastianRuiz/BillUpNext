@@ -14,12 +14,14 @@ export class MovimientoDAOImpl implements MovimientoDAO {
     return MovimientoDAOImpl.instancia;
   }
 
-  public getAll = async (): Promise<Array<MovimientoDTO>> => {
+  public getAll = async (idEmpresa: number): Promise<Array<MovimientoDTO>> => {
     try {
       const movimientoDatabase: MovimientoDTO[] = await ejecutarQuery(
         `SELECT m.\"idMovimiento\", m.\"idUsuario\", m.\"idCaja\", m.\"tipoMovimiento\", m.\"descripcionMovimiento\", m.\"fechaMovimiento\", m.\"valorMovimiento\"
-            FROM \"Movimiento\" m;`,
-        []
+            FROM \"Movimiento\" m
+            JOIN \"Usuario\" u ON m.\"idUsuario\" = u.\"idUsuario\"
+            WHERE u.\"idEmpresa\" = $1;`,
+        [idEmpresa]
       );
 
       return movimientoDatabase;

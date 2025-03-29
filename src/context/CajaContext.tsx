@@ -5,6 +5,7 @@ import { CajaDTO } from "@/dto/CajaDTO";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { DetalleCajaDTO } from "@/dto/DetalleCajaDTO";
+import { MovimientoDTO } from "@/dto/MovimientoDTO";
 
 
 interface CajaContextType {
@@ -19,6 +20,9 @@ interface CajaContextType {
     detallesCajas: DetalleCajaDTO[]
     setDetallesCajas: (detallesCajas: DetalleCajaDTO[]) => void
     obtenerDetallesCajas: () => void
+    movimientos: MovimientoDTO[]
+    setMovimientos: (movimientos: MovimientoDTO[]) => void
+    obtenerMovimientos: () => void
 }
 
 const CajaContext = createContext<CajaContextType | undefined>(undefined);
@@ -30,12 +34,14 @@ interface CajaProviderProps {
 
 export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) => {
     const [cajas, setCajas] = useState<CajaDTO[]>([]);
+    const [movimientos, setMovimientos] = useState<MovimientoDTO[]>([]);
     const [cajaSeleccionada, setCajaSeleccionada] = useState<CajaDTO | null>(null);
     const [detalleCajaActual, setDetalleCajaActual] = useState<DetalleCajaDTO | null>(null);
     const [detallesCajas, setDetallesCajas] = useState<DetalleCajaDTO[]>([]);
     const { data: session, status } = useSession();
     const idEmpresa = session?.user?.idEmpresa;
     const idRol = session?.user?.idRol;
+    const idUsuario = session?.user?.idUsuario;
 
 
     const obtenerCajas = async () => {
@@ -46,6 +52,22 @@ export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) =
             }
         } catch (error) {
             console.error("Error obteniendo cajas ", error)
+        }
+    }
+
+    const obtenerMovimientos = async () => {
+        try {
+            const respuesta = await axios.get<MovimientoDTO[]>(`/api/empresas/${idEmpresa}/movimientos`);
+            if (respuesta.status === 200) {
+                if (idRol === 2) {
+                    setMovimientos(respuesta.data)
+                } else if (idRol === 3) {
+                    const movimientosFiltrados = respuesta.data.filter(movimiento => movimiento.idUsuario === idUsuario);
+                    setMovimientos(movimientosFiltrados)
+                }
+            }
+        } catch (error) {
+            console.error("Error obteniendo movimientos ", error)
         }
     }
 
@@ -64,7 +86,12 @@ export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) =
         try {
             const respuesta = await axios.get<DetalleCajaDTO[]>(`/api/empresas/${idEmpresa}/detalles-cajas`);
             if (respuesta.status === 200) {
-                setDetallesCajas(respuesta.data);
+                if (idRol === 2) {
+                    setDetallesCajas(respuesta.data)
+                } else if (idRol === 3) {
+                    const detallesFiltrados = respuesta.data.filter(detalle => detalle.idUsuario === idUsuario);
+                    setDetallesCajas(detallesFiltrados)
+                }
             }
         } catch (error) {
             console.error("Error obteniendo detalles cajas", error);
@@ -75,15 +102,24 @@ export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) =
         const fetchData = async () => {
             if (status !== "authenticated" || idEmpresa == undefined) return;
             if (idRol === 3) {
-                obtenerCajas();
+                const [cajasRes, detallesCajasRes, movimientosRes] = await Promise.all([
+                    axios.get<CajaDTO[]>(`/api/empresas/${idEmpresa}/cajas`),
+                    axios.get<DetalleCajaDTO[]>(`/api/empresas/${idEmpresa}/detalles-cajas`),
+                    axios.get<MovimientoDTO[]>(`/api/empresas/${idEmpresa}/movimientos`)
+                ]);
+                if (cajasRes.status === 200) setCajas(cajasRes.data);
+                if (detallesCajasRes.status === 200) setDetallesCajas(detallesCajasRes.data.filter(detalle => detalle.idUsuario === idUsuario));
+                if (movimientosRes.status === 200) setMovimientos(movimientosRes.data.filter(movimiento => movimiento.idUsuario === idUsuario));
 
             } else if (idRol === 2) {
-                const [cajasRes, detallesCajasRes] = await Promise.all([
+                const [cajasRes, detallesCajasRes, movimientosRes] = await Promise.all([
                     axios.get<CajaDTO[]>(`/api/empresas/${idEmpresa}/cajas`),
-                    axios.get<DetalleCajaDTO[]>(`/api/empresas/${idEmpresa}/detalles-cajas`)
+                    axios.get<DetalleCajaDTO[]>(`/api/empresas/${idEmpresa}/detalles-cajas`),
+                    axios.get<MovimientoDTO[]>(`/api/empresas/${idEmpresa}/movimientos`)
                 ]);
                 if (cajasRes.status === 200) setCajas(cajasRes.data);
                 if (detallesCajasRes.status === 200) setDetallesCajas(detallesCajasRes.data);
+                if (movimientosRes.status === 200) setMovimientos(movimientosRes.data);
             }
         }
         fetchData();
@@ -101,7 +137,10 @@ export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) =
             obtenerDetalleCajaActual,
             detallesCajas,
             setDetallesCajas,
-            obtenerDetallesCajas
+            obtenerDetallesCajas,
+            movimientos,
+            setMovimientos,
+            obtenerMovimientos
         }}>
             {children}
         </CajaContext.Provider>

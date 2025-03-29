@@ -87,6 +87,13 @@ CREATE OR REPLACE FUNCTION cerrarCaja(
 RETURNS BOOLEAN AS
 $$
 DECLARE
+    _idDetalleCaja INT;
+    _fechaApertura TIMESTAMP;
+    _dineroApertura DOUBLE PRECISION;
+    _dineroCierreSistemaDetalleCaja DOUBLE PRECISION;
+    _totalVentas DOUBLE PRECISION := 0;
+    _totalIngresos DOUBLE PRECISION := 0;
+    _totalEgresos DOUBLE PRECISION := 0;
     row_count INT;
 BEGIN
     -- Verificar si la caja está abierta
@@ -95,14 +102,58 @@ BEGIN
         RETURN FALSE;
     END IF;
 
-    -- Cerrar la caja
+    -- Obtener el idDetalleCaja más reciente asociado a la caja
+    SELECT "idDetalleCaja", "fechaAperturaDetalleCaja", "dineroAperturaDetalleCaja"
+    INTO _idDetalleCaja, _fechaApertura, _dineroApertura
+    FROM "DetalleCaja"
+    WHERE "idCaja" = _idCaja
+    ORDER BY "fechaAperturaDetalleCaja" DESC
+    LIMIT 1;
+
+    IF _idDetalleCaja IS NULL THEN
+        RAISE NOTICE 'No se encontró un detalle de caja asociado a la caja %.', _idCaja;
+        RETURN FALSE;
+    END IF;
+
+    -- Calcular total de ventas en la caja
+    SELECT COALESCE(SUM("valorTotalVenta"), 0)
+    INTO _totalVentas
+    FROM "Venta"
+    WHERE "idCaja" = _idCaja
+    AND "fechaVenta" >= _fechaApertura;
+
+    -- Calcular ingresos en la caja (tipoMovimiento = TRUE)
+    SELECT COALESCE(SUM("valorMovimiento"), 0)
+    INTO _totalIngresos
+    FROM "Movimiento"
+    WHERE "idCaja" = _idCaja
+    AND "tipoMovimiento" = TRUE
+    AND "fechaMovimiento" >= _fechaApertura;
+
+    -- Calcular egresos en la caja (tipoMovimiento = FALSE)
+    SELECT COALESCE(SUM("valorMovimiento"), 0)
+    INTO _totalEgresos
+    FROM "Movimiento"
+    WHERE "idCaja" = _idCaja
+    AND "tipoMovimiento" = FALSE
+    AND "fechaMovimiento" >= _fechaApertura;
+
+    -- Calcular el dinero de cierre del sistema
+    _dineroCierreSistemaDetalleCaja := _dineroApertura + _totalVentas + _totalIngresos - _totalEgresos;
+
+    -- Cerrar la caja y actualizar detalle de caja
     UPDATE "Caja" SET "openCaja" = FALSE WHERE "idCaja" = _idCaja;
-    
+
+    UPDATE "DetalleCaja" SET
+        "fechaCierreDetalleCaja" = NOW(),
+        "dineroCierreSistemaDetalleCaja" = _dineroCierreSistemaDetalleCaja
+    WHERE "idDetalleCaja" = _idDetalleCaja;
+
     -- Verificar si la actualización fue exitosa
     GET DIAGNOSTICS row_count = ROW_COUNT;
 
     IF row_count > 0 THEN
-        RAISE NOTICE 'La caja % ha sido cerrada correctamente.', _idCaja;
+        RAISE NOTICE 'La caja % ha sido cerrada correctamente. Dinero cierre sistema: %', _idCaja, _dineroCierreSistemaDetalleCaja;
         RETURN TRUE;
     ELSE
         RAISE NOTICE 'No se pudo cerrar la caja.';
@@ -111,7 +162,5 @@ BEGIN
 END;
 $$
 LANGUAGE PLPGSQL;
-
-
 
 

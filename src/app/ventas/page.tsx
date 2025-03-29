@@ -48,9 +48,9 @@ const VentasPage: React.FC = () => {
     // Paginacion
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10); // Número de ventas por página
-    const indexOfLastCategoria = currentPage * itemsPerPage;
-    const indexOfFirstCategoria = indexOfLastCategoria - itemsPerPage;
-    const ventasActuales = ventasFiltradas.slice(indexOfFirstCategoria, indexOfLastCategoria);
+    const indexOfLastVenta = currentPage * itemsPerPage;
+    const indexOfFirstVenta = indexOfLastVenta - itemsPerPage;
+    const ventasActuales = ventasFiltradas.slice(indexOfFirstVenta, indexOfLastVenta);
     const totalPages = Math.ceil(ventasFiltradas.length / itemsPerPage);
 
     const filtrarVentas = () => {
