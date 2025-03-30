@@ -2,7 +2,7 @@ import { UsuarioService } from "@/services/UsuarioService";
 import { UsuarioDAOImpl } from "@/dao/impl/UsuarioDAOImpl";
 import { NextResponse } from "next/server";
 import bycript from "bcryptjs";
-import { isValidEmail, isValidPhoneNumber, isValidDocument, isValidLength } from "@/util/validators/validators";
+import { isValidEmail, isValidPhoneNumber, isValidDocument, isValidLength, isValidPassword } from "@/util/validators/validators";
 import { plainToInstance } from "class-transformer";
 import { UsuarioRequestDTO } from "@/dto/UsuarioRequestDTO";
 import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
@@ -238,7 +238,7 @@ export class UsuarioServiceImpl implements UsuarioService {
     private getClaveAutenticacion = async (numeroDocumentoUsuario: string): Promise<UsuarioAutenticacionDTO | null> => {
         try {
             const usuarioAutenticacionDTO = await this.usuarioDAOImpl.getClaveAutenticacion(numeroDocumentoUsuario);
-            if (!usuarioAutenticacionDTO) {
+            if (!usuarioAutenticacionDTO || !usuarioAutenticacionDTO.estadoUsuario) {
                 return null;
             }
             return usuarioAutenticacionDTO;
@@ -246,6 +246,84 @@ export class UsuarioServiceImpl implements UsuarioService {
         } catch (error) {
             console.error("Error al obtener el usuario por documento:", error);
             throw new Error("Error al obtener el usuario por documento");
+        }
+    }
+
+    public updateClave = async (data: UsuarioRequestDTO): Promise<NextResponse> => {
+        const {
+            idUsuario,
+            claveUsuario,
+            claveNuevaUsuario,
+            confirmarClaveUsuario
+        } = data
+
+
+        if (!claveUsuario || !claveNuevaUsuario || !confirmarClaveUsuario || !idUsuario) {
+            return NextResponse.json({ message: "Faltan campos por llenar" }, { status: 400 })
+        }
+
+        if (claveNuevaUsuario !== confirmarClaveUsuario) {
+            return NextResponse.json({ message: "Las contraseñas no coinciden" }, { status: 400 });
+        }
+
+        if (claveUsuario === claveNuevaUsuario) {
+            return NextResponse.json({ message: "La nueva contraseña no puede ser igual a la actual" }, { status: 400 });
+        }
+
+        if (!isValidLength(claveUsuario, 100)) {
+            return NextResponse.json({ message: "Longitud de contraseña invalida" }, { status: 400 });
+        }
+
+        if (!isValidLength(claveNuevaUsuario, 100)) {
+            return NextResponse.json({ message: "Longitud de contraseña nueva invalida" }, { status: 400 });
+        }
+
+        if (!isValidLength(confirmarClaveUsuario, 100)) {
+            return NextResponse.json({ message: "Longitud de contraseña nueva invalida" }, { status: 400 });
+        }
+
+        if (!isValidPassword(claveNuevaUsuario)) {
+            return NextResponse.json({ message: "La contraseña nueva no es válida" }, { status: 400 });
+        }
+
+        if (!isValidPassword(claveUsuario)) {
+            return NextResponse.json({ message: "La contraseña actual no es válida" }, { status: 400 });
+        }
+
+        if (!isValidPassword(confirmarClaveUsuario)) {
+            return NextResponse.json({ message: "La contraseña nueva no es válida" }, { status: 400 });
+        }
+
+        try {
+            const datosDB = await this.usuarioDAOImpl.getDatosActualizarClave(idUsuario);
+
+            if (!datosDB) {
+                return NextResponse.json({ message: "El usuario no existe" }, { status: 404 });
+            }
+
+            if (!datosDB.estadoUsuario) {
+                return NextResponse.json({ message: "El usuario no se encuentra activo" }, { status: 400 });
+            }
+
+            const isValidPassword = await bycript.compare(claveUsuario, datosDB.claveUsuario);
+            if (!isValidPassword) {
+                return NextResponse.json({ message: "La contraseña actual es incorrecta" }, { status: 400 });
+            }
+
+            // Encriptar clave
+            const hashClave = await bycript.hash(claveNuevaUsuario, 12);
+
+            const respuesta = await this.usuarioDAOImpl.updateClave(idUsuario, hashClave);
+
+            if (respuesta) {
+                return NextResponse.json({ message: "Contraseña actualizada correctamente" }, { status: 200 });
+            } else {
+                return NextResponse.json({ message: "Error al actualizar la contraseña" }, { status: 400 });
+            }
+
+        } catch (error) {
+            console.error("Error inesperado:", error);
+            return NextResponse.json({ message: "Error interno del servidor" }, { status: 500 });
         }
     }
 

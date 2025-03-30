@@ -95,7 +95,7 @@ const PerfilPage = () => {
                                 <BotonFiltro
                                     Symbol={User}
                                     onClick={() => setModalActualizarClave(true)}
-                                    name="Actualizar clave"
+                                    name="Actualizar contraseña"
                                 />
                             </div>
                         </motion.div>

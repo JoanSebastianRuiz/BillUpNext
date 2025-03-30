@@ -154,5 +154,32 @@ export class UsuarioDAOImpl implements UsuarioDAO {
         }
     }
 
+    public getDatosActualizarClave = async (idUsuario: number): Promise<UsuarioAutenticacionDTO | null> => {
+        try {
+            const respuesta = await ejecutarQuery<UsuarioAutenticacionDTO>(
+                `SELECT \"claveUsuario\", \"estadoUsuario\" FROM \"Usuario\" WHERE \"idUsuario\" = $1;`,
+                [idUsuario]
+            );
+
+            return respuesta.length > 0 ? respuesta[0] : null;
+        } catch (error) {
+            throw new Error(`Error en UsuarioDAO.getClaveUsuario: ${error}`);
+        }
+    }
+
+    public updateClave = async (idUsuario: number, claveUsuario: string): Promise<boolean> => {
+        try {
+            const respuesta = await ejecutarQuery<ResultadoBooleanDTO>(
+                `SELECT actualizarClaveUsuario ($1,$2) as resultado;`,
+                [idUsuario, claveUsuario]
+            );
+
+            return respuesta.length > 0 ? respuesta[0].resultado : false; // Si la respuesta está vacía, se retorna false
+        }
+        catch (error) {
+            throw new Error(`Error en UsuarioDAO.updateClave: ${error}`);
+        }
+    }
+
 }
 

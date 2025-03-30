@@ -155,3 +155,25 @@ END;
 $$
 LANGUAGE PLPGSQL;
 
+
+CREATE OR REPLACE FUNCTION actualizarClaveUsuario(
+    _idUsuario "Usuario"."idUsuario"%TYPE,
+    _nuevaClave TEXT
+)
+RETURNS BOOLEAN AS
+$$
+BEGIN
+    UPDATE "Usuario" 
+    SET "claveUsuario" = _nuevaClave
+    WHERE "idUsuario" = _idUsuario;
+
+    IF FOUND THEN
+        RAISE NOTICE 'Clave actualizada correctamente para el usuario %', _idUsuario;
+        RETURN TRUE;
+    ELSE
+        RAISE NOTICE 'No se encontró el usuario con ID %', _idUsuario;
+        RETURN FALSE;
+    END IF;
+END;
+$$
+LANGUAGE PLPGSQL;

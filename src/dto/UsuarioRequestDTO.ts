@@ -12,5 +12,7 @@ export interface UsuarioRequestDTO {
     telefonoUsuario: string,
     direccionUsuario: string,
     claveUsuario: string,
-    estadoUsuario: boolean
+    estadoUsuario: boolean,
+    confirmarClaveUsuario?: string,
+    claveNuevaUsuario?: string,
 }

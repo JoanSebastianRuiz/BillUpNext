@@ -11,4 +11,6 @@ export interface UsuarioDAO {
     existUsuarioCorreo(correoUsuario: string): Promise<boolean>;
     existUsuarioTelefono(telefonoUsuario: string): Promise<boolean>;
     getClaveAutenticacion(numeroDocumentoUsuario: string): Promise<UsuarioAutenticacionDTO | null>;
+    getDatosActualizarClave(idUsuario: number): Promise<UsuarioAutenticacionDTO | null>;
+    updateClave(idUsuario: number, claveUsuario : string): Promise<boolean>;
 }
