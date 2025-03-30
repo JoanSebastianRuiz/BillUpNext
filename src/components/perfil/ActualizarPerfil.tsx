@@ -20,7 +20,7 @@ import ButtonForm from '../form/ButtonForm';
 
 const ActualizarPerfil = ({ setModalActualizarPerfil }: { setModalActualizarPerfil?: (value: boolean) => void }) => {
 
-    const { departamentos, municipios, roles, tiposDocumento, usuario, obtenerUsuarios } = useUsuarioContext();
+    const { departamentos, municipios, tiposDocumento, usuario, obtenerUsuarios } = useUsuarioContext();
 
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
     const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);
@@ -58,25 +58,26 @@ const ActualizarPerfil = ({ setModalActualizarPerfil }: { setModalActualizarPerf
 
 
     useEffect(() => {
-        const setearDatos = async () => {
-            setValue("nombreUsuario", usuario.nombreUsuario || '');
-            setValue("apellidoUsuario", usuario.apellidoUsuario || '');
-            setValue("idTipoDocumento", usuario.idTipoDocumento || 0);
-            setValue("numeroDocumentoUsuario", usuario.numeroDocumentoUsuario || '');
-            setValue("idDepartamento", usuario.idDepartamento || 0);
-            setValue("idMunicipio", usuario.idMunicipio || 0);
-            setValue("telefonoUsuario", usuario.telefonoUsuario || '');
-            setValue("direccionUsuario", usuario.direccionUsuario || '');
-            setValue("correoUsuario", usuario.correoUsuario || '');
-        }
-        setearDatos();
+        if (!usuario) return; // Evita errores si usuario es undefined
+        console.log("Datos del usuario:", usuario);
+        setValue("nombreUsuario", usuario.nombreUsuario || '');
+        setValue("apellidoUsuario", usuario.apellidoUsuario || '');
+        setValue("idTipoDocumento", usuario.idTipoDocumento || 0);
+        setValue("numeroDocumentoUsuario", usuario.numeroDocumentoUsuario || '');
+        setValue("idDepartamento", usuario.idDepartamento || 0);
+        setValue("idMunicipio", usuario.idMunicipio || 0);
+        setValue("telefonoUsuario", usuario.telefonoUsuario || '');
+        setValue("direccionUsuario", usuario.direccionUsuario || '');
+        setValue("correoUsuario", usuario.correoUsuario || '');
     }, [usuario, setValue]);
+    
 
     const onSubmit = async (data: UsuarioRequestDTO) => {
         try {
+            console.log(usuario);
             let { idDepartamento, ...datosModificados } = data;
 
-            datosModificados = { ...data, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idEmpresa: parseInt(usuario.idEmpresa.toString()), idRol: parseInt(data.idRol.toString()), estadoUsuario: true };
+            datosModificados = { ...data, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idEmpresa: parseInt(usuario.idEmpresa.toString()), idRol: parseInt(usuario.idRol.toString()), estadoUsuario: true };
 
             const respuesta = await axios.put(`/api/usuarios/${usuario.idUsuario}`, datosModificados);
             setError(null);

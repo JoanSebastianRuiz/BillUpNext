@@ -49,25 +49,13 @@ const ActualizarClave = ({ setModalActualizarClave }: { setModalActualizarClave?
     return (
         <ContenedorRegistrar name={"Actualizar contraseña"}>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-                <InputForm label="Clave actual" register={register} name="claveUsuario" type="text"
+            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-x-6 gap-y-4">
+                <InputForm label="Clave actual" register={register} name="claveUsuario" type="password"
                     validationRules={{
                         required: { value: true, message: "Este campo es obligatorio" },
                         minLength: { value: 8, message: "Mínimo 8 caracteres" },
                         maxLength: { value: 100, message: "Máximo 100 caracteres" },
                         validate: (value: string) => {
-                            if (/[A-Z]/.test(value) === false) {
-                                return "La contraseña debe contener al menos una letra mayúscula";
-                            }
-                            if (/[a-z]/.test(value) === false) {
-                                return "La contraseña debe contener al menos una letra minúscula";
-                            }
-                            if (/\d/.test(value) === false) {
-                                return "La contraseña debe contener al menos un número";
-                            }
-                            if (/[!@#$%^&*(),.?":{}|<>]/.test(value) === false) {
-                                return "La contraseña debe contener al menos un carácter especial";
-                            }
                             if (/\s/.test(value)) {
                                 return "La contraseña no debe contener espacios en blanco";
                             }
@@ -76,7 +64,7 @@ const ActualizarClave = ({ setModalActualizarClave }: { setModalActualizarClave?
                     }}
                     errors={errors} />
 
-                <InputForm label="Contraseña nueva" register={register} name="claveNuevaUsuario" type="text"
+                <InputForm label="Contraseña nueva" register={register} name="claveNuevaUsuario" type="password"
                     validationRules={{
                         required: { value: true, message: "Este campo es obligatorio" },
                         minLength: { value: 8, message: "Mínimo 8 caracteres" },
@@ -105,7 +93,7 @@ const ActualizarClave = ({ setModalActualizarClave }: { setModalActualizarClave?
                     }}
                     errors={errors} />
 
-                <InputForm label="Confirmar contraseña" register={register} name="confirmarClaveUsuario" type="text"
+                <InputForm label="Confirmar contraseña" register={register} name="confirmarClaveUsuario" type="password"
                     validationRules={{
                         required: { value: true, message: "Este campo es obligatorio" },
                         minLength: { value: 8, message: "Mínimo 8 caracteres" },
@@ -137,7 +125,7 @@ const ActualizarClave = ({ setModalActualizarClave }: { setModalActualizarClave?
                     }}
                     errors={errors} />
 
-                <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
+                <div className="col-span-1 flex justify-center mt-4">
                     <ButtonForm name={"Actualizar"} type="submit" />
                 </div>
             </form>

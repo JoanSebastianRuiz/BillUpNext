@@ -286,10 +286,6 @@ export class UsuarioServiceImpl implements UsuarioService {
             return NextResponse.json({ message: "La contraseña nueva no es válida" }, { status: 400 });
         }
 
-        if (!isValidPassword(claveUsuario)) {
-            return NextResponse.json({ message: "La contraseña actual no es válida" }, { status: 400 });
-        }
-
         if (!isValidPassword(confirmarClaveUsuario)) {
             return NextResponse.json({ message: "La contraseña nueva no es válida" }, { status: 400 });
         }
@@ -305,9 +301,11 @@ export class UsuarioServiceImpl implements UsuarioService {
                 return NextResponse.json({ message: "El usuario no se encuentra activo" }, { status: 400 });
             }
 
-            const isValidPassword = await bycript.compare(claveUsuario, datosDB.claveUsuario);
-            if (!isValidPassword) {
-                return NextResponse.json({ message: "La contraseña actual es incorrecta" }, { status: 400 });
+            if (datosDB.claveUsuario != claveUsuario) {
+                const validPassword = await bycript.compare(claveUsuario, datosDB.claveUsuario);
+                if (!validPassword) {
+                    return NextResponse.json({ message: "La contraseña actual es incorrecta" }, { status: 400 });
+                }
             }
 
             // Encriptar clave

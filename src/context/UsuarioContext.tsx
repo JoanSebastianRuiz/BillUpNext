@@ -56,6 +56,7 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
 
             if (respuesta.status === 200) {
                 setUsuarios(respuesta.data.filter(usuario => usuario.idUsuario !== session.user.idUsuario));
+                setUsuario(respuesta.data.find(usuario => usuario.idUsuario === idUsuario) || {} as UsuarioResponseDTO);
             } else {
                 console.error(respuesta.data);
             }

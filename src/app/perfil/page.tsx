@@ -104,7 +104,7 @@ const PerfilPage = () => {
             </div>
 
             {/* Modal para actualizar la clave */}
-            <Modal isOpen={modalActualizarClave} setIsOpen={() => setModalActualizarClave(false)}>
+            <Modal isOpen={modalActualizarClave} setIsOpen={() => setModalActualizarClave(false)} size="small">
                 <ActualizarClave setModalActualizarClave={setModalActualizarClave} />
             </Modal>
 
