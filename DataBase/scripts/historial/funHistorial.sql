@@ -38,7 +38,7 @@ BEGIN
 
 END;
 $$ 
-LANGUAGE PLGSQL;
+LANGUAGE PLPGSQL;
 
 -- Crea triggers  a todas las tablas de la base de datos, excepto a la tabla Historial
 DO $$
