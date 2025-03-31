@@ -205,12 +205,12 @@ const CajasPage: React.FC = () => {
             />
 
             {/* Modal para registrar una caja*/}
-            <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
+            <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)} size="small">
                 <RegistrarCaja setModalRegistrar={setModalRegistrar} />
             </Modal>
 
             {/* Modal para actualizar una caja*/}
-            <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)} >
+            <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)} size="small">
                 <RegistrarCaja cajaSeleccionada={cajaSeleccionada} setModalActualizar={setModalActualizar} />
             </Modal>
 

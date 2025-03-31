@@ -10,7 +10,7 @@ interface ModalProps {
 }
 
 const sizeClasses = {
-    small: "w-96 h-80",
+    small: "w-96 h-92",
     medium: "w-[600px] h-[400px]",
     large: "w-[900px] h-[600px]",
 };

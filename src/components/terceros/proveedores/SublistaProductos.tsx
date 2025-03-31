@@ -26,7 +26,7 @@ interface ProductoMostrar {
     idTerceroProducto: number;
     nombreProducto: string;
     precioCompraTerceroProducto: number;
-    estadoTerceroProducto: boolean;
+    estadoTerceroProducto: boolean | string;
 }
 
 
@@ -176,14 +176,14 @@ const SublistaProductos = ({ tercero}: { tercero: TerceroResponsePersonaDTO | Te
             />
 
 
-            {/* Modal para aagregar un tercero producto*/}
-            <Modal isOpen={modalRegistar} setIsOpen={() => setModalRegistrar(false)}>
+            {/* Modal para agregar un tercero producto*/}
+            <Modal isOpen={modalRegistar} setIsOpen={() => setModalRegistrar(false)} size="small">
                 <RegistrarTerceroProducto idTercero={tercero?.idTercero} setModalRegistrar={setModalRegistrar} />
             </Modal>
 
 
             {/* Modal para actualizar un tercero producto*/}
-            <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
+            <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)} size="small">
                 <RegistrarTerceroProducto idTercero={tercero?.idTercero} idTerceroProductoSeleccionado={idTerceroProductoSeleccionado} setModalActualizar={setModalActualizar} />
             </Modal>
 

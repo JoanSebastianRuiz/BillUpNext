@@ -49,15 +49,3 @@ BEGIN
 END;
 $$
 LANGUAGE PLPGSQL;
-
-
-CREATE OR REPLACE FUNCTION validarPorcentajeGravamenProducto(
-    _porcentajeGravamenProducto "GravamenProducto"."porcentajeGravamenProducto"%TYPE
-)
-RETURNS BOOLEAN AS
-$$
-BEGIN
-    RETURN _porcentajeGravamenProducto > 0;
-END;
-$$
-LANGUAGE PLPGSQL;

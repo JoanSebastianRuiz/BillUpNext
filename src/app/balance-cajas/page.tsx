@@ -93,7 +93,7 @@ const BalanceCajasPage: React.FC = () => {
     }, [usuarios]);
 
     let titulosTabla;
-    if (usuario.idRol === 2) {
+    if (usuario.idRol === 3) {
         titulosTabla = [
             { titulo: "Fecha Apertura", center: false },
             { titulo: "Dinero Apertura", center: false },

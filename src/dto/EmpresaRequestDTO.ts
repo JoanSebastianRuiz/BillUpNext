@@ -1,8 +1,8 @@
 export interface EmpresaRequestDTO {
     idEmpresa?: number,
-    idTipoPersona: number,
-    idRegimenContribuyente: number,
-    idMunicipio: number,
+    idTipoPersona: number | string,
+    idRegimenContribuyente: number | string,
+    idMunicipio: number | string,
     nitEmpresa: string,
     digitoVerificacionEmpresa: string,
     nombreEmpresa: string,
@@ -12,6 +12,6 @@ export interface EmpresaRequestDTO {
     telefonoEmpresa: string,
     correoEmpresa: string,
     logoEmpresa: string,
-    estadoEmpresa: boolean,
-    idDepartamento?: number
+    estadoEmpresa: boolean | string,
+    idDepartamento?: number | string,
 }

@@ -26,6 +26,7 @@ import { MovimientoDTO } from "@/dto/MovimientoDTO";
 import AbrirCaja from "@/components/cajas/AbrirCaja";
 import CerrarCaja from "@/components/cajas/CerrarCaja";
 import MostrarInfoMovimiento from "@/components/movimientos/MostrarInfoMovimiento";
+import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 
 
 const MovimientosPage: React.FC = () => {
@@ -36,6 +37,7 @@ const MovimientosPage: React.FC = () => {
     const [modalCerrarCaja, setModalCerrarCaja] = useState(false);
     const { movimientos, cajaSeleccionada, cajas } = useCajaContext()
     const { usuarios, usuario } = useUsuarioContext()
+    const [cajeros, setCajeros] = useState<UsuarioResponseDTO[]>(usuarios);
     const [movimientosFiltrados, setMovimientosFiltrados] = useState<MovimientoDTO[]>([]);
 
     const fechaMovimientoRef = useRef<HTMLInputElement | null>(null);
@@ -117,9 +119,16 @@ const MovimientosPage: React.FC = () => {
 
     useEffect(() => {
         if (usuario.idRol === 2) {
+            const cajerosFiltrados = usuarios.filter(usuario => usuario.idRol === 3);
+            setCajeros(cajerosFiltrados);
+        }
+    }, [usuarios, usuario.idRol]);
+
+    useEffect(() => {
+        if (usuario.idRol === 3) {
             setMovimientosFiltrados(movimientos.filter(movimiento => movimiento.idUsuario === usuario.idUsuario));
         }
-    }, [usuarios]);
+    }, [movimientos]);
 
     let titulosTabla;
     if (usuario.idRol === 3) {
@@ -142,7 +151,7 @@ const MovimientosPage: React.FC = () => {
 
     return (
         <ContenedorPrincipal>
-            <ContenedorFiltros title="Ventas">
+            <ContenedorFiltros title="Movimientos">
                 <ContenedorBotonesFiltros>
                     {usuario.idRol === 3 && (
                         cajaSeleccionada == null ?
@@ -198,7 +207,7 @@ const MovimientosPage: React.FC = () => {
 
                     <SelectFiltro
                         id="tipoMovimiento"
-                        name="Estado"
+                        name="Tipo"
                         onChange={filtrarMovimientos}
                         ref={tipoMovimientoRef}
                     >
@@ -226,9 +235,15 @@ const MovimientosPage: React.FC = () => {
                             onChange={filtrarMovimientos}
                             ref={idUsuarioRef}
                         >
-                            <option key={usuario.idUsuario} value={usuario.idUsuario}>
-                                {`${usuario.nombreUsuario} ${usuario.apellidoUsuario}`}
-                            </option>
+                            {cajeros.length > 0 ? (
+                                cajeros.map(cajero => (
+                                    <option key={cajero.idUsuario} value={cajero.idUsuario}>
+                                        {cajero.nombreUsuario}
+                                    </option>
+                                ))
+                            ) : (
+                                <option value="0" disabled>No hay cajeros disponibles</option>
+                            )}
                         </SelectFiltro>
                     )}
                 </ContenedorSelectores>

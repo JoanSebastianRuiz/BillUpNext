@@ -59,8 +59,10 @@ const RegistrarGravamenProducto = ({
       );
       setValue(
         "estadoGravamenProducto",
-        gravamenesProductoSeleccionado?.estadoGravamenProducto ?? true
+        gravamenesProductoSeleccionado?.estadoGravamenProducto ? "true" : "false"
       );
+    } else {
+      setValue("estadoGravamenProducto", "");
     }
   }, [gravamenesProductoSeleccionado, setValue]);
 

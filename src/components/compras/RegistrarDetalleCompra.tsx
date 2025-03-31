@@ -28,7 +28,27 @@ const RegistrarDetalleCompra = ({ detalleCompra, detallesCompra, setDetallesComp
     const [success, setSuccess] = useState<string | null>(null);
     const [proveedorEmpresa, setProveedorEmpresa] = useState<boolean>(true);
     const tipoProveedorRef = useRef<HTMLSelectElement>(null);
+    const [tipoProveedor, setTipoProveedor] = useState<string>("");
 
+    const cambiarTipoProveedor = () => {
+        const tipo = tipoProveedorRef.current?.value;
+        if (tipo !== undefined && tipo !== "") {
+            setTipoProveedor(tipo);
+            setProveedorEmpresa(tipo === "true");
+        }
+    };
+
+    useEffect(() => {
+        // Se activa cuando tipoProveedor cambia, forzando la actualización del select de proveedores
+    }, [tipoProveedor]);
+
+    useEffect(() => {
+        if (tipoProveedorRef.current?.value === "true") {
+            setProveedorEmpresa(true);
+        } else if (tipoProveedorRef.current?.value === "false") {
+            setProveedorEmpresa(false);
+        }
+    }, [tipoProveedorRef.current?.value]);
 
     const { register, handleSubmit, formState: { errors }, watch, setValue, reset } = useForm<DetalleCompraDTO>();
     const idTercero = watch("idTercero");
@@ -56,13 +76,17 @@ const RegistrarDetalleCompra = ({ detalleCompra, detallesCompra, setDetallesComp
             setValue("idProducto", detalleCompra.idProducto);
             setValue("cantidadDetalleCompra", detalleCompra.cantidadDetalleCompra);
             setValue("valorDetalleCompra", detalleCompra.valorDetalleCompra);
+        } else {
+            setValue("idProducto", "");
+            setValue("idTercero", "");
+            tipoProveedorRef.current!.value = "";
         }
     }, [detalleCompra, setValue]);
 
 
     const onSubmit = async (data: DetalleCompraDTO) => {
         if (detalleCompra) {
-            const dataModificada = { ...data, idDetalleCompra: contadorDetalles + 1, idTercero: parseInt(data.idTercero.toString()), idProducto: parseInt(data.idProducto.toString()), cantidadDetalleCompra: parseInt(data.cantidadDetalleCompra.toString()) };
+            const dataModificada = { ...data, idDetalleCompra: detalleCompra.idDetalleCompra, idTercero: parseInt(detalleCompra.idTercero.toString()), idProducto: parseInt(detalleCompra.idProducto.toString()), cantidadDetalleCompra: parseInt(data.cantidadDetalleCompra.toString()) };
 
             const detallesCompraActualizados = detallesCompra.map(detalle =>
                 detalle.idDetalleCompra === detalleCompra.idDetalleCompra ? dataModificada : detalle
@@ -81,58 +105,65 @@ const RegistrarDetalleCompra = ({ detalleCompra, detallesCompra, setDetallesComp
         }
     }
 
-    const cambiarTipoProveedor = () => {
-        const tipoProveedor = tipoProveedorRef.current?.value;
-
-        if (tipoProveedor !== undefined && tipoProveedor !== "") {
-            setProveedorEmpresa(tipoProveedor === "true");
-        }
-    };
 
 
     return (
         <ContenedorRegistrar name={detalleCompra ? "Actualizar producto" : "Registrar producto"}>
 
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-                <div className="flex flex-col gap-y-2 w-full">
-                    <label htmlFor="tipoProveedor" className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                        Tipo de proveedor
-                    </label>
+                {!detalleCompra &&
+                    <div className="flex flex-col gap-y-2 w-full">
+                        <label htmlFor="tipoProveedor" className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                            Tipo de proveedor
+                        </label>
 
-                    <select
-                        id="tipoProveedor"
-                        className="w-full max-w-md h-[40px] rounded-lg border px-3 py-2 transition-all duration-200
+                        <select
+                            id="tipoProveedor"
+                            className="w-full max-w-md h-[40px] rounded-lg border px-3 py-2 transition-all duration-200
                     bg-gray-100 text-gray-900 border-gray-400 focus:ring-2 focus:ring-gray-500
                     dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:focus:ring-gray-400"
-                        onChange={cambiarTipoProveedor}
-                        ref={tipoProveedorRef}
-                        defaultValue="true"
-                    >
-                        <option value="true">Empresa</option>
-                        <option value="false">Persona</option>
-                    </select>
-                </div>
+                            onChange={cambiarTipoProveedor}
+                            ref={tipoProveedorRef}
+                        >
+                            <option value="" disabled>Seleccione un tipo de proveedor</option>
+                            <option value="true">Empresa</option>
+                            <option value="false">Persona</option>
+                        </select>
+                    </div>}
+
+                {!detalleCompra &&
+                    <SelectForm label="Proveedor" register={register} name="idTercero"
+                        validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
+                        errors={errors}>
+                        <option value="" disabled>
+                            {tipoProveedor === ""
+                                ? "Seleccione un tipo de proveedor"
+                                : tipoProveedor === "true"
+                                    ? proveedoresEmpresa.length > 0
+                                        ? "Seleccione un proveedor"
+                                        : "No hay proveedores disponibles"
+                                    : proveedoresPersona.length > 0
+                                        ? "Seleccione un proveedor"
+                                        : "No hay proveedores disponibles"}
+                        </option>
+                        {tipoProveedorRef.current?.value === "" ?
+                            <option value="" disabled>Seleccione un tipo de proveedor</option> :
+                            proveedorEmpresa ?
+                                proveedoresEmpresa.map(proveedor => <option key={proveedor.idTercero} value={proveedor.idTercero}>{proveedor.nombreTercero}</option>) :
+                                proveedoresPersona.map(proveedor => <option key={proveedor.idTercero} value={proveedor.idTercero}>{`${proveedor.nombreTercero} ${proveedor.apellidoTercero}`}</option>)}
+                    </SelectForm>}
 
 
-                <SelectForm label="Proveedor" register={register} name="idTercero"
-                    validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
-                    errors={errors}>
-                    <option value="" disabled>Seleccione un proveedor</option>
-                    {proveedorEmpresa ?
-                        proveedoresEmpresa.map(proveedor => <option key={proveedor.idTercero} value={proveedor.idTercero}>{proveedor.nombreTercero}</option>) :
-                        proveedoresPersona.map(proveedor => <option key={proveedor.idTercero} value={proveedor.idTercero}>{`${proveedor.nombreTercero} ${proveedor.apellidoTercero}`}</option>)}
-                </SelectForm>
-
-
-                <SelectForm label="Producto" register={register} name="idProducto"
-                    validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
-                    errors={errors}>
-                    <option value="" disabled>Seleccione un producto</option>
-                    {proveedoresProductoFiltrados.map(pp => {
-                        const producto = productos.find(producto => producto.idProducto === pp.idProducto);
-                        return <option key={pp.idTerceroProducto} value={pp.idProducto}>{producto?.nombreProducto}</option>
-                    })}
-                </SelectForm>
+                {!detalleCompra &&
+                    <SelectForm label="Producto" register={register} name="idProducto"
+                        validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
+                        errors={errors}>
+                        <option value="" disabled>{proveedoresProductoFiltrados.length > 0 ? "Seleccione un producto" : "No hay productos disponibles"}</option>
+                        {proveedoresProductoFiltrados.map(pp => {
+                            const producto = productos.find(producto => producto.idProducto === pp.idProducto);
+                            return <option key={pp.idTerceroProducto} value={pp.idProducto}>{producto?.nombreProducto}</option>
+                        })}
+                    </SelectForm>}
 
 
                 <InputForm label="Cantidad" register={register} name="cantidadDetalleCompra" type="number"

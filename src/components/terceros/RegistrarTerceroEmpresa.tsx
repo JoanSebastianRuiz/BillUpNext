@@ -81,13 +81,12 @@ const RegistrarTerceroEmpresa = ({ terceroSeleccionado, setModalActualizar, setM
             setValue("telefonoTercero", terceroSeleccionado.telefonoTercero || '');
             setValue("direccionTercero", terceroSeleccionado.direccionTercero || '');
             setValue("correoTercero", terceroSeleccionado.correoTercero || '');
-            setValue("estadoTercero", terceroSeleccionado.estadoTercero);
-
-            register("idEmpresa");
-            setValue("idEmpresa", terceroSeleccionado.idEmpresa || 0);
-
-            register("proveedorTercero");
-            setValue("proveedorTercero", terceroSeleccionado.proveedorTercero);
+            setValue("estadoTercero", terceroSeleccionado.estadoTercero? "true" : "false");
+        } else{
+            setValue("idTipoPersona", "");
+            setValue("idRegimenContribuyente", "");
+            setValue("idDepartamento", "");
+            setValue("idMunicipio", "");
         }
 
     }, [terceroSeleccionado, setValue]);
@@ -98,9 +97,9 @@ const RegistrarTerceroEmpresa = ({ terceroSeleccionado, setModalActualizar, setM
             if (terceroSeleccionado) {
                 let { idDepartamento, ...datosModificados } = data;
 
-                datosModificados = { ...datosModificados, idTipoPersona: parseInt(data.idTipoPersona.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idRegimenContribuyente: parseInt(data.idRegimenContribuyente.toString()), estadoTercero: String(data.estadoTercero) === "true" };
+                datosModificados = { ...datosModificados, idTipoPersona: parseInt(data.idTipoPersona.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idRegimenContribuyente: parseInt(data.idRegimenContribuyente.toString()), estadoTercero: String(data.estadoTercero) === "true", idEmpresa: parseInt(idEmpresa.toString()), proveedorTercero: proveedorTerceroEmpresa };
 
-                const respuesta = await axios.put(`/api/terceros/${terceroSeleccionado}?tipo=empresa`, datosModificados);
+                const respuesta = await axios.put(`/api/terceros/${terceroSeleccionado.idTercero}?tipo=empresa`, datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerEmpresas(proveedorTerceroEmpresa ? "proveedores" : "clientes");

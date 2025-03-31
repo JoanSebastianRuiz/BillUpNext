@@ -1,7 +1,7 @@
 export interface TerceroProductoDTO {
     idTerceroProducto?: number,
     idTercero: number,
-    idProducto: number,
+    idProducto: number | string,
     precioCompraTerceroProducto: number,
-    estadoTerceroProducto: boolean
+    estadoTerceroProducto: boolean | string
 }

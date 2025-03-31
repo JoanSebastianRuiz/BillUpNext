@@ -55,7 +55,11 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
             const respuesta = await axios.get<UsuarioResponseDTO[]>(endpoint);
 
             if (respuesta.status === 200) {
-                setUsuarios(respuesta.data.filter(usuario => usuario.idUsuario !== session.user.idUsuario));
+                if (idRol === 1) {
+                    setUsuarios(respuesta.data.filter((usuario: UsuarioResponseDTO) => usuario.idRol !== 3 && usuario.idUsuario !== session.user.idUsuario) || []);
+                } else {
+                    setUsuarios(respuesta.data.filter((usuario: UsuarioResponseDTO) => usuario.idUsuario !== session.user.idUsuario) || []);
+                }
                 setUsuario(respuesta.data.find(usuario => usuario.idUsuario === idUsuario) || {} as UsuarioResponseDTO);
             } else {
                 console.error(respuesta.data);
@@ -84,13 +88,21 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
                 if (departamentosRes.status === 200) setDepartamentos(departamentosRes.data);
                 if (municipiosRes.status === 200) setMunicipios(municipiosRes.data);
                 if (rolesRes.status === 200) {
-                    setRoles(rolesRes.data.filter((rol: RolDTO) => rol.estadoRol === true && !(idRol === 2 && rol.idRol === 1)));
+                    if (idRol === 1) {
+                        setRoles(rolesRes.data.filter((rol: RolDTO) => rol.idRol !== 3));
+                    } else if (idRol === 2) {
+                        setRoles(rolesRes.data.filter((rol: RolDTO) => rol.idRol !== 1));
+                    }
                 }
                 if (tiposDocumentoRes.status === 200) {
                     setTiposDocumento(tiposDocumentoRes.data.filter((tipo: TipoDocumentoResponseDTO) => tipo.estadoTipoDocumento === true) || []);
                 }
                 if (usuariosRes.status === 200) {
-                    setUsuarios(usuariosRes.data.filter((usuario: UsuarioResponseDTO) => usuario.idUsuario !== session.user.idUsuario) || []);
+                    if (idRol === 1) {
+                        setUsuarios(usuariosRes.data.filter((usuario: UsuarioResponseDTO) => usuario.idRol !== 3 && usuario.idUsuario !== session.user.idUsuario) || []);
+                    } else {
+                        setUsuarios(usuariosRes.data.filter((usuario: UsuarioResponseDTO) => usuario.idUsuario !== session.user.idUsuario) || []);
+                    }
                     setUsuario(usuariosRes.data.find((usuario: UsuarioResponseDTO) => usuario.idUsuario === idUsuario) || {} as UsuarioResponseDTO);
                 }
             } catch (error) {
@@ -102,7 +114,6 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
 
 
         if (idRol === 1 || idRol === 2 || idRol === 3) fetchData();
-        console.log(usuarios);
     }, [status, idRol, idEmpresa]);
 
     return (

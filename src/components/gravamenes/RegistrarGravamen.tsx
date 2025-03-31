@@ -38,7 +38,7 @@ const RegistrarGravamen = ({
       setValue("nombreGravamen", gravamenSeleccionado.nombreGravamen || '');
       setValue(
         "estadoGravamen",
-        gravamenSeleccionado.estadoGravamen ? true : false);
+        gravamenSeleccionado.estadoGravamen ? "true" : "false");
     }
 
   }, [gravamenSeleccionado, setValue]);

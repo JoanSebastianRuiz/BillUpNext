@@ -19,6 +19,7 @@ import Notificacion from '@/components/form/Notificacion';
 import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';
 import { UsuarioResponseDTO } from '@/dto/UsuarioResponseDTO';
+import { EmpresaResponseDTO } from '@/dto/EmpresaResponseDTO';
 
 
 const RegistrarUsuario = ({ usuarioSeleccionado, setModalActualizar, setModalRegistrar }: { usuarioSeleccionado?: UsuarioResponseDTO | null, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
@@ -28,6 +29,7 @@ const RegistrarUsuario = ({ usuarioSeleccionado, setModalActualizar, setModalReg
 
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
     const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);
+    const [empresasFiltradas, setEmpresasFiltradas] = useState<EmpresaResponseDTO[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
@@ -64,6 +66,12 @@ const RegistrarUsuario = ({ usuarioSeleccionado, setModalActualizar, setModalReg
         }
     }, [idMunicipio, municipios]);
 
+    useEffect(() => {
+        if (!empresas.length) return;
+        if (idRol == 1) setEmpresasFiltradas(empresas.filter((empresa) => empresa.estadoEmpresa == true));
+
+    }, [idRol, idEmpresa, empresas]);
+
 
     useEffect(() => {
         if (usuarioSeleccionado) {
@@ -74,14 +82,19 @@ const RegistrarUsuario = ({ usuarioSeleccionado, setModalActualizar, setModalReg
             setValue("numeroDocumentoUsuario", usuarioSeleccionado.numeroDocumentoUsuario || '');
             setValue("idDepartamento", usuarioSeleccionado.idDepartamento || 0);
             setValue("idMunicipio", usuarioSeleccionado.idMunicipio || 0);
-            setValue("idEmpresa", usuarioSeleccionado.idEmpresa || 0);
+            if (idRol == 1) setValue("idEmpresa", usuarioSeleccionado.idEmpresa || 0);
             setValue("idRol", usuarioSeleccionado.idRol || 0);
             setValue("telefonoUsuario", usuarioSeleccionado.telefonoUsuario || '');
             setValue("direccionUsuario", usuarioSeleccionado.direccionUsuario || '');
             setValue("correoUsuario", usuarioSeleccionado.correoUsuario || '');
-            setValue("estadoUsuario", usuarioSeleccionado.estadoUsuario);
-
-        };
+            setValue("estadoUsuario", usuarioSeleccionado.estadoUsuario ? "true" : "false");
+        } else {
+            setValue("idDepartamento", "");
+            setValue("idMunicipio", "");
+            if (idRol == 1) setValue("idEmpresa", "");
+            setValue("idRol", "");
+            setValue("idTipoDocumento", "");
+        }
     }, [usuarioSeleccionado, setValue]);
 
     useEffect(() => {
@@ -94,13 +107,10 @@ const RegistrarUsuario = ({ usuarioSeleccionado, setModalActualizar, setModalReg
         try {
             if (usuarioSeleccionado) {
                 let { idDepartamento, ...datosModificados } = data;
-                console.log(data);
 
                 datosModificados = { ...data, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idEmpresa: parseInt(data.idEmpresa.toString()), idRol: parseInt(data.idRol.toString()), estadoUsuario: String(data.estadoUsuario) === "true", claveUsuario: watch('numeroDocumentoUsuario') };
 
-                console.log(datosModificados);
-
-                const respuesta = await axios.put(`/api/usuarios/${usuarioSeleccionado}`, datosModificados);
+                const respuesta = await axios.put(`/api/usuarios/${usuarioSeleccionado.idUsuario}`, datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerUsuarios();
@@ -177,19 +187,14 @@ const RegistrarUsuario = ({ usuarioSeleccionado, setModalActualizar, setModalReg
                     {municipiosFiltrados.map(mun => <option key={mun.idMunicipio} value={mun.idMunicipio}>{mun.nombreMunicipio}</option>)}
                 </SelectForm>
 
-                {idRol === 1 ? (
+                {idRol === 1 && (
                     <SelectForm label="Empresa" register={register} name="idEmpresa"
                         validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
                         errors={errors} >
-                        <option value="" disabled>Seleccione una empresa</option>
-                        {empresas.map(emp => <option key={emp.idEmpresa} value={emp.idEmpresa}>{emp.nombreEmpresa}</option>)}
+                        <option value="" disabled>{empresasFiltradas.length > 0 ? "Seleccione una empresa" : "No hay empresas disponibles"}</option>
+                        {empresasFiltradas.map(emp => <option key={emp.idEmpresa} value={emp.idEmpresa}>{emp.nombreEmpresa}</option>)}
                     </SelectForm>
-                ) :
-                    <SelectForm label="Empresa" register={register} name="idEmpresa"
-                        validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
-                        errors={errors} >
-                        {idEmpresa && empresas.find(emp => emp.idEmpresa == idEmpresa) && <option value={idEmpresa}>{empresas.find(emp => emp.idEmpresa == idEmpresa)?.nombreEmpresa}</option>}
-                    </SelectForm>}
+                )}
 
                 <SelectForm label="Rol" register={register} name="idRol"
                     validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}

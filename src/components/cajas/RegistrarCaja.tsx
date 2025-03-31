@@ -35,8 +35,10 @@ const RegistrarCaja = ({ cajaSeleccionada, setModalActualizar, setModalRegistrar
     useEffect(() => {
         if (cajaSeleccionada) {
             setValue("nombreCaja", cajaSeleccionada.nombreCaja || '');
-            setValue("estadoCaja", cajaSeleccionada.estadoCaja);
-        } 
+            setValue("estadoCaja", cajaSeleccionada.estadoCaja ? 'true' : 'false');
+        } else {
+            setValue("estadoCaja", "");
+        }
     }, [cajaSeleccionada, setValue]);
 
 
@@ -48,7 +50,7 @@ const RegistrarCaja = ({ cajaSeleccionada, setModalActualizar, setModalRegistrar
                 //actualizar caja
 
                 const datosModificados = {
-                    ...data, 
+                    ...data,
                     idEmpresa: idEmpresa,
                     estadoCaja: String(data.estadoCaja) === "true"
                 };
@@ -60,7 +62,7 @@ const RegistrarCaja = ({ cajaSeleccionada, setModalActualizar, setModalRegistrar
             } else {
 
                 const datosModificados = {
-                    ...data, 
+                    ...data,
                     idEmpresa: idEmpresa,
                     estadoCaja: true
                 };
@@ -107,8 +109,8 @@ const RegistrarCaja = ({ cajaSeleccionada, setModalActualizar, setModalRegistrar
                         validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
                         errors={errors}>
                         <option value="" disabled> Selecione un estado</option>
-                        <option value="true"> Activo </option>
-                        <option value="false"> Inactivo </option>
+                        <option value="true"> Disponible </option>
+                        <option value="false"> No disponible </option>
                     </SelectForm>
                 )}
 

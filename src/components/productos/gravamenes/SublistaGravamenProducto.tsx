@@ -173,14 +173,14 @@ const SublistaGravamenes = ({ producto}: { producto: ProductoResponseDTO | Produ
             />
 
 
-            {/* Modal para aagregar un gravamen producto*/}
-            <Modal isOpen={modalRegistar} setIsOpen={() => setModalRegistrar(false)}>
+            {/* Modal para agregar un gravamen producto*/}
+            <Modal isOpen={modalRegistar} setIsOpen={() => setModalRegistrar(false)} size="small">
                 <RegistrarGravamenProducto idProducto={producto?.idProducto} setModalRegistrar={setModalRegistrar} />
             </Modal>
 
 
             {/* Modal para actualizar un gravamen producto*/}
-            <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
+            <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)} size="small">
                 <RegistrarGravamenProducto idProducto={producto?.idProducto} idGravamenProductoSeleccionado={idGravamenProductoSeleccionado} setModalActualizar={setModalActualizar} />
             </Modal>
 

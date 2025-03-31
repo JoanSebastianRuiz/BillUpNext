@@ -43,6 +43,7 @@ const RegistrarCompra = ({ setModal }: { setModal?: (value: boolean) => void }) 
 
     const { register, handleSubmit, formState: { errors }, setValue } = useForm<CompraDTO>();
     const { obtenerCompras, obtenerDetallesCompras } = useCompraContext();
+    const { obtenerProductos } = useProductoContext();
 
     const { data: session } = useSession();
     const idUsuario = session?.user?.idUsuario;
@@ -66,6 +67,7 @@ const RegistrarCompra = ({ setModal }: { setModal?: (value: boolean) => void }) 
             setSuccess(respuesta.data.message);
             obtenerCompras();
             obtenerDetallesCompras();
+            obtenerProductos();
             setModal?.(false);
             setContadorDetalles(0);
 
@@ -159,7 +161,7 @@ const RegistrarCompra = ({ setModal }: { setModal?: (value: boolean) => void }) 
                                     </TableRow>)
                             })) : (
 
-                            <TableMessage message="No se han agregado productos" />
+                            <TableMessage colSpan={5} message="No se han agregado productos" />
                         )}
                     </Table>
                 </div>

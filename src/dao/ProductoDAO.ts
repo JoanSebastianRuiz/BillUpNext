@@ -7,7 +7,4 @@ export interface ProductoDAO{
     create(producto: ProductoRequestDTO): Promise<boolean>;
     update(producto: ProductoRequestDTO): Promise<boolean>;
     existProductoNombre(nombreProducto: string, idEmpresa: number, idCategoria: number): Promise<boolean>;
-    validarStock(stockMinimoProducto: number, stockMaximoProducto: number): Promise<boolean>;
-    validarPrecio(precioVentaProducto: number): Promise<boolean>;
-    validarPorcentaje(porcentajeDescuentoProducto: number): Promise<boolean>;
 }

@@ -2,6 +2,7 @@ import { GravamenProductoService } from "@/services/GravamenProductoService";
 import { GravamenProductoDAOImpl } from "@/dao/impl/GravamenProductoDAOImpl";
 import { NextResponse } from "next/server";
 import { GravamenProductoDTO } from "@/dto/GravamenProductoDTO";
+import { isValidPercent } from "@/util/validators/validators";
 
 export class GravamenProductoServiceImpl implements GravamenProductoService {
   private static instancia: GravamenProductoServiceImpl;
@@ -30,7 +31,7 @@ export class GravamenProductoServiceImpl implements GravamenProductoService {
       if (
         !idProducto ||
         !idGravamen ||
-        !porcentajeGravamenProducto ||
+        porcentajeGravamenProducto == undefined ||
         estadoGravamenProducto === undefined
       ) {
         return NextResponse.json(
@@ -39,11 +40,7 @@ export class GravamenProductoServiceImpl implements GravamenProductoService {
         );
       }
 
-      if (
-        !(await this.gravamenProductoDAOImpl.validarPorcentaje(
-          porcentajeGravamenProducto)
-        )
-      ) {
+      if (!isValidPercent(porcentajeGravamenProducto.toString())) {
         return NextResponse.json(
           { message: "El porcentaje no es valido" },
           { status: 400 }
@@ -85,13 +82,20 @@ export class GravamenProductoServiceImpl implements GravamenProductoService {
         !idGravamenProducto ||
         !idProducto ||
         !idGravamen ||
-        !porcentajeGravamenProducto ||
+        porcentajeGravamenProducto == undefined ||
         estadoGravamenProducto === undefined
       ) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
           { status: 400 }
         );
+      }
+
+      if (!isValidPercent(porcentajeGravamenProducto.toString())) {
+        return NextResponse.json(
+          { message: "El porcentaje no es valido" },
+          { status: 400 }
+        )
       }
 
       const respuesta = await this.gravamenProductoDAOImpl.update(

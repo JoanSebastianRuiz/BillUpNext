@@ -5,7 +5,7 @@ import { ProductoResponseDTO } from "@/dto/ProductoResponseDTO";
 import { ProductoRequestDTO } from "@/dto/ProductoRequestDTO";
 import { GravamenProductoDTO } from "@/dto/GravamenProductoDTO";
 import { GravamenProductoDAOImpl } from "@/dao/impl/GravamenProductoDAOImpl";
-import { isValidLength, isValidNum } from "@/util/validators/validators";
+import { isValidLength, isValidNum, isValidDinero, isValidPercent, isValidStock } from "@/util/validators/validators";
 
 export class ProductoServiceImpl implements ProductoService {
   private static instancia: ProductoServiceImpl;
@@ -96,7 +96,7 @@ export class ProductoServiceImpl implements ProductoService {
         await this.productoDAOImpl.existProductoNombre(
           nombreProducto,
           idEmpresa,
-          idCategoria
+          parseInt(idCategoria.toString())
         )
       ) {
         return NextResponse.json(
@@ -105,34 +105,21 @@ export class ProductoServiceImpl implements ProductoService {
         );
       }
 
-      if (
-        !(await this.productoDAOImpl.validarStock(
-          stockMinimoProducto,
-          stockMaximoProducto
-        ))
-      ) {
+      if (!isValidStock(stockMinimoProducto, stockMaximoProducto)) {
         return NextResponse.json(
           { message: "Los valores del stock no son validos" },
           { status: 400 }
         );
       }
 
-      if (
-        !(await this.productoDAOImpl.validarPrecio(
-          precioVentaProducto)
-        )
-      ) {
+      if (!isValidDinero(precioVentaProducto.toString())) {
         return NextResponse.json(
           { message: "El precio no es valido" },
           { status: 400 }
         );
       }
 
-      if (
-        !(await this.productoDAOImpl.validarPorcentaje(
-          porcentajeDescuentoProducto)
-        )
-      ) {
+      if (!isValidPercent(porcentajeDescuentoProducto.toString())) {
         return NextResponse.json(
           { message: "El porcentaje no es valido" },
           { status: 400 }
@@ -213,6 +200,13 @@ export class ProductoServiceImpl implements ProductoService {
         );
       }
 
+      if (!isValidPercent(porcentajeDescuentoProducto.toString())) {
+        return NextResponse.json(
+          { message: "El porcentaje no es valido" },
+          { status: 400 }
+        );
+      }
+
       if (!isValidLength(descripcionProducto, 250)) {
         return NextResponse.json(
           { message: "Descripción invalida" },
@@ -220,7 +214,7 @@ export class ProductoServiceImpl implements ProductoService {
         );
       }
 
-      if (!isValidNum(precioVentaProducto.toString())) {
+      if (!isValidDinero(precioVentaProducto.toString())) {
         return NextResponse.json(
           { message: "Precio invalido" },
           { status: 400 }
@@ -255,7 +249,7 @@ export class ProductoServiceImpl implements ProductoService {
           await this.productoDAOImpl.existProductoNombre(
             nombreProducto,
             idEmpresa,
-            idCategoria
+            parseInt(idCategoria.toString())
           )
         ) {
           return NextResponse.json(
@@ -265,12 +259,7 @@ export class ProductoServiceImpl implements ProductoService {
         }
       }
 
-      if (
-        !(await this.productoDAOImpl.validarStock(
-          stockMinimoProducto,
-          stockMaximoProducto
-        ))
-      ) {
+      if (!isValidStock(stockMinimoProducto, stockMaximoProducto)) {
         return NextResponse.json(
           { message: "Los valores del stock no son validos" },
           { status: 400 }
@@ -313,7 +302,7 @@ export class ProductoServiceImpl implements ProductoService {
 
       const productosModificados = productos.map((producto: ProductoResponseDTO) => {
         const gravamenes = gravamenesProducto.filter(
-          (gp: GravamenProductoDTO) => gp.idProducto === producto.idProducto
+          (gp: GravamenProductoDTO) => gp.idProducto === producto.idProducto && gp.estadoGravamenProducto == true
         );
 
         // Aplicar el descuento primero

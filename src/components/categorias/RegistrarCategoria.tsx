@@ -29,7 +29,7 @@ const RegistrarCategoria = ({ categoriaSeleccionada, setModalActualizar, setModa
     useEffect(() => {
         if (categoriaSeleccionada) {
             setValue("nombreCategoria", categoriaSeleccionada.nombreCategoria || '');
-            setValue("estadoCategoria", categoriaSeleccionada.estadoCategoria ? true : false);
+            setValue("estadoCategoria", categoriaSeleccionada.estadoCategoria ? "true" : "false");
         }
     }, [categoriaSeleccionada, setValue]);
 
@@ -84,7 +84,7 @@ const RegistrarCategoria = ({ categoriaSeleccionada, setModalActualizar, setModa
                     </SelectForm>
                 )}
 
-                <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
+                <div className="col-span-1 sm:col-span-1 flex justify-center mt-4">
                     <ButtonForm name={categoriaSeleccionada ? "Actualizar" : "Registrar"} type="submit" />
                 </div>
             </form>

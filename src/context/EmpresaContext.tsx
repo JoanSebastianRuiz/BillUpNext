@@ -47,7 +47,7 @@ export const EmpresaContextProvider: React.FC<EmpresaProviderProps> = ({ childre
         if (status !== "authenticated") return;
         const fetchData = async () => {
             try {
-                if (idRol == 1) {
+                if (idRol == 1 || idRol == 2) { 
                     const [tiposPersonaRes, regimenesContribuyenteRes, empresasRes] = await Promise.all([
                         axios.get<TipoPersonaDTO[]>("/api/tipos-persona"),
                         axios.get<RegimenContribuyenteResponseDTO[]>("/api/regimenes-contribuyente"),

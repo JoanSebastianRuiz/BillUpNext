@@ -2,6 +2,6 @@ export interface CajaDTO {
     idCaja?: number,
     idEmpresa: number,
     nombreCaja: string,
-    estadoCaja: boolean
+    estadoCaja: boolean | string,
     openCaja: boolean
 }

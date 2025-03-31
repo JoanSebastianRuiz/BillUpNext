@@ -3,5 +3,5 @@ export interface GravamenProductoDTO {
     idProducto: number,
     idGravamen: number,
     porcentajeGravamenProducto: number,
-    estadoGravamenProducto: boolean
+    estadoGravamenProducto: boolean | string,
 }

@@ -15,7 +15,7 @@ import ButtonForm from "@/components/form/ButtonForm";
 import SelectForm from "@/components/form/SelectForm";
 
 
-const RegistrarUbicacionVenta = ({ ubicacionVentaSeleccionada, setModalActualizar, setModalRegistrar }: { ubicacionVentaSeleccionada?: UbicacionVentaDTO, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
+const RegistrarUbicacionVenta = ({ ubicacionVentaSeleccionada, setModalActualizar, setModalRegistrar }: { ubicacionVentaSeleccionada?: UbicacionVentaDTO | null, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
@@ -29,7 +29,9 @@ const RegistrarUbicacionVenta = ({ ubicacionVentaSeleccionada, setModalActualiza
     useEffect(() => {
         if (ubicacionVentaSeleccionada) {
             setValue("nombreUbicacionVenta", ubicacionVentaSeleccionada.nombreUbicacionVenta || ' ');
-            setValue("estadoUbicacionVenta", ubicacionVentaSeleccionada.estadoUbicacionVenta);
+            setValue("estadoUbicacionVenta", ubicacionVentaSeleccionada.estadoUbicacionVenta? "true" : "false");
+        } else{
+            setValue("estadoUbicacionVenta", "");
         }
     }, [ubicacionVentaSeleccionada, setValue]);
 

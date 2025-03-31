@@ -39,6 +39,7 @@ VALUES
 
 INSERT INTO "Empresa" ("idTipoPersona", "idRegimenContribuyente", "idMunicipio", "nitEmpresa", "digitoVerificacionEmpresa", "nombreEmpresa", "razonSocialEmpresa", "direccionEmpresa", "codigoPostalEmpresa", "telefonoEmpresa", "correoEmpresa", "estadoEmpresa")
 VALUES
+(1,1,2,1,'111111111','1','BillUp','BillUp','Calle 1','111111','1111111111','billup@gmail.com','TRUE')
 (1, 2, 1, '900123456', '5', 'AgroIndustria del Valle', 'AgroIndustria del Valle S.A.S.', 
  'Cra 50 # 15-30', '760001', '3001234567', 'contacto@agrovalle.com', TRUE),
 (2, 1, 1, '800765432', '3', 'Transportes Unidos', 'Transportes Unidos Ltda.', 

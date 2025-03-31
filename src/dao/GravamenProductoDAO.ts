@@ -5,5 +5,4 @@ export interface GravamenProductoDAO {
   getById(idGravamenProducto: number): Promise<GravamenProductoDTO | null>;
   create(gravamenProducto: GravamenProductoDTO): Promise<boolean>;
   update(gravamenProducto: GravamenProductoDTO): Promise<boolean>;
-  validarPorcentaje(porcentajeGravamenProducto: number): Promise<boolean>;
 }

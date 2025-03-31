@@ -73,7 +73,12 @@ const RegistrarEmpresa = ({ empresa, setModal }: { empresa?: EmpresaResponseDTO 
             setValue("direccionEmpresa", empresa.direccionEmpresa || '');
             setValue("correoEmpresa", empresa.correoEmpresa || '');
             setValue("codigoPostalEmpresa", empresa.codigoPostalEmpresa || '');
-            setValue("estadoEmpresa", empresa.estadoEmpresa);
+            setValue("estadoEmpresa", empresa.estadoEmpresa? "true" : "false");
+        } else{
+            setValue("idTipoPersona", "");
+            setValue("idRegimenContribuyente", "");
+            setValue("idDepartamento", "");
+            setValue("idMunicipio", "");
         }
     }, [empresa, setValue]);
 

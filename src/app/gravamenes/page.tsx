@@ -140,7 +140,7 @@ const GravamenesPage: React.FC = () => {
             ))) : (
 
             <tr>
-              <td colSpan={3} className="text-center py-4 text-gray-500 dark:text-gray-400">
+              <td colSpan={2} className="text-center py-4 text-gray-500 dark:text-gray-400">
                 No se encontraron gravámenes
               </td>
             </tr>
@@ -155,7 +155,7 @@ const GravamenesPage: React.FC = () => {
         setCurrentPage={setCurrentPage}
       />
 
-      <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
+      <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)} size="small">
         <RegistrarGravamen
           setModalRegistrar={setModalRegistrar}
         />
@@ -164,6 +164,7 @@ const GravamenesPage: React.FC = () => {
       <Modal
         isOpen={modalActualizar}
         setIsOpen={() => setModalActualizar(false)}
+        size="small"
       >
         <RegistrarGravamen
           gravamenSeleccionado={gravamenSeleccionado}

@@ -105,7 +105,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
 
     useEffect(() => {
         filtrarEmpresas();
-    }, [clientesEmpresa]);
+    }, [clientesEmpresa, proveedoresEmpresa]);
 
     useEffect(() => {
         if (!departamentos.length || !municipios.length) return;
@@ -142,7 +142,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
         if (nitEmpresaRef.current) nitEmpresaRef.current.value = "";
         if (idDepartamentoRef.current) idDepartamentoRef.current.value = "0";
         if (idMunicipioRef.current) idMunicipioRef.current.value = "0";
-        if (estadoEmpresaRef.current) estadoEmpresaRef.current.value = "";
+        if (estadoEmpresaRef.current) estadoEmpresaRef.current.value = "true";
         filtrarEmpresas();
     }
 
@@ -314,7 +314,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
             </Modal>
 
             {/* Modal para gestionar los productos de un proveedor*/}
-            <Modal isOpen={modalProductos} setIsOpen={() => setModalProductos(false)}>
+            <Modal isOpen={modalProductos} setIsOpen={() => setModalProductos(false)} size="large">
                 <SublistaProductos tercero={terceroSeleccionado} />
             </Modal>
 

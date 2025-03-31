@@ -43,6 +43,11 @@ const isValidNum = (num: string): boolean => {
   return regex.test(num) && Number(num) >= 0;
 };
 
+const isValidPercent = (percent: string): boolean => {
+  const regex = /^(100|[1-9]?\d)(\.\d+)?$/; // Permite números entre 0 y 100, con decimales
+  return regex.test(percent) && Number(percent) >= 0 && Number(percent) <= 100;
+};
+
 const isValidPassword = (password: string): boolean => {
   const minLength = 8;
 
@@ -69,4 +74,8 @@ const isValidPassword = (password: string): boolean => {
   return hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar && hasNoSpaces;
 };
 
-export { isValidEmail, isValidPhoneNumber, isValidDocument, isValidPassword, isValidNit, isValidDigitoVerificacion, isValidCodigoPostal, isValidLength, isValidDinero, isValidNum };
+const isValidStock = (stockMinimo: number, stockMaximo: number): boolean => {
+  return stockMinimo > 0 && stockMaximo > 0 && stockMinimo <= stockMaximo;
+}
+
+export { isValidEmail, isValidPhoneNumber, isValidDocument, isValidPassword, isValidNit, isValidDigitoVerificacion, isValidCodigoPostal, isValidLength, isValidDinero, isValidNum, isValidPercent, isValidStock };

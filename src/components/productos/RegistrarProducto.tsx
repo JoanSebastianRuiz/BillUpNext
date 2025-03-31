@@ -39,7 +39,9 @@ const RegistrarProducto = ({ productoSeleccionado, setModalActualizar, setModalR
             setValue("porcentajeDescuentoProducto", productoSeleccionado.porcentajeDescuentoProducto || 0);
             setValue("stockMinimoProducto", productoSeleccionado.stockMinimoProducto || 0);
             setValue("stockMaximoProducto", productoSeleccionado.stockMaximoProducto || 0);
-            setValue("estadoProducto", productoSeleccionado.estadoProducto);
+            setValue("estadoProducto", productoSeleccionado.estadoProducto ? "true" : "false");
+        } else {
+            setValue("idCategoria", "");
         }
     }, [productoSeleccionado, setValue]);
 
@@ -88,7 +90,7 @@ const RegistrarProducto = ({ productoSeleccionado, setModalActualizar, setModalR
                 <SelectForm label="Categoría" register={register} name="idCategoria"
                     validationRules={{ required: { value: true, message: "Este campo es obligatorio" } }}
                     errors={errors} >
-                    <option value="" disabled>Seleccione una categoría</option>
+                    <option value="" disabled>{categorias.length > 0 ? "Seleccione una categoría" : "No hay categorías registradas"}</option>
                     {categorias.map(categoria => <option key={categoria.idCategoria} value={categoria.idCategoria}>{categoria.nombreCategoria}</option>)}
                 </SelectForm>
 
@@ -99,8 +101,8 @@ const RegistrarProducto = ({ productoSeleccionado, setModalActualizar, setModalR
                     }}
                     errors={errors} />
 
-                <InputForm label="Precio de venta" register={register} name="precioVentaProducto" type="number"
-                    validationRules={{ 
+                <InputForm label="Precio base" register={register} name="precioVentaProducto" type="number"
+                    validationRules={{
                         required: { value: true, message: "Este campo es obligatorio" },
                         min: { value: 0, message: "El valor debe ser mayor o igual a 0" }
                     }}

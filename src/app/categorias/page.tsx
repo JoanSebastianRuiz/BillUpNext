@@ -132,7 +132,7 @@ const CategoriasPage: React.FC = () => {
                         ))) : (
 
                         <tr>
-                            <td colSpan={3} className="text-center py-4 text-gray-500 dark:text-gray-400">
+                            <td colSpan={2} className="text-center py-4 text-gray-500 dark:text-gray-400">
                                 No se encontraron categorías
                             </td>
                         </tr>
@@ -149,11 +149,11 @@ const CategoriasPage: React.FC = () => {
                 setCurrentPage={setCurrentPage}
             />
 
-            <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
+            <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)} size="small">
                 <RegistrarCategoria setModalRegistrar={setModalRegistrar} />
             </Modal>
 
-            <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)}>
+            <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)} size="small">
                 <RegistrarCategoria categoriaSeleccionada={categoriaSeleccionada} setModalActualizar={setModalActualizar} />
             </Modal>
         </ContenedorPrincipal>

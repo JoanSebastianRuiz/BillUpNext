@@ -11,9 +11,10 @@ export const PUT = async (request: NextRequest, {params} : {params : {idTercero 
     if (!idTercero) {
         return NextResponse.json({message: "ID inválido"}, {status: 400});
     }
+    console.log("ID TERCERO", idTercero);
     
     const data = await request.json();
-    const dataWithId = { ...data, idTercero: parseInt(idTercero) };
+    const dataWithId = { ...data, idTercero: parseInt(idTercero.toString()) };
 
     if(tipo === "persona"){
         const respuesta = await terceroService.updatePersona(dataWithId);

@@ -88,18 +88,4 @@ export class GravamenProductoDAOImpl implements GravamenProductoDAO {
       throw new Error(`Error en GravamenProductoDAO.update: ${error}`);
     }
   };
-
-  public validarPorcentaje = async (
-    porcentajeGravamenProducto: number
-  ): Promise<boolean> => {
-    try {
-      const respuesta = await ejecutarQuery(
-        `SELECT validarPorcentajeGravamenProducto ($1) as resultado;`,
-        [porcentajeGravamenProducto]
-      );
-      return respuesta.length > 0 ? respuesta[0].resultado : false;
-    } catch (error) {
-      throw new Error(`Error en GravamenProducto.validarPorcentaje: ${error}`);
-    }
-  };
 }

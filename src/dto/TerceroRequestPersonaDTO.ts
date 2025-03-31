@@ -1,9 +1,9 @@
 export interface TerceroRequestPersonaDTO {
     idTercero?: number,
     idEmpresa: number,
-    idTipoDocumento: number,
-    idMunicipio: number,
-    idDepartamento?: number,
+    idTipoDocumento: number | string,
+    idMunicipio: number | string,
+    idDepartamento?: number | string,
     numeroDocumentoTercero: string,
     nombreTercero: string,
     apellidoTercero: string,
@@ -11,5 +11,5 @@ export interface TerceroRequestPersonaDTO {
     direccionTercero: string,
     correoTercero: string,
     proveedorTercero: boolean,
-    estadoTercero: boolean
+    estadoTercero: boolean | string
 }

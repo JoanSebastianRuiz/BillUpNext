@@ -101,6 +101,7 @@ const UbicacionVentaPage: React.FC = () => {
                         onChange={filtrarUbicacionesVenta}
                         ref={estadoUbicacionVentaRef}
                         defaultValue="true"
+                        selectEstado={true}
                     >
                         <option value="true">Activa</option>
                         <option value="false">Inactiva</option>
@@ -128,7 +129,7 @@ const UbicacionVentaPage: React.FC = () => {
                         ))) : (
 
                         <tr>
-                            <td colSpan={3} className="text-center py-4 text-gray-500 dark:text-gray-400">
+                            <td colSpan={2} className="text-center py-4 text-gray-500 dark:text-gray-400">
                                 No se encontraron ubicaciones
                             </td>
                         </tr>
@@ -144,11 +145,11 @@ const UbicacionVentaPage: React.FC = () => {
             />
 
 
-            <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)} >
+            <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)} size="small">
                 <RegistrarUbicacionVenta setModalRegistrar={setModalRegistrar} />
             </Modal>
 
-            <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)} >
+            <Modal isOpen={modalActualizar} setIsOpen={() => setModalActualizar(false)} size="small">
                 <RegistrarUbicacionVenta ubicacionVentaSeleccionada={ubicacionVentaSeleccionada} setModalActualizar={setModalActualizar} />
             </Modal>
 

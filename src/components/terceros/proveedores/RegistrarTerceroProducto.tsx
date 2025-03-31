@@ -34,7 +34,9 @@ const RegistrarTerceroProducto = ({ idTerceroProductoSeleccionado, setModalActua
     useEffect(() => {
         if (terceroProductoSeleccionado) {
             setValue("precioCompraTerceroProducto", terceroProductoSeleccionado?.precioCompraTerceroProducto ?? 0);
-            setValue("estadoTerceroProducto", terceroProductoSeleccionado?.estadoTerceroProducto ?? true);
+            setValue("estadoTerceroProducto", terceroProductoSeleccionado?.estadoTerceroProducto ? "true" : "false");
+        } else{
+            setValue("idProducto", "");
         }
 
     }, [terceroProductoSeleccionado, setValue]);

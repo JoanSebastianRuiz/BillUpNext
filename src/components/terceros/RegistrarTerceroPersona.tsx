@@ -24,7 +24,6 @@ import { TerceroResponsePersonaDTO } from '@/dto/TerceroResponsePersonaDTO';
 const RegistrarTerceroPersona = ({ terceroSeleccionado, setModalActualizar, setModalRegistrar, proveedorTerceroPersona }: { terceroSeleccionado?: TerceroResponsePersonaDTO | null, proveedorTerceroPersona: boolean, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 
     const { departamentos, municipios, tiposDocumento } = useUsuarioContext();
-    const { proveedoresPersona, clientesPersona } = useTerceroContext()
 
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
     const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);
@@ -77,13 +76,12 @@ const RegistrarTerceroPersona = ({ terceroSeleccionado, setModalActualizar, setM
             setValue("telefonoTercero", terceroSeleccionado.telefonoTercero || '');
             setValue("direccionTercero", terceroSeleccionado.direccionTercero || '');
             setValue("correoTercero", terceroSeleccionado.correoTercero || '');
-            setValue("estadoTercero", terceroSeleccionado.estadoTercero);
+            setValue("estadoTercero", terceroSeleccionado.estadoTercero ? "true" : "false");
+        } else {
+            setValue("idTipoDocumento", "");
+            setValue("idDepartamento", "");
+            setValue("idMunicipio", "");
 
-            register("idEmpresa");
-            setValue("idEmpresa", terceroSeleccionado.idEmpresa || 0);
-
-            register("proveedorTercero");
-            setValue("proveedorTercero", terceroSeleccionado.proveedorTercero);
         }
     }, [terceroSeleccionado, setValue]);
 
@@ -93,9 +91,9 @@ const RegistrarTerceroPersona = ({ terceroSeleccionado, setModalActualizar, setM
             if (terceroSeleccionado) {
                 let { idDepartamento, ...datosModificados } = data;
 
-                datosModificados = { ...datosModificados, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), estadoTercero: String(data.estadoTercero) === "true" };
+                datosModificados = { ...datosModificados, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idEmpresa: parseInt(idEmpresa.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), estadoTercero: String(data.estadoTercero) === "true", proveedorTercero: proveedorTerceroPersona };
 
-                const respuesta = await axios.put(`/api/terceros/${terceroSeleccionado}?tipo=persona`, datosModificados);
+                const respuesta = await axios.put(`/api/terceros/${terceroSeleccionado.idTercero}?tipo=persona`, datosModificados);
                 setError(null);
                 setSuccess(respuesta.data.message);
                 obtenerPersonas(proveedorTerceroPersona ? "proveedores" : "clientes");

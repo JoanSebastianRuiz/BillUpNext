@@ -26,7 +26,7 @@ const MostrarInfoProducto = ({ producto }: {
         text={`${producto.porcentajeDescuentoProducto || 0}%`}
       />
       <ParrafoMostrarInfo
-        subtitle="Impuesos aplicados"
+        subtitle="Impuestos aplicados"
         text={`${producto.valorImpuestoProducto}`}
       />
       <ParrafoMostrarInfo

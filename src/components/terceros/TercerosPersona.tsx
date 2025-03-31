@@ -100,7 +100,7 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
 
     useEffect(() => {
         filtrarUsuarios();
-    }, [clientesPersona]);
+    }, [clientesPersona, proveedoresPersona]);
 
     useEffect(() => {
         if (!departamentos.length || !municipios.length) return;
@@ -296,7 +296,7 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
             </Modal>
 
             {/* Modal para gestionar los productos de un proveedor*/}
-            <Modal isOpen={modalProductos} setIsOpen={() => setModalProductos(false)}>
+            <Modal isOpen={modalProductos} setIsOpen={() => setModalProductos(false)} size="large">
                 <SublistaProductos tercero={terceroSeleccionado} />
             </Modal>
 
