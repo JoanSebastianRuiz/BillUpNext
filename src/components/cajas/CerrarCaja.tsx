@@ -17,7 +17,7 @@ const CerrarCaja = ({ setModal }: { setModal?: (value: boolean) => void }) => {
 
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
-    const { detalleCajaActual, setCajaSeleccionada, setDetalleCajaActual } = useCajaContext();
+    const { detalleCajaActual, setCajaSeleccionada, setDetalleCajaActual, obtenerDetallesCajas } = useCajaContext();
 
     const { register, handleSubmit, formState: { errors }, setValue } = useForm<DetalleCajaDTO>();
 
@@ -32,6 +32,7 @@ const CerrarCaja = ({ setModal }: { setModal?: (value: boolean) => void }) => {
             setSuccess(respuesta.data.message);
             setCajaSeleccionada(null);
             setDetalleCajaActual(null);
+            obtenerDetallesCajas();
             setModal?.(false);
 
         } catch (error: unknown) {

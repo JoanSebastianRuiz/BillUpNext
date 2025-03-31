@@ -271,11 +271,11 @@ const VentasPage: React.FC = () => {
                 <CancelarVenta venta={ventaSeleccionada} setModal={setModalCancelar} />
             </Modal>
 
-            <Modal isOpen={modalAbrirCaja} setIsOpen={() => setModalAbrirCaja(false)}>
+            <Modal isOpen={modalAbrirCaja} setIsOpen={() => setModalAbrirCaja(false)} size="small">
                 <AbrirCaja setModal={setModalAbrirCaja} />
             </Modal>
 
-            <Modal isOpen={modalCerrarCaja} setIsOpen={() => setModalCerrarCaja(false)}>
+            <Modal isOpen={modalCerrarCaja} setIsOpen={() => setModalCerrarCaja(false)} size="small">
                 <CerrarCaja setModal={setModalCerrarCaja} />
             </Modal>
 

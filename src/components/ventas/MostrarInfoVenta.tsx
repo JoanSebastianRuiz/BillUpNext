@@ -70,10 +70,10 @@ const MostrarInfoVenta = ({ venta }: { venta: VentaDTO | null }) => {
 
     return (
         <ContenedorMostrarInfo name="">
-            <ParrafoMostrarInfo
+            {usuario.idRol == 2 && <ParrafoMostrarInfo
                 subtitle="Realizada por"
                 text={`${usuarioVendio?.nombreUsuario} ${usuarioVendio?.apellidoUsuario}`}
-            />
+            />}
             <ParrafoMostrarInfo
                 subtitle="Fecha de venta"
                 text={`${venta?.fechaVenta
@@ -95,6 +95,22 @@ const MostrarInfoVenta = ({ venta }: { venta: VentaDTO | null }) => {
                     text={venta?.observacionVenta || "No hay observaciones"}
                 />
             </div>
+
+            <ParrafoMostrarInfo
+                subtitle="Descuentos totales"
+                text={`$ ${descuentosTotales}`}
+            />
+
+            <ParrafoMostrarInfo
+                subtitle="Impuestos totales"
+                text={`$ ${impuestosTotales}`}
+            />
+
+            <ParrafoMostrarInfo
+                subtitle="Valor total"
+                text={`$ ${venta?.valorTotalVenta}`} />
+
+            <EstadoMostrarInfo estado={venta?.estadoVenta ?? true} facturacion={true} />
 
             {venta?.estadoVenta == false && (
                 <>
@@ -126,22 +142,6 @@ const MostrarInfoVenta = ({ venta }: { venta: VentaDTO | null }) => {
                     </div>
                 </>
             )}
-
-            <ParrafoMostrarInfo
-                subtitle="Descuentos totales"
-                text={`$ ${descuentosTotales}`}
-            />
-
-            <ParrafoMostrarInfo
-                subtitle="Impuestos totales"
-                text={`$ ${impuestosTotales}`}
-            />
-
-            <ParrafoMostrarInfo
-                subtitle="Valor total"
-                text={`$ ${venta?.valorTotalVenta}`} />
-
-            <EstadoMostrarInfo estado={venta?.estadoVenta ?? true} facturacion={true} />
 
             <div className="col-span-1 sm:col-span-2">
                 <h1 className="text-lg md:text-xl font-bold text-gray-800 dark:text-gray-100 mb-6">

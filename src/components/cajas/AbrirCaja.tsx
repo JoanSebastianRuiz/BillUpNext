@@ -75,7 +75,7 @@ const AbrirCaja = ({ setModal }: { setModal?: (value: boolean) => void }) => {
                      }}
                     errors={errors} />
 
-                <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
+                <div className="col-span-1 sm:col-span-1 flex justify-center mt-4">
                     <ButtonForm name={"Abrir"} type="submit" />
                 </div>
             </form>

@@ -120,6 +120,7 @@ BEGIN
     INTO _totalVentas
     FROM "Venta"
     WHERE "idCaja" = _idCaja
+    AND "estadoVenta" = TRUE
     AND "fechaVenta" >= _fechaApertura;
 
     -- Calcular ingresos en la caja (tipoMovimiento = TRUE)

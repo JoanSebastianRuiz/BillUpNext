@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useCompraContext } from '@/context/CompraContext';
+import { useProductoContext } from '@/context/ProductoContext';
 
 import { CompraDTO } from '@/dto/CompraDTO';
 
@@ -22,18 +23,20 @@ const CancelarCompra = ({ compra, setModal }: { compra: CompraDTO | null, setMod
 
     const { register, handleSubmit, formState: { errors }, setValue } = useForm<CompraDTO>();
     const { obtenerCompras } = useCompraContext();
+    const { obtenerProductos } = useProductoContext();
 
     const { data: session } = useSession();
     const idUsuario = session?.user?.idUsuario;
 
     const onSubmit = async (data: CompraDTO) => {
         try {
-            
+
             const datosModificados = { ...data, idUsuarioCancelacionCompra: idUsuario };
             const respuesta = await axios.put(`/api/compras/${compra?.idCompra}`, datosModificados);
             setError(null);
             setSuccess(respuesta.data.message);
             obtenerCompras();
+            obtenerProductos();
             setModal?.(false);
 
         } catch (error: unknown) {

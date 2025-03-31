@@ -38,7 +38,7 @@ const RegistrarDetalleVenta = ({ detalleVenta, detallesVenta, setDetallesVenta, 
         }
         setProductosFiltrados(filtrados);
     
-        const valor = cantidadDetalleVenta * (productos.find(producto => producto.idProducto == idProducto)?.precioVentaProducto || 0);
+        const valor = cantidadDetalleVenta * (productos.find(producto => producto.idProducto == idProducto)?.valorTotalProducto || 0);
         setValue("valorTotalDetalleVenta", valor);
     }, [productos, idProducto, cantidadDetalleVenta, detallesVenta, setValue]);
 
@@ -57,7 +57,7 @@ const RegistrarDetalleVenta = ({ detalleVenta, detallesVenta, setDetallesVenta, 
         const valorImpuestosDetalleVenta = (producto?.valorImpuestoProducto ?? 0) * data.cantidadDetalleVenta;
 
         if (detalleVenta) {
-            const dataModificada = { ...data, idDetalleVenta: contadorDetalles + 1, idProducto: parseInt(data.idProducto.toString()), cantidadDetalleVenta: parseInt(data.cantidadDetalleVenta.toString()), valorDescuentoDetalleVenta, valorImpuestosDetalleVenta };
+            const dataModificada = { ...data, idDetalleVenta: detalleVenta.idDetalleVenta, idProducto: parseInt(data.idProducto.toString()), cantidadDetalleVenta: parseInt(data.cantidadDetalleVenta.toString()), valorDescuentoDetalleVenta, valorImpuestosDetalleVenta };
 
             const detallesVentaActualizados = detallesVenta.map(detalle =>
                 detalle.idDetalleVenta === detalleVenta.idDetalleVenta ? dataModificada : detalle

@@ -181,12 +181,14 @@ const RegistrarCompra = ({ setModal }: { setModal?: (value: boolean) => void }) 
 
             {error && <Notificacion type="error" message={error} />}
             {success && <Notificacion type="success" message={success} />}
-
+            
+            {/* Modal para registrar detalle de compra */}
             <Modal isOpen={modalRegistrarDetalle} setIsOpen={() => setModalRegistrarDetalle(false)}>
                 <RegistrarDetalleCompra contadorDetalles={contadorDetalles} setModal={setModalRegistrarDetalle} detallesCompra={detallesCompra} setDetallesCompra={setDetallesCompra} setContadorDetalles={setContadorDetalles} />
             </Modal>
 
-            <Modal isOpen={modalActualizarDetalle} setIsOpen={() => setModalActualizarDetalle(false)}>
+            {/* Modal para actualizar detalle de compra */}                
+            <Modal isOpen={modalActualizarDetalle} setIsOpen={() => setModalActualizarDetalle(false)} size='small'>
                 <RegistrarDetalleCompra contadorDetalles={contadorDetalles} detalleCompra={detalleSeleccionado} setModal={setModalActualizarDetalle} detallesCompra={detallesCompra} setDetallesCompra={setDetallesCompra} setContadorDetalles={setContadorDetalles} />
             </Modal>
 

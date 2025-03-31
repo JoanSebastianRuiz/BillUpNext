@@ -233,11 +233,14 @@ const RegistrarVenta = ({ setModal }: { setModal?: (value: boolean) => void }) =
 
             {error && <Notificacion type="error" message={error} />}
             {success && <Notificacion type="success" message={success} />}
-
+            
+            {/* Modal para registrar detalle de venta */}
             <Modal isOpen={modalRegistrarDetalle} setIsOpen={() => setModalRegistrarDetalle(false)}>
                 <RegistrarDetalleVenta contadorDetalles={contadorDetalles} setModal={setModalRegistrarDetalle} detallesVenta={detallesVenta} setDetallesVenta={setDetallesVenta} setContadorDetalles={setContadorDetalles} />
             </Modal>
 
+
+            {/* Modal para actualizar detalle de venta */}                         
             <Modal isOpen={modalActualizarDetalle} setIsOpen={() => setModalActualizarDetalle(false)}>
                 <RegistrarDetalleVenta contadorDetalles={contadorDetalles} detalleVenta={detalleSeleccionado} setModal={setModalActualizarDetalle} detallesVenta={detallesVenta} setDetallesVenta={setDetallesVenta} setContadorDetalles={setContadorDetalles} />
             </Modal>

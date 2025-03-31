@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { DetalleCajaServiceImpl } from "@/services/Impl/DetalleCajaServiceImpl";
 
-export const POST = async (request: Request, {params}: {params: {idDetalleCaja: string}}) => {
+export const PUT = async (request: Request, {params}: {params: {idDetalleCaja: string}}) => {
     const detalleCajaService = DetalleCajaServiceImpl.getInstance();
     const {idDetalleCaja} = params;
     const data = await request.json();

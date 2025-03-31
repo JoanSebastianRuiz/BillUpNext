@@ -151,7 +151,7 @@ const CajasPage: React.FC = () => {
                         name="Estado"
                         onChange={filtrarCajas}
                         ref={openCajaRef}
-                        defaultValue="true"
+                        defaultValue=""
                     >
                         <option value="true">Abierta</option>
                         <option value="false">Cerrada</option>

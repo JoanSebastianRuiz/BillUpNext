@@ -110,7 +110,7 @@ const RegistrarDetalleCompra = ({ detalleCompra, detallesCompra, setDetallesComp
     return (
         <ContenedorRegistrar name={detalleCompra ? "Actualizar producto" : "Registrar producto"}>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className={`grid grid-cols-1 sm:${detalleCompra ? "col-span-1" : "col-span-2"} gap-x-6 gap-y-4`}>
                 {!detalleCompra &&
                     <div className="flex flex-col gap-y-2 w-full">
                         <label htmlFor="tipoProveedor" className="text-lg font-semibold text-gray-700 dark:text-gray-200">
@@ -180,7 +180,7 @@ const RegistrarDetalleCompra = ({ detalleCompra, detallesCompra, setDetallesComp
                     }} errors={errors} />
 
 
-                <div className="col-span-1 sm:col-span-2 flex justify-center mt-4">
+                <div className={`col-span-1 sm:${detalleCompra ? "col-span-1" : "col-span-2"} flex justify-center mt-4`}>
                     <ButtonForm name={detalleCompra ? "Actualizar" : "Registrar"} type="submit" />
                 </div>
             </form>

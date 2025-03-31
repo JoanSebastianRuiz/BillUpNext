@@ -131,7 +131,7 @@ const MovimientosPage: React.FC = () => {
     }, [movimientos]);
 
     let titulosTabla;
-    if (usuario.idRol === 3) {
+    if (usuario.idRol === 2) {
         titulosTabla = [
             { titulo: "Fecha", center: false },
             { titulo: "Valor", center: false },
@@ -255,7 +255,7 @@ const MovimientosPage: React.FC = () => {
                         movimientosActuales.map((movimiento) => {
                             return (
                                 <TableRow key={movimiento.idMovimiento}>
-                                    <TableData center={false} noWrap={true} width="30%">
+                                    <TableData center={false} noWrap={true} width="20%">
                                         {movimiento.fechaMovimiento
                                             ? new Date(movimiento.fechaMovimiento).toLocaleString('es-ES', {
                                                 day: '2-digit',
@@ -268,8 +268,12 @@ const MovimientosPage: React.FC = () => {
                                             : 'No registrada'}
                                     </TableData>
                                     <TableData center={false} noWrap={true} width="20%">$ {movimiento.valorMovimiento || 'N/A'}</TableData>
+                                    <TableData center={false} noWrap={true} width="15%">
+                                        {movimiento.tipoMovimiento ? 'Entrada' : 'Salida'}
+                                    </TableData>
+                                    <TableData center={false} noWrap={false} width={usuario.idRol == 2? "45%" : "30%"}>{movimiento.descripcionMovimiento || 'N/A'}</TableData>
                                     {usuario.idRol === 2 &&
-                                        (<TableData center={false} width="20%">
+                                        (<TableData center={false} width="15%">
                                             <div className="flex gap-2">
                                                 <BotonAccionCard
                                                     Symbol={List}
@@ -284,7 +288,7 @@ const MovimientosPage: React.FC = () => {
                                 </TableRow>)
                         })) : (
 
-                        <TableMessage message="No hay movmientos registrados" colSpan={usuario.idRol == 2 ? 4 : 5} />
+                        <TableMessage message="No hay movmientos registrados" colSpan={usuario.idRol == 3 ? 4 : 5} />
                     )}
                 </Table>
             </div>
@@ -295,18 +299,22 @@ const MovimientosPage: React.FC = () => {
                 setCurrentPage={setCurrentPage}
             />
 
+            {/* Modal para registrar movimiento */}
             <Modal isOpen={modalRegistrar} setIsOpen={() => setModalRegistrar(false)}>
                 <RegistrarMovimiento setModal={setModalRegistrar} />
             </Modal>
 
-            <Modal isOpen={modalAbrirCaja} setIsOpen={() => setModalAbrirCaja(false)}>
+            {/* Modal para abrir caja */}
+            <Modal isOpen={modalAbrirCaja} setIsOpen={() => setModalAbrirCaja(false)} size="small">
                 <AbrirCaja setModal={setModalAbrirCaja} />
             </Modal>
 
-            <Modal isOpen={modalCerrarCaja} setIsOpen={() => setModalCerrarCaja(false)}>
+            {/* Modal para cerrar caja */}
+            <Modal isOpen={modalCerrarCaja} setIsOpen={() => setModalCerrarCaja(false)} size="small">
                 <CerrarCaja setModal={setModalCerrarCaja} />
             </Modal>
 
+            {/* Modal para mostrar información del movimiento */}
             <Modal isOpen={modalInfo} setIsOpen={() => setModalInfo(false)}>
                 <MostrarInfoMovimiento movimiento={movimientoSeleccionado} />
             </Modal>
