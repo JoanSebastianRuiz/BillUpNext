@@ -140,12 +140,16 @@ const VentasPage: React.FC = () => {
         }
 
         const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.getWidth(); // Obtener ancho de la página
 
-        // Establecer fuente y agregar logo
+        // Título centrado
         doc.setFont("helvetica", "bold");
         doc.setFontSize(22);
-        doc.text(`Factura de Venta - ${empresa?.nombreEmpresa}`, 70, 20);
+        const titulo = `Factura de Venta - ${empresa?.nombreEmpresa}`;
+        const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2; // Centrar texto
+        doc.text(titulo, titleX, 20);
 
+        // Información de la empresa
         doc.setFont("helvetica", "normal");
         doc.setFontSize(12);
         doc.text(`Factura No. ${venta.idVenta}`, 14, 35);
@@ -157,18 +161,23 @@ const VentasPage: React.FC = () => {
             minute: '2-digit',
             second: '2-digit',
         }) : 'N/A'}`, 14, 45);
-        doc.text(`Cliente: ${nombreCliente}`, 14, 55);
-        doc.text(`Cajero: ${cajero?.nombreUsuario} ${cajero?.apellidoUsuario}`, 14, 60);
+
+        // Información del cliente y cajero alineados a la derecha
+        const infoX = pageWidth - 80; // Alineación derecha
+        doc.text(`Cliente: ${nombreCliente}`, infoX, 35);
+        doc.text(`Cajero: ${cajero?.nombreUsuario} ${cajero?.apellidoUsuario}`, infoX, 45);
+
+        // Total en negrita y resaltado
         doc.setFont("helvetica", "bold");
-        doc.text(`Total: $${venta.valorTotalVenta.toFixed(2)}`, 14, 65);
+        doc.text(`Total: $${venta.valorTotalVenta.toFixed(2)}`, 14, 60);
 
         // Línea separadora
         doc.setLineWidth(0.5);
-        doc.line(14, 70, 190, 70);
+        doc.line(14, 65, 190, 65);
 
         // Tabla de productos
         autoTable(doc, {
-            startY: 80,
+            startY: 75,
             head: [["Producto", "Cantidad", "Subtotal", "Descuento", "Impuesto", "Total"]],
             body: detalles.map((d) => {
                 const producto = productos.find(p => p.idProducto === d.idProducto);
@@ -179,7 +188,7 @@ const VentasPage: React.FC = () => {
                     `$${d.valorDescuentoDetalleVenta.toFixed(2)}`,
                     `$${d.valorImpuestosDetalleVenta.toFixed(2)}`,
                     `$${d.valorTotalDetalleVenta.toFixed(2)}`,
-                ]
+                ];
             }),
             theme: "striped",
             styles: {
@@ -200,6 +209,7 @@ const VentasPage: React.FC = () => {
         // Guardar o descargar
         doc.save(`Factura_${venta.idVenta}.pdf`);
     };
+
 
     return (
         <ContenedorPrincipal>
