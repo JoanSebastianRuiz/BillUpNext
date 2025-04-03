@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { List, PlusCircle, XCircle, Ban, Unlock, Lock } from "lucide-react";
+import { List, PlusCircle, XCircle, Ban, Unlock, Lock, FileDown } from "lucide-react";
 
 import { VentaDTO } from "@/dto/VentaDTO";
 import { useUsuarioContext } from "@/context/UsuarioContext";
@@ -28,6 +28,12 @@ import { useCajaContext } from "@/context/CajaContext";
 import AbrirCaja from "@/components/cajas/AbrirCaja";
 import CerrarCaja from "@/components/cajas/CerrarCaja";
 
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import { useTerceroContext } from "@/context/TerceroContext";
+import { useProductoContext } from "@/context/ProductoContext";
+import { useEmpresaContext } from "@/context/EmpresaContext";
+
 
 const VentasPage: React.FC = () => {
     const [modalRegistrar, setModalRegistrar] = useState(false);
@@ -40,6 +46,10 @@ const VentasPage: React.FC = () => {
     const { usuarios, usuario } = useUsuarioContext()
     const { cajaSeleccionada } = useCajaContext()
     const [ventasFiltradas, setVentasFiltradas] = useState<VentaDTO[]>([]);
+    const { clientesPersona, clientesEmpresa } = useTerceroContext()
+    const { detallesVentas } = useVentaContext()
+    const { productos } = useProductoContext()
+    const { empresas } = useEmpresaContext()
 
     const fechaVentaRef = useRef<HTMLInputElement | null>(null);
     const estadoVentaRef = useRef<HTMLSelectElement>(null);
@@ -112,6 +122,85 @@ const VentasPage: React.FC = () => {
         { titulo: "Acciones", center: false }
     ]
 
+    const generarPDF = (venta: VentaDTO) => {
+        const empresa = empresas.find(empresa => empresa.idEmpresa === usuario.idEmpresa);
+        const cajero = usuarios.find(usuario => usuario.idUsuario === venta.idUsuario);
+        let nombreCliente = "N/A";
+        const detalles = detallesVentas.filter(detalle => detalle.idVenta === venta.idVenta);
+        let cliente;
+
+        if (venta.idTercero) {
+            cliente = clientesEmpresa.find(cliente => cliente.idTercero === venta.idTercero);
+            if (!cliente) {
+                cliente = clientesPersona.find(cliente => cliente.idTercero === venta.idTercero);
+                nombreCliente = `${cliente?.nombreTercero} ${cliente?.apellidoTercero || ""}`;
+            } else {
+                nombreCliente = cliente?.nombreTercero || "N/A";
+            }
+        }
+
+        const doc = new jsPDF();
+
+        // Establecer fuente y agregar logo
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        doc.text(`Factura de Venta - ${empresa?.nombreEmpresa}`, 70, 20);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        doc.text(`Factura No. ${venta.idVenta}`, 14, 35);
+        doc.text(`Fecha: ${venta?.fechaVenta ? new Date(venta.fechaVenta).toLocaleString('es-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        }) : 'N/A'}`, 14, 45);
+        doc.text(`Cliente: ${nombreCliente}`, 14, 55);
+        doc.text(`Cajero: ${cajero?.nombreUsuario} ${cajero?.apellidoUsuario}`, 14, 60);
+        doc.setFont("helvetica", "bold");
+        doc.text(`Total: $${venta.valorTotalVenta.toFixed(2)}`, 14, 65);
+
+        // Línea separadora
+        doc.setLineWidth(0.5);
+        doc.line(14, 70, 190, 70);
+
+        // Tabla de productos
+        autoTable(doc, {
+            startY: 80,
+            head: [["Producto", "Cantidad", "Subtotal", "Descuento", "Impuesto", "Total"]],
+            body: detalles.map((d) => {
+                const producto = productos.find(p => p.idProducto === d.idProducto);
+                return [
+                    producto?.nombreProducto || "N/A",
+                    d.cantidadDetalleVenta,
+                    `$${(d.valorTotalDetalleVenta + d.valorDescuentoDetalleVenta - d.valorImpuestosDetalleVenta).toFixed(2)}`,
+                    `$${d.valorDescuentoDetalleVenta.toFixed(2)}`,
+                    `$${d.valorImpuestosDetalleVenta.toFixed(2)}`,
+                    `$${d.valorTotalDetalleVenta.toFixed(2)}`,
+                ]
+            }),
+            theme: "striped",
+            styles: {
+                fontSize: 10,
+                halign: "center",
+                valign: "middle",
+            },
+            headStyles: {
+                fillColor: [44, 62, 80],
+                textColor: [255, 255, 255],
+                fontSize: 11,
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240],
+            },
+        });
+
+        // Guardar o descargar
+        doc.save(`Factura_${venta.idVenta}.pdf`);
+    };
+
     return (
         <ContenedorPrincipal>
             <ContenedorFiltros title="Ventas">
@@ -125,19 +214,19 @@ const VentasPage: React.FC = () => {
                             />
                             :
                             (<>
-                                    <BotonFiltro
-                                        onClick={() => setModalCerrarCaja(true)}
-                                        Symbol={Lock}
-                                        name="Cerrar caja"
-                                    />
+                                <BotonFiltro
+                                    onClick={() => setModalCerrarCaja(true)}
+                                    Symbol={Lock}
+                                    name="Cerrar caja"
+                                />
 
-                                    <BotonFiltro
-                                        onClick={() => setModalRegistrar(true)}
-                                        Symbol={PlusCircle}
-                                        name="Registrar venta"
-                                    />
-                                </>)
-                            )}
+                                <BotonFiltro
+                                    onClick={() => setModalRegistrar(true)}
+                                    Symbol={PlusCircle}
+                                    name="Registrar venta"
+                                />
+                            </>)
+                    )}
 
                     <BotonFiltro
                         onClick={limpiarFiltros}
@@ -232,6 +321,7 @@ const VentasPage: React.FC = () => {
                                                 }}
                                                 h={5}
                                             />
+
                                             {usuario.idRol == 2 && venta.estadoVenta && (
                                                 <BotonAccionCard
                                                     Symbol={Ban}
@@ -242,6 +332,12 @@ const VentasPage: React.FC = () => {
                                                     h={5}
                                                 />
                                             )}
+
+                                            <BotonAccionCard
+                                                Symbol={FileDown}
+                                                onClick={() => generarPDF(venta)}
+                                                h={5}
+                                            />
 
                                         </div>
                                     </TableData>

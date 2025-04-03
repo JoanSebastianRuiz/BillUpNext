@@ -15,4 +15,5 @@ export interface TerceroResponseEmpresaDTO {
     codigoPostalTercero: string,
     proveedorTercero: boolean,
     estadoTercero: boolean
+    apellido1Tercero?: string,
 }
