@@ -159,7 +159,7 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
         // Título centrado
         doc.setFont("helvetica", "bold");
         doc.setFontSize(22);
-        const titulo = `Usuarios - ${empresa?.nombreEmpresa}`;
+        const titulo = `${proveedorTerceroPersona ? "Proveedores persona" : "Clientes persona"} - ${empresa?.nombreEmpresa}`;
         const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2;
         doc.text(titulo, titleX, 20);
 
@@ -202,6 +202,8 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
         doc.save(proveedorTerceroPersona ? "Reporte_proveedores_persona.pdf" : "Reporte_clientes_persona.pdf");
     };
 
+
+
     return (
         <section>
             <ContenedorFiltros title="">
@@ -217,10 +219,10 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
                         Symbol={XCircle}
                         name="Limpiar filtros" />
 
-                    {usuario.idUsuario == 2 && (<BotonFiltro
+                    {usuario.idRol == 2 && <BotonFiltro
                         onClick={exportarDatosPDF}
                         Symbol={FileDown}
-                        name="Exportar datos" />)}
+                        name="Exportar datos" />}
 
                 </ContenedorBotonesFiltros>
 

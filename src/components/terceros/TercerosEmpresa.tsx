@@ -219,7 +219,7 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
                         Symbol={XCircle}
                         name="Limpiar filtros" />
 
-                    {usuario.idUsuario == 2 && (<BotonFiltro
+                    {usuario.idRol == 2 && (<BotonFiltro
                         onClick={exportarDatosPDF}
                         Symbol={FileDown}
                         name="Exportar datos" />)}
