@@ -174,6 +174,21 @@ const UsuariosPage: React.FC = () => {
 
         const pageWidth = doc.internal.pageSize.getWidth();
 
+        // Fecha alineada a la derecha
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        const fechaTexto = `Fecha: ${new Date().toLocaleString('es-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        })}`;
+        const paddingRight = 14;
+        const fechaX = pageWidth - doc.getTextWidth(fechaTexto) - paddingRight;
+        doc.text(fechaTexto, fechaX, 15); // Parte superior derecha
+
         // Título centrado
         doc.setFont("helvetica", "bold");
         doc.setFontSize(22);
@@ -215,7 +230,14 @@ const UsuariosPage: React.FC = () => {
             },
         });
 
-        doc.save(`Reporte_usuarios.pdf`);
+        // Fecha actual para el nombre del archivo
+        const fechaActual = new Date();
+        const dia = String(fechaActual.getDate()).padStart(2, '0');
+        const mes = String(fechaActual.getMonth() + 1).padStart(2, '0');
+        const año = fechaActual.getFullYear();
+        const fechaNombre = `${dia}_${mes}_${año}`;
+
+        doc.save(`Reporte_usuarios_${fechaNombre}.pdf`);
     };
 
 

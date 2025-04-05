@@ -93,6 +93,21 @@ const GravamenesPage: React.FC = () => {
     const doc = new jsPDF(); // orientación vertical por defecto
 
     const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 14;
+
+    // Fecha alineada a la derecha (mejor alineación)
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    const fechaTexto = `Fecha: ${new Date().toLocaleString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    })}`;
+    const fechaX = pageWidth - margin; // posición base en el borde derecho
+    doc.text(fechaTexto, fechaX, 10, { align: "right" }); // 'align: right' hace que el texto termine en X
 
     // Título centrado
     doc.setFont("helvetica", "bold");
@@ -129,7 +144,14 @@ const GravamenesPage: React.FC = () => {
       },
     });
 
-    doc.save(`Reporte_gravamenes.pdf`);
+    // Fecha actual para el nombre del archivo
+    const fechaActual = new Date();
+    const dia = String(fechaActual.getDate()).padStart(2, '0');
+    const mes = String(fechaActual.getMonth() + 1).padStart(2, '0');
+    const año = fechaActual.getFullYear();
+    const fechaNombre = `${dia}_${mes}_${año}`;
+
+    doc.save(`Reporte_gravamenes_${fechaNombre}.pdf`);
   };
 
   return (

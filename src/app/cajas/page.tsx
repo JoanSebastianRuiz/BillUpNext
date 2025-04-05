@@ -122,21 +122,36 @@ const CajasPage: React.FC = () => {
         const doc = new jsPDF(); // orientación vertical por defecto
 
         const pageWidth = doc.internal.pageSize.getWidth();
+        const margin = 14;
+
+        // Fecha alineada a la derecha (mejor alineación)
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        const fechaTexto = `Fecha: ${new Date().toLocaleString('es-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        })}`;
+        const fechaX = pageWidth - margin; // posición base en el borde derecho
+        doc.text(fechaTexto, fechaX, 10, { align: "right" }); // 'align: right' hace que el texto termine en X
 
         // Título centrado
         doc.setFont("helvetica", "bold");
         doc.setFontSize(22);
         const titulo = `Cajas - ${empresa?.nombreEmpresa}`;
-        const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2;
-        doc.text(titulo, titleX, 20);
+        const titleX = pageWidth / 2;
+        doc.text(titulo, titleX, 20, { align: "center" });
 
         // Línea separadora
         doc.setLineWidth(0.5);
-        doc.line(14, 30, pageWidth - 14, 30); // línea horizontal justo debajo del título
+        doc.line(margin, 30, pageWidth - margin, 30); // línea horizontal justo debajo del título
 
         // Tabla de balance de cajas
         autoTable(doc, {
-            startY: 40, // espacio después de la línea
+            startY: 40,
             head: [["Caja", "Estado"]],
             body: cajasFiltradas.map((c) => [
                 c.nombreCaja,
@@ -158,8 +173,16 @@ const CajasPage: React.FC = () => {
             },
         });
 
-        doc.save(`Reporte_cajas.pdf`);
+        // Fecha actual para el nombre del archivo
+        const fechaActual = new Date();
+        const dia = String(fechaActual.getDate()).padStart(2, '0');
+        const mes = String(fechaActual.getMonth() + 1).padStart(2, '0');
+        const año = fechaActual.getFullYear();
+        const fechaNombre = `${dia}_${mes}_${año}`;
+
+        doc.save(`Reporte_cajas_${fechaNombre}.pdf`);
     };
+
 
 
     return (
@@ -182,7 +205,7 @@ const CajasPage: React.FC = () => {
                         onClick={exportarDatosPDF}
                         Symbol={FileDown}
                         name="Exportar datos" />
-                        
+
                 </ContenedorBotonesFiltros>
                 <ContenedorSelectores>
                     {/* Nombre */}
