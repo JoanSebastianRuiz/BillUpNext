@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Pencil, PlusCircle, XCircle } from "lucide-react";
+import { Pencil, PlusCircle, XCircle, FileDown } from "lucide-react";
 
 import { useGravamenContext } from "@/context/GravamenContext";
 
@@ -20,11 +20,18 @@ import RegistrarGravamen from "@/components/gravamenes/RegistrarGravamen";
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 import Table from "@/components/common/Table";
 
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import { useEmpresaContext } from "@/context/EmpresaContext";
+import { useUsuarioContext } from "@/context/UsuarioContext";
+
 const GravamenesPage: React.FC = () => {
   const [modalRegistrar, setModalRegistrar] = useState(false);
   const [modalActualizar, setModalActualizar] = useState(false);
   const [gravamenSeleccionado, setGravamenSeleccionado] = useState<GravamenDTO | null>(null);
   const { gravamenes } = useGravamenContext();
+  const { empresas } = useEmpresaContext();
+  const { usuario } = useUsuarioContext();
 
   const [gravamenesFiltrados, setGravamenesFiltrados] = useState<GravamenDTO[]>([]);
 
@@ -80,6 +87,51 @@ const GravamenesPage: React.FC = () => {
     { titulo: "Acciones", center: true },
   ];
 
+  const exportarDatosPDF = () => {
+    const empresa = empresas.find(empresa => empresa.idEmpresa === usuario.idEmpresa);
+
+    const doc = new jsPDF(); // orientación vertical por defecto
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    // Título centrado
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    const titulo = `Gravámenes - ${empresa?.nombreEmpresa}`;
+    const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2;
+    doc.text(titulo, titleX, 20);
+
+    // Línea separadora
+    doc.setLineWidth(0.5);
+    doc.line(14, 30, pageWidth - 14, 30); // línea horizontal justo debajo del título
+
+    // Tabla de gravámenes
+    autoTable(doc, {
+      startY: 40, // espacio después de la línea
+      head: [["Gravámen", "Estado"]],
+      body: gravamenesFiltrados.map((c) => [
+        c.nombreGravamen,
+        c.estadoGravamen ? "Activa" : "Inactiva",
+      ]),
+      theme: "striped",
+      styles: {
+        fontSize: 10,
+        halign: "center",
+        valign: "middle",
+      },
+      headStyles: {
+        fillColor: [44, 62, 80],
+        textColor: [255, 255, 255],
+        fontSize: 11,
+      },
+      alternateRowStyles: {
+        fillColor: [240, 240, 240],
+      },
+    });
+
+    doc.save(`Reporte_gravamenes.pdf`);
+  };
+
   return (
     <ContenedorPrincipal>
       <ContenedorFiltros title="Gravámenes">
@@ -94,6 +146,10 @@ const GravamenesPage: React.FC = () => {
             Symbol={XCircle}
             name="Limpiar filtros"
           />
+          <BotonFiltro
+            onClick={exportarDatosPDF}
+            Symbol={FileDown}
+            name="Exportar datos" />
         </ContenedorBotonesFiltros>
 
         <ContenedorSelectores>

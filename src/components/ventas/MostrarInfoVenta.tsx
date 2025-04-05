@@ -71,7 +71,7 @@ const MostrarInfoVenta = ({ venta }: { venta: VentaDTO | null }) => {
     return (
         <ContenedorMostrarInfo name="">
             {usuario.idRol == 2 && <ParrafoMostrarInfo
-                subtitle="Realizada por"
+                subtitle="Cajero"
                 text={`${usuarioVendio?.nombreUsuario} ${usuarioVendio?.apellidoUsuario}`}
             />}
             <ParrafoMostrarInfo
@@ -95,6 +95,10 @@ const MostrarInfoVenta = ({ venta }: { venta: VentaDTO | null }) => {
                     text={venta?.observacionVenta || "No hay observaciones"}
                 />
             </div>
+
+            <ParrafoMostrarInfo
+                subtitle="Subtotal"
+                text={`$ ${venta?.valorTotalVenta || 0 + descuentosTotales - impuestosTotales}`} />
 
             <ParrafoMostrarInfo
                 subtitle="Descuentos totales"

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { XCircle, Eye } from "lucide-react";
+import { XCircle, Eye, FileDown } from "lucide-react";
 
 import { useUsuarioContext } from "@/context/UsuarioContext";
 import { useCajaContext } from "@/context/CajaContext";
@@ -23,10 +23,15 @@ import BotonAccionCard from "@/components/cards/BotonAccionCard";
 import Modal from "@/components/modal/Modal";
 import MostrarInfoDetalleCaja from "@/components/balanceCaja/MostrarInfoDetalleCaja";
 
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import { useEmpresaContext } from "@/context/EmpresaContext";
+
 
 const BalanceCajasPage: React.FC = () => {
     const { detallesCajas, cajas } = useCajaContext()
     const { usuarios, usuario } = useUsuarioContext()
+    const { empresas } = useEmpresaContext()
     const [detallesCajasFiltrados, setDetallesCajasFiltrados] = useState<DetalleCajaDTO[]>([]);
     const [usuariosFiltrados, setUsuariosFiltrados] = useState(usuarios);
     const [modalInfo, setModalInfo] = useState(false);
@@ -112,6 +117,81 @@ const BalanceCajasPage: React.FC = () => {
         ]
     }
 
+    const exportarDatosPDF = () => {
+        const empresa = empresas.find(empresa => empresa.idEmpresa === usuario.idEmpresa);
+
+        const doc = new jsPDF({
+            orientation: "landscape", //  Orientación horizontal
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+
+        // Título centrado
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        const titulo = `Balance de cajas - ${empresa?.nombreEmpresa}`;
+        const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2;
+        doc.text(titulo, titleX, 20);
+
+        // Línea separadora
+        doc.setLineWidth(0.5);
+        doc.line(14, 30, pageWidth - 14, 30); // ajustado a landscape
+
+        // Tabla de balance de cajas
+        autoTable(doc, {
+            startY: 40, // ajustado por la línea separadora
+            head: [["Cajero", "Caja", "Fecha de apertura", "Dinero de apertura", "Fecha de cierre", "Dinero de cierre", "Dinero de cierre calculado"]],
+            body: detallesCajasFiltrados.map((d) => {
+                const cajero = usuarios.find(usuario => usuario.idUsuario === d.idUsuario);
+                const caja = cajas.find(caja => caja.idCaja === d.idCaja);
+
+                return [
+                    `${cajero?.nombreUsuario || ''} ${cajero?.apellidoUsuario || ''}`,
+                    caja?.nombreCaja || '',
+                    d.fechaAperturaDetalleCaja
+                        ? new Date(d.fechaAperturaDetalleCaja).toLocaleString('es-ES', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                        })
+                        : 'No registrada',
+                    `$ ${d.dineroAperturaDetalleCaja}`,
+                    d.fechaCierreDetalleCaja
+                        ? new Date(d.fechaCierreDetalleCaja).toLocaleString('es-ES', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                        })
+                        : 'No registrada',
+                    d.dineroCierreDetalleCaja !== null ? `$ ${d.dineroCierreDetalleCaja}` : 'No registrado',
+                    d.dineroCierreSistemaDetalleCaja !== null ? `$ ${d.dineroCierreSistemaDetalleCaja}` : 'No registrado'
+                ]
+            }),
+            theme: "striped",
+            styles: {
+                fontSize: 10,
+                halign: "center",
+                valign: "middle",
+            },
+            headStyles: {
+                fillColor: [44, 62, 80],
+                textColor: [255, 255, 255],
+                fontSize: 11,
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240],
+            },
+        });
+
+        doc.save(`Reporte_balance_cajas.pdf`);
+    };
+
     return (
         <ContenedorPrincipal>
             <ContenedorFiltros title="Balance de Cajas">
@@ -121,6 +201,14 @@ const BalanceCajasPage: React.FC = () => {
                         Symbol={XCircle}
                         name="Limpiar filtros"
                     />
+
+                    {usuario.idRol === 2 && (
+                        <BotonFiltro
+                            onClick={exportarDatosPDF}
+                            Symbol={FileDown}
+                            name="Exportar datos" />
+                    )}
+
                 </ContenedorBotonesFiltros>
 
                 <ContenedorSelectores>

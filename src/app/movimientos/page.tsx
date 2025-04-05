@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { List, PlusCircle, XCircle, Ban, Unlock, Lock } from "lucide-react";
+import { List, PlusCircle, XCircle, Ban, Unlock, Lock, FileDown } from "lucide-react";
 
-import { VentaDTO } from "@/dto/VentaDTO";
 import { useUsuarioContext } from "@/context/UsuarioContext";
 
 import ContenedorFiltros from "@/components/filtros/ContenedorFiltros";
@@ -28,6 +27,10 @@ import CerrarCaja from "@/components/cajas/CerrarCaja";
 import MostrarInfoMovimiento from "@/components/movimientos/MostrarInfoMovimiento";
 import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import { useEmpresaContext } from "@/context/EmpresaContext";
+
 
 const MovimientosPage: React.FC = () => {
     const [modalRegistrar, setModalRegistrar] = useState(false);
@@ -37,6 +40,7 @@ const MovimientosPage: React.FC = () => {
     const [modalCerrarCaja, setModalCerrarCaja] = useState(false);
     const { movimientos, cajaSeleccionada, cajas } = useCajaContext()
     const { usuarios, usuario } = useUsuarioContext()
+    const { empresas } = useEmpresaContext()
     const [cajeros, setCajeros] = useState<UsuarioResponseDTO[]>(usuarios);
     const [movimientosFiltrados, setMovimientosFiltrados] = useState<MovimientoDTO[]>([]);
 
@@ -148,6 +152,71 @@ const MovimientosPage: React.FC = () => {
         ]
     }
 
+    const exportarDatosPDF = () => {
+        const empresa = empresas.find(empresa => empresa.idEmpresa === usuario.idEmpresa);
+
+        const doc = new jsPDF({
+            orientation: "landscape", //  Orientación horizontal
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+
+        // Título centrado
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        const titulo = `Movimientos - ${empresa?.nombreEmpresa}`;
+        const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2;
+        doc.text(titulo, titleX, 20);
+
+        // Línea separadora
+        doc.setLineWidth(0.5);
+        doc.line(14, 30, pageWidth - 14, 30); // ajustado a landscape
+
+        // Tabla de movimientos
+        autoTable(doc, {
+            startY: 40, // ajustado por la línea separadora
+            head: [["Cajero", "Caja", "Fecha", "Valor", "Tipo", "Descripción"]],
+            body: movimientosFiltrados.map((m) => {
+                const cajero = usuarios.find(usuario => usuario.idUsuario === m.idUsuario);
+                const caja = cajas.find(caja => caja.idCaja === m.idCaja);
+
+                return [
+                    `${cajero?.nombreUsuario || ''} ${cajero?.apellidoUsuario || ''}`,
+                    caja?.nombreCaja || '',
+                    m.fechaMovimiento
+                        ? new Date(m.fechaMovimiento).toLocaleString('es-ES', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                        })
+                        : 'No registrada',
+                    `$ ${m.valorMovimiento}`,
+                    m.tipoMovimiento ? 'Entrada' : 'Salida',
+                    m.descripcionMovimiento || 'N/A',
+                ]
+            }),
+            theme: "striped",
+            styles: {
+                fontSize: 10,
+                halign: "center",
+                valign: "middle",
+            },
+            headStyles: {
+                fillColor: [44, 62, 80],
+                textColor: [255, 255, 255],
+                fontSize: 11,
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240],
+            },
+        });
+
+        doc.save(`Reporte_movimientos.pdf`);
+    };
+
 
     return (
         <ContenedorPrincipal>
@@ -181,6 +250,12 @@ const MovimientosPage: React.FC = () => {
                         Symbol={XCircle}
                         name="Limpiar filtros"
                     />
+                    {usuario.idRol === 2 && (
+                        <BotonFiltro
+                            onClick={exportarDatosPDF}
+                            Symbol={FileDown}
+                            name="Exportar datos" />
+                    )}
                 </ContenedorBotonesFiltros>
 
                 <ContenedorSelectores>
@@ -271,7 +346,7 @@ const MovimientosPage: React.FC = () => {
                                     <TableData center={false} noWrap={true} width="15%">
                                         {movimiento.tipoMovimiento ? 'Entrada' : 'Salida'}
                                     </TableData>
-                                    <TableData center={false} noWrap={false} width={usuario.idRol == 2? "45%" : "30%"}>{movimiento.descripcionMovimiento || 'N/A'}</TableData>
+                                    <TableData center={false} noWrap={false} width={usuario.idRol == 2 ? "45%" : "30%"}>{movimiento.descripcionMovimiento || 'N/A'}</TableData>
                                     {usuario.idRol === 2 &&
                                         (<TableData center={false} width="15%">
                                             <div className="flex gap-2">

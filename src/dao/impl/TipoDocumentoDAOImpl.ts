@@ -1,5 +1,4 @@
 import { TipoDocumentoDAO } from "@/dao/TipoDocumentoDAO";
-import { TipoDocumento } from "@/models/TipoDocumento";
 import { ejecutarQuery } from "@/connection/conexion";
 import { TipoDocumentoResponseDTO } from "@/dto/TipoDocumentoResponseDTO";
 
@@ -17,7 +16,7 @@ export class TipoDocumentoDAOImpl implements TipoDocumentoDAO {
     public getAll = async (): Promise<Array<TipoDocumentoResponseDTO>> => {
         try {
             const tipoDocumentos: TipoDocumentoResponseDTO[] = await ejecutarQuery(
-                `SELECT \"idTipoDocumento\", \"nombreTipoDocumento\", \"estadoTipoDocumento\" FROM \"TipoDocumento\";`,
+                `SELECT \"idTipoDocumento\", \"nombreTipoDocumento\", \"estadoTipoDocumento\", \"abreviaturaTipoDocumento\"  FROM \"TipoDocumento\";`,
                 []
             );
 

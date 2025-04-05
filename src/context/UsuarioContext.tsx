@@ -92,6 +92,8 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
                         setRoles(rolesRes.data.filter((rol: RolDTO) => rol.idRol !== 3));
                     } else if (idRol === 2) {
                         setRoles(rolesRes.data.filter((rol: RolDTO) => rol.idRol !== 1));
+                    } else if (idRol === 3) {
+                        setRoles(rolesRes.data.filter((rol: RolDTO) => rol.idRol == 3));
                     }
                 }
                 if (tiposDocumentoRes.status === 200) {

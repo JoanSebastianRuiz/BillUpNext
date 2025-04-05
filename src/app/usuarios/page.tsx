@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
+import { Pencil, Eye, PlusCircle, XCircle, FileDown } from "lucide-react";
 
 import { useUsuarioContext } from '@/context/UsuarioContext';
 import { useEmpresaContext } from "@/context/EmpresaContext";
@@ -26,6 +26,9 @@ import MostrarInfoUsuario from "@/components/usuarios/MostrarInfoUsuario";
 import RegistrarUsuario from "@/components/usuarios/RegistrarUsuario";
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+
 
 const UsuariosPage: React.FC = () => {
     const [modalInfo, setModalInfo] = useState(false)
@@ -37,7 +40,8 @@ const UsuariosPage: React.FC = () => {
         municipios,
         roles,
         tiposDocumento,
-        usuarios
+        usuarios,
+        usuario
     } = useUsuarioContext()
 
     const { empresas } = useEmpresaContext()
@@ -161,6 +165,60 @@ const UsuariosPage: React.FC = () => {
         }
     }, [municipios, idMunicipioRef.current?.value]);
 
+    const exportarDatosPDF = () => {
+        const empresa = empresas.find(empresa => empresa.idEmpresa === usuario.idEmpresa);
+
+        const doc = new jsPDF({
+            orientation: "landscape", //  Orientación horizontal
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+
+        // Título centrado
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        const titulo = `Usuarios - ${empresa?.nombreEmpresa}`;
+        const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2;
+        doc.text(titulo, titleX, 20);
+
+        // Línea separadora
+        doc.setLineWidth(0.5);
+        doc.line(14, 30, pageWidth - 14, 30); // ajustado a landscape
+
+        // Tabla de usuarios
+        autoTable(doc, {
+            startY: 40, // ajustado por la línea separadora
+            head: [["Nombres", "Apellidos", "T.D.", "Documento", "Correo", "Telefono", "Rol", "Estado"]],
+            body: usuariosFiltrados.map((u) => [
+                u.nombreUsuario,
+                u.apellidoUsuario,
+                tiposDocumento.find(tipo => tipo.idTipoDocumento === u.idTipoDocumento)?.abreviaturaTipoDocumento || "N/A",
+                u.numeroDocumentoUsuario,
+                u.correoUsuario || "N/A",
+                u.telefonoUsuario || "N/A",
+                roles.find(rol => rol.idRol === u.idRol)?.nombreRol || "N/A",
+                u.estadoUsuario ? "Activo" : "Inactivo",
+            ]),
+            theme: "striped",
+            styles: {
+                fontSize: 10,
+                halign: "center",
+                valign: "middle",
+            },
+            headStyles: {
+                fillColor: [44, 62, 80],
+                textColor: [255, 255, 255],
+                fontSize: 11,
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240],
+            },
+        });
+
+        doc.save(`Reporte_usuarios.pdf`);
+    };
+
+
 
     return (
         <ContenedorPrincipal>
@@ -176,6 +234,11 @@ const UsuariosPage: React.FC = () => {
                         onClick={limpiarFiltros}
                         Symbol={XCircle}
                         name="Limpiar filtros" />
+
+                    <BotonFiltro
+                        onClick={exportarDatosPDF}
+                        Symbol={FileDown}
+                        name="Exportar datos" />
 
                 </ContenedorBotonesFiltros>
 

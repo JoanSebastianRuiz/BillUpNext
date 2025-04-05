@@ -6,8 +6,7 @@ import { DetalleCajaDTO } from '@/dto/DetalleCajaDTO';
 
 import ParrafoMostrarInfo from '../modal/ParrafoMostrarInfo';
 import ContenedorMostrarInfo from '../modal/ContenedorMostrarInfo';
-import EstadoMostrarInfo from '../modal/EstadoMostrarInfo';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useCajaContext } from '@/context/CajaContext';
 
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Pencil, PlusCircle, XCircle } from "lucide-react";
+import { Pencil, PlusCircle, XCircle, FileDown } from "lucide-react";
 import { useProductoContext } from "@/context/ProductoContext";
 
 import { CategoriaDTO } from "@/dto/CategoriaDTO";
@@ -19,12 +19,19 @@ import RegistrarCategoria from "@/components/categorias/RegistrarCategoria";
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 import Table from "@/components/common/Table";
 
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import { useEmpresaContext } from "@/context/EmpresaContext";
+import { useUsuarioContext } from "@/context/UsuarioContext";
+
 
 const CategoriasPage: React.FC = () => {
     const [modalRegistrar, setModalRegistrar] = useState(false);
     const [modalActualizar, setModalActualizar] = useState(false);
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<CategoriaDTO | null>(null);
     const { categorias } = useProductoContext()
+    const { empresas } = useEmpresaContext()
+    const { usuario } = useUsuarioContext()
     const [categoriasFiltradas, setCategoriasFiltradas] = useState<CategoriaDTO[]>([]);
 
     const nombreCategoriaRef = useRef<HTMLInputElement>(null);
@@ -72,6 +79,51 @@ const CategoriasPage: React.FC = () => {
         { titulo: "Acciones", center: true }
     ]
 
+    const exportarDatosPDF = () => {
+        const empresa = empresas.find(empresa => empresa.idEmpresa === usuario.idEmpresa);
+
+        const doc = new jsPDF(); // orientación vertical por defecto
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+
+        // Título centrado
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        const titulo = `Categorías - ${empresa?.nombreEmpresa}`;
+        const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2;
+        doc.text(titulo, titleX, 20);
+
+        // Línea separadora
+        doc.setLineWidth(0.5);
+        doc.line(14, 30, pageWidth - 14, 30); // línea horizontal justo debajo del título
+
+        // Tabla de categorías
+        autoTable(doc, {
+            startY: 40, // espacio después de la línea
+            head: [["Categoría", "Estado"]],
+            body: categoriasFiltradas.map((c) => [
+                c.nombreCategoria,
+                c.estadoCategoria ? "Activa" : "Inactiva",
+            ]),
+            theme: "striped",
+            styles: {
+                fontSize: 10,
+                halign: "center",
+                valign: "middle",
+            },
+            headStyles: {
+                fillColor: [44, 62, 80],
+                textColor: [255, 255, 255],
+                fontSize: 11,
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240],
+            },
+        });
+
+        doc.save(`Reporte_categorias.pdf`);
+    };
+
 
 
     return (
@@ -88,6 +140,10 @@ const CategoriasPage: React.FC = () => {
                         Symbol={XCircle}
                         name="Limpiar filtros"
                     />
+                    <BotonFiltro
+                        onClick={exportarDatosPDF}
+                        Symbol={FileDown}
+                        name="Exportar datos" />
                 </ContenedorBotonesFiltros>
 
                 <ContenedorSelectores>
@@ -106,8 +162,8 @@ const CategoriasPage: React.FC = () => {
                         selectEstado={true}
                         defaultValue="true"
                     >
-                        <option value="true">Activo</option>
-                        <option value="false">Inactivo</option>
+                        <option value="true">Activa</option>
+                        <option value="false">Inactiva</option>
                     </SelectFiltro>
                 </ContenedorSelectores>
             </ContenedorFiltros>

@@ -3,7 +3,7 @@
 import axios from "axios";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Pencil, PlusCircle, XCircle, Lock } from "lucide-react";
+import { Pencil, PlusCircle, XCircle, Lock, FileDown } from "lucide-react";
 
 import { CajaDTO } from "@/dto/CajaDTO";
 
@@ -23,6 +23,11 @@ import Notificacion from '@/components/form/Notificacion';
 
 import Modal from "@/components/modal/Modal";
 import { useCajaContext } from "@/context/CajaContext";
+import { useEmpresaContext } from "@/context/EmpresaContext";
+import { useUsuarioContext } from "@/context/UsuarioContext";
+
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const CajasPage: React.FC = () => {
 
@@ -34,6 +39,8 @@ const CajasPage: React.FC = () => {
     const [success, setSuccess] = useState<string | null>(null);
 
     const { cajas, obtenerCajas } = useCajaContext();
+    const { empresas } = useEmpresaContext();
+    const { usuario } = useUsuarioContext();
 
     const nombreCajaRef = useRef<HTMLInputElement>(null);
     const estadoCajaRef = useRef<HTMLSelectElement>(null);
@@ -109,6 +116,52 @@ const CajasPage: React.FC = () => {
         { titulo: "Acciones", center: true }
     ]
 
+    const exportarDatosPDF = () => {
+        const empresa = empresas.find(empresa => empresa.idEmpresa === usuario.idEmpresa);
+
+        const doc = new jsPDF(); // orientación vertical por defecto
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+
+        // Título centrado
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        const titulo = `Cajas - ${empresa?.nombreEmpresa}`;
+        const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2;
+        doc.text(titulo, titleX, 20);
+
+        // Línea separadora
+        doc.setLineWidth(0.5);
+        doc.line(14, 30, pageWidth - 14, 30); // línea horizontal justo debajo del título
+
+        // Tabla de balance de cajas
+        autoTable(doc, {
+            startY: 40, // espacio después de la línea
+            head: [["Caja", "Estado"]],
+            body: cajasFiltradas.map((c) => [
+                c.nombreCaja,
+                c.estadoCaja ? "Disponible" : "No disponible",
+            ]),
+            theme: "striped",
+            styles: {
+                fontSize: 10,
+                halign: "center",
+                valign: "middle",
+            },
+            headStyles: {
+                fillColor: [44, 62, 80],
+                textColor: [255, 255, 255],
+                fontSize: 11,
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240],
+            },
+        });
+
+        doc.save(`Reporte_cajas.pdf`);
+    };
+
+
     return (
         <ContenedorPrincipal>
             <ContenedorFiltros title="Cajas">
@@ -124,6 +177,12 @@ const CajasPage: React.FC = () => {
                         Symbol={XCircle}
                         name="Limpiar filtros"
                     />
+
+                    <BotonFiltro
+                        onClick={exportarDatosPDF}
+                        Symbol={FileDown}
+                        name="Exportar datos" />
+                        
                 </ContenedorBotonesFiltros>
                 <ContenedorSelectores>
                     {/* Nombre */}

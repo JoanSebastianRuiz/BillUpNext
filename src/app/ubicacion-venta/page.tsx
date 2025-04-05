@@ -2,7 +2,7 @@
 
 
 import React, { useEffect, useState, useRef } from "react";
-import { Pencil, PlusCircle, XCircle } from "lucide-react";
+import { Pencil, PlusCircle, XCircle, FileDown } from "lucide-react";
 import { useVentaContext } from "@/context/VentaContext";
 
 import { UbicacionVentaDTO } from "@/dto/UbicacionVentaDTO";
@@ -20,6 +20,11 @@ import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
 import Table from "@/components/common/Table";
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import { useEmpresaContext } from "@/context/EmpresaContext";
+import { useUsuarioContext } from "@/context/UsuarioContext";
+
 const UbicacionVentaPage: React.FC = () => {
     const [modalRegistrar, setModalRegistrar] = useState(false);
     const [modalActualizar, setModalActualizar] = useState(false);
@@ -30,6 +35,8 @@ const UbicacionVentaPage: React.FC = () => {
     const estadoUbicacionVentaRef = useRef<HTMLSelectElement>(null);
 
     const { ubicacionesVenta } = useVentaContext();
+    const { empresas } = useEmpresaContext();
+    const { usuario } = useUsuarioContext();
 
     // Paginacion
     const [currentPage, setCurrentPage] = useState(1);
@@ -73,6 +80,51 @@ const UbicacionVentaPage: React.FC = () => {
         { titulo: "Acciones", center: true }
     ];
 
+    const exportarDatosPDF = () => {
+            const empresa = empresas.find(empresa => empresa.idEmpresa === usuario.idEmpresa);
+    
+            const doc = new jsPDF(); // orientación vertical por defecto
+    
+            const pageWidth = doc.internal.pageSize.getWidth();
+    
+            // Título centrado
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(22);
+            const titulo = `Ubicaciones de venta - ${empresa?.nombreEmpresa}`;
+            const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2;
+            doc.text(titulo, titleX, 20);
+    
+            // Línea separadora
+            doc.setLineWidth(0.5);
+            doc.line(14, 30, pageWidth - 14, 30); // línea horizontal justo debajo del título
+    
+            // Tabla de ubicaciones de venta
+            autoTable(doc, {
+                startY: 40, // espacio después de la línea
+                head: [["Ubicación", "Estado"]],
+                body: ubicacionesVentaFiltradas.map((c) => [
+                    c.nombreUbicacionVenta,
+                    c.estadoUbicacionVenta ? "Disponible" : "No disponible",
+                ]),
+                theme: "striped",
+                styles: {
+                    fontSize: 10,
+                    halign: "center",
+                    valign: "middle",
+                },
+                headStyles: {
+                    fillColor: [44, 62, 80],
+                    textColor: [255, 255, 255],
+                    fontSize: 11,
+                },
+                alternateRowStyles: {
+                    fillColor: [240, 240, 240],
+                },
+            });
+    
+            doc.save(`Reporte_ubicaciones_venta.pdf`);
+        };
+
     return (
         <ContenedorPrincipal>
             <ContenedorFiltros title="Ubicaciones de venta">
@@ -87,6 +139,10 @@ const UbicacionVentaPage: React.FC = () => {
                         Symbol={XCircle}
                         name="Limpiar filtros"
                     />
+                    <BotonFiltro
+                        onClick={exportarDatosPDF}
+                        Symbol={FileDown}
+                        name="Exportar datos" />
                 </ContenedorBotonesFiltros>
                 <ContenedorSelectores>
                     <InputFiltro
@@ -103,8 +159,8 @@ const UbicacionVentaPage: React.FC = () => {
                         defaultValue="true"
                         selectEstado={true}
                     >
-                        <option value="true">Activa</option>
-                        <option value="false">Inactiva</option>
+                        <option value="true">Disponible</option>
+                        <option value="false">No disponible</option>
                     </SelectFiltro>
                 </ContenedorSelectores>
             </ContenedorFiltros>

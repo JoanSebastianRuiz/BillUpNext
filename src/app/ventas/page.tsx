@@ -42,18 +42,22 @@ const VentasPage: React.FC = () => {
     const [modalAbrirCaja, setModalAbrirCaja] = useState(false);
     const [modalCerrarCaja, setModalCerrarCaja] = useState(false);
     const [ventaSeleccionada, setVentaSeleccionada] = useState<VentaDTO | null>(null);
+
     const { ventas } = useVentaContext()
     const { usuarios, usuario } = useUsuarioContext()
-    const { cajaSeleccionada } = useCajaContext()
+    const { cajaSeleccionada, cajas } = useCajaContext()
     const [ventasFiltradas, setVentasFiltradas] = useState<VentaDTO[]>([]);
     const { clientesPersona, clientesEmpresa } = useTerceroContext()
     const { detallesVentas } = useVentaContext()
     const { productos } = useProductoContext()
     const { empresas } = useEmpresaContext()
+    const [usuariosFiltrados, setUsuariosFiltrados] = useState(usuarios);
 
     const fechaVentaRef = useRef<HTMLInputElement | null>(null);
     const estadoVentaRef = useRef<HTMLSelectElement>(null);
     const valorTotalVentaRef = useRef<HTMLSelectElement>(null);
+    const idUsuarioRef = useRef<HTMLSelectElement>(null);
+    const idCajaRef = useRef<HTMLSelectElement>(null);
 
     // Paginacion
     const [currentPage, setCurrentPage] = useState(1);
@@ -67,6 +71,8 @@ const VentasPage: React.FC = () => {
         const fechaVenta = fechaVentaRef.current?.value || "";
         const estadoVenta = estadoVentaRef.current?.value;
         const valorTotalVenta = valorTotalVentaRef.current?.value;
+        const idUsuario = idUsuarioRef.current?.value;
+        const idCaja = idCajaRef.current?.value;
 
         let ventasFiltradas = [...ventas];
 
@@ -100,6 +106,16 @@ const VentasPage: React.FC = () => {
             });
         }
 
+        // Filtrar por caja
+        if (idCaja && idCaja !== "0") {
+            ventasFiltradas = ventasFiltradas.filter(venta => venta.idCaja === Number(idCaja));
+        }
+
+        // Filtrar por usuario
+        if (idUsuario && idUsuario !== "0" && usuario.idRol == 2) {
+            ventasFiltradas = ventasFiltradas.filter(venta => venta.idUsuario === Number(idUsuario));
+        }
+
         setVentasFiltradas(ventasFiltradas);
     };
 
@@ -115,6 +131,13 @@ const VentasPage: React.FC = () => {
         filtrarVentas();
     }, [ventas]);
 
+    useEffect(() => {
+        if (usuario.idRol === 2) {
+            const usuariosFiltrados = usuarios.filter(usuario => usuario.idRol === 3);
+            setUsuariosFiltrados(usuariosFiltrados);
+        }
+    }, [usuarios]);
+
     const titulosTabla = [
         { titulo: estadoVentaRef.current?.value == "true" ? "Registrada por" : "Cancelada por", center: false },
         { titulo: "Fecha", center: false },
@@ -122,9 +145,14 @@ const VentasPage: React.FC = () => {
         { titulo: "Acciones", center: false }
     ]
 
-    const generarPDF = (venta: VentaDTO) => {
+    const generarFacturaPDF = (venta: VentaDTO) => {
         const empresa = empresas.find(empresa => empresa.idEmpresa === usuario.idEmpresa);
-        const cajero = usuarios.find(usuario => usuario.idUsuario === venta.idUsuario);
+        let cajero;
+        if (usuario.idRol === 2) {
+            cajero = usuarios.find(usuario => usuario.idUsuario === venta.idUsuarioCancelacionVenta);
+        } else {
+            cajero = usuario;
+        }
         let nombreCliente = "N/A";
         const detalles = detallesVentas.filter(detalle => detalle.idVenta === venta.idVenta);
         let cliente;
@@ -210,6 +238,74 @@ const VentasPage: React.FC = () => {
         doc.save(`Factura_${venta.idVenta}.pdf`);
     };
 
+    const exportarDatosPDF = () => {
+        const empresa = empresas.find(empresa => empresa.idEmpresa === usuario.idEmpresa);
+        const detalles = detallesVentas.filter(detalle => detalle.idVenta === ventaSeleccionada?.idVenta);
+        const descuentosTotales = detalles.reduce((total, detalle) => total + detalle.valorDescuentoDetalleVenta, 0);
+        const impuestosTotales = detalles.reduce((total, detalle) => total + detalle.valorImpuestosDetalleVenta, 0);
+
+        const doc = new jsPDF({
+            orientation: "landscape", //  Orientación horizontal
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+
+        // Título centrado
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        const titulo = `Ventas - ${empresa?.nombreEmpresa}`;
+        const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2;
+        doc.text(titulo, titleX, 20);
+
+        // Línea separadora
+        doc.setLineWidth(0.5);
+        doc.line(14, 30, pageWidth - 14, 30); // ajustado a landscape
+
+        // Tabla de ventas
+        autoTable(doc, {
+            startY: 40, // ajustado por la línea separadora
+            head: [["Cajero", "Fecha", "Subtotal", "Descuentos", "Impuestos", "Total", "Estado"]],
+            body: ventasFiltradas.map((v) => {
+                const cajero = usuarios.find(usuario => usuario.idUsuario === v.idUsuario);
+
+                return [
+                    `${cajero?.nombreUsuario || ''} ${cajero?.apellidoUsuario || ''}`,
+                    v.fechaVenta
+                        ? new Date(v.fechaVenta).toLocaleString('es-ES', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                        })
+                        : "No registrada",
+                    `$ ${v.valorTotalVenta || 0 + descuentosTotales - impuestosTotales}`,
+                    `$ ${descuentosTotales}`,
+                    `$ ${impuestosTotales}`,
+                    `$ ${v.valorTotalVenta}`,
+                    v.estadoVenta ? "Registrada" : "Cancelada",
+                ]
+            }),
+            theme: "striped",
+            styles: {
+                fontSize: 10,
+                halign: "center",
+                valign: "middle",
+            },
+            headStyles: {
+                fillColor: [44, 62, 80],
+                textColor: [255, 255, 255],
+                fontSize: 11,
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240],
+            },
+        });
+
+        doc.save(`Reporte_ventas.pdf`);
+    };
+
 
     return (
         <ContenedorPrincipal>
@@ -243,6 +339,12 @@ const VentasPage: React.FC = () => {
                         Symbol={XCircle}
                         name="Limpiar filtros"
                     />
+
+                    {usuario.idUsuario == 2 &&
+                        (<BotonFiltro
+                            onClick={exportarDatosPDF}
+                            Symbol={FileDown}
+                            name="Exportar datos" />)}
                 </ContenedorBotonesFiltros>
 
                 <ContenedorSelectores>
@@ -265,6 +367,37 @@ const VentasPage: React.FC = () => {
                         <option value="500000-1000000">$500.000 - $1.000.000</option>
                         <option value="1000000+">Más de $1.000.000</option>
                     </SelectFiltro>
+
+
+                    {usuario.idRol === 2 && (
+                        <>
+                            <SelectFiltro
+                                id="idCaja"
+                                name="Caja"
+                                onChange={filtrarVentas}
+                                ref={idCajaRef}
+                            >
+                                {cajas.map(caja => (
+                                    <option key={caja.idCaja} value={caja.idCaja}>
+                                        {caja.nombreCaja}
+                                    </option>
+                                ))}
+                            </SelectFiltro>
+
+                            <SelectFiltro
+                                id="idUsuario"
+                                name="Cajero"
+                                onChange={filtrarVentas}
+                                ref={idUsuarioRef}
+                            >
+                                {usuariosFiltrados.map(usuario => (
+                                    <option key={usuario.idUsuario} value={usuario.idUsuario}>
+                                        {usuario.nombreUsuario}
+                                    </option>
+                                ))}
+                            </SelectFiltro>
+                        </>
+                    )}
 
 
                     <SelectFiltro
@@ -345,7 +478,7 @@ const VentasPage: React.FC = () => {
 
                                             <BotonAccionCard
                                                 Symbol={FileDown}
-                                                onClick={() => generarPDF(venta)}
+                                                onClick={() => generarFacturaPDF(venta)}
                                                 h={5}
                                             />
 

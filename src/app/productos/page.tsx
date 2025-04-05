@@ -3,7 +3,7 @@
 import axios from "axios";
 
 import { useEffect, useState, useRef } from "react";
-import { Pencil, Eye, PlusCircle, XCircle, ReceiptText } from "lucide-react";
+import { Pencil, Eye, PlusCircle, XCircle, ReceiptText, FileDown } from "lucide-react";
 
 import { useProductoContext } from "@/context/ProductoContext";
 
@@ -25,6 +25,11 @@ import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 import SublistaGravamenes from "@/components/productos/gravamenes/SublistaGravamenProducto";
 
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import { useEmpresaContext } from "@/context/EmpresaContext";
+import { useUsuarioContext } from "@/context/UsuarioContext";
+
 const ProductosPage: React.FC = (gravamenProducto) => {
   const [modalInfo, setModalInfo] = useState(false);
   const [modalRegistrar, setModalRegistrar] = useState(false);
@@ -36,6 +41,8 @@ const ProductosPage: React.FC = (gravamenProducto) => {
     ProductoResponseDTO[]
   >([]);
   const { productos, categorias } = useProductoContext();
+  const { empresas } = useEmpresaContext();
+  const { usuario } = useUsuarioContext();
 
   const nombreProductoRef = useRef<HTMLInputElement>(null);
   const idCategoriaRef = useRef<HTMLSelectElement>(null);
@@ -93,6 +100,65 @@ const ProductosPage: React.FC = (gravamenProducto) => {
     filtrarProductos();
   };
 
+  const exportarDatosPDF = () => {
+    const empresa = empresas.find(empresa => empresa.idEmpresa === usuario.idEmpresa);
+
+    const doc = new jsPDF({
+      orientation: "landscape", //  Orientación horizontal
+    });
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    // Título centrado
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    const titulo = `Productos - ${empresa?.nombreEmpresa}`;
+    const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2;
+    doc.text(titulo, titleX, 20);
+
+    // Línea separadora
+    doc.setLineWidth(0.5);
+    doc.line(14, 30, pageWidth - 14, 30); // ajustado a landscape
+
+    // Tabla de productos
+    autoTable(doc, {
+      startY: 40, // ajustado por la línea separadora
+      head: [["Producto", "Categoría", "Precio base", "Descuento", "Impuestos", "Precio de venta", "Stock mínimo", "Stock máximo", "Stock actual", "Estado"]],
+      body: productosFiltrados.map((p) => {
+        const categoria = categorias.find(c => c.idCategoria === p.idCategoria)?.nombreCategoria || "N/A";
+
+        return [
+          p.nombreProducto,
+          categoria,
+          p.precioVentaProducto,
+          `${p.porcentajeDescuentoProducto || 0}%`,
+          p.valorImpuestoProducto,
+          p.valorTotalProducto,
+          p.stockMinimoProducto,
+          p.stockMaximoProducto,
+          p.stockProducto,
+          p.estadoProducto ? "Activo" : "Inactivo",
+        ]
+      }),
+      theme: "striped",
+      styles: {
+        fontSize: 10,
+        halign: "center",
+        valign: "middle",
+      },
+      headStyles: {
+        fillColor: [44, 62, 80],
+        textColor: [255, 255, 255],
+        fontSize: 11,
+      },
+      alternateRowStyles: {
+        fillColor: [240, 240, 240],
+      },
+    });
+
+    doc.save(`Reporte_productos.pdf`);
+  };
+
   return (
     <ContenedorPrincipal>
       <ContenedorFiltros title="Productos">
@@ -108,6 +174,10 @@ const ProductosPage: React.FC = (gravamenProducto) => {
             Symbol={XCircle}
             name="Limpiar filtros"
           />
+          <BotonFiltro
+            onClick={exportarDatosPDF}
+            Symbol={FileDown}
+            name="Exportar datos" />
         </ContenedorBotonesFiltros>
 
         {/* Selectores de filtros */}

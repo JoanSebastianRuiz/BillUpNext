@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Pencil, Eye, PlusCircle, XCircle, PackageSearch } from "lucide-react";
+import { Pencil, Eye, PlusCircle, XCircle, PackageSearch, FileDown } from "lucide-react";
 
 import { useUsuarioContext } from '@/context/UsuarioContext';
 import { useTerceroContext } from "@/context/TerceroContext";
@@ -25,6 +25,12 @@ import RegistrarTerceroPersona from "@/components/terceros/RegistrarTerceroPerso
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 import SublistaProductos from "./proveedores/SublistaProductos";
 
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import { useEmpresaContext } from "@/context/EmpresaContext";
+
+
+
 
 const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorTerceroPersona: boolean, tipoPersonas: "clientes" | "proveedores" }) => {
     const [modalInfo, setModalInfo] = useState(false)
@@ -32,7 +38,8 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
     const [modalActualizar, setModalActualizar] = useState(false)
     const [modalProductos, setModalProductos] = useState(false)
     const [terceroSeleccionado, setTerceroSeleccionado] = useState<TerceroResponsePersonaDTO | null>(null)
-    const { departamentos, municipios, tiposDocumento } = useUsuarioContext()
+    const { departamentos, municipios, tiposDocumento, usuario } = useUsuarioContext()
+    const { empresas } = useEmpresaContext()
 
     const { clientesPersona, proveedoresPersona } = useTerceroContext()
 
@@ -140,6 +147,61 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
         filtrarUsuarios();
     }
 
+    const exportarDatosPDF = () => {
+        const empresa = empresas.find(empresa => empresa.idEmpresa === usuario.idEmpresa);
+
+        const doc = new jsPDF({
+            orientation: "landscape", //  Orientación horizontal
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+
+        // Título centrado
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        const titulo = `Usuarios - ${empresa?.nombreEmpresa}`;
+        const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2;
+        doc.text(titulo, titleX, 20);
+
+        // Línea separadora
+        doc.setLineWidth(0.5);
+        doc.line(14, 30, pageWidth - 14, 30); // ajustado a landscape
+
+        // Tabla de usuarios
+        autoTable(doc, {
+            startY: 40, // ajustado por la línea separadora
+            head: [["Nombres", "Apellidos", "T.D.", "Documento", "Correo", "Telefono", "Departamento", "Municipio", "Dirección", "Estado"]],
+            body: personasFiltradas.map((p) => [
+                p.nombreTercero,
+                p.apellidoTercero,
+                tiposDocumento.find((tipo) => tipo.idTipoDocumento === p.idTipoDocumento)?.abreviaturaTipoDocumento || "N/A",
+                p.numeroDocumentoTercero,
+                p.correoTercero,
+                p.telefonoTercero,
+                departamentos.find((d) => d.idDepartamento === p.idDepartamento)?.nombreDepartamento || "N/A",
+                municipios.find((m) => m.idMunicipio === p.idMunicipio)?.nombreMunicipio || "N/A",
+                p.direccionTercero,
+                p.estadoTercero ? "Activo" : "Inactivo",
+            ]),
+            theme: "striped",
+            styles: {
+                fontSize: 10,
+                halign: "center",
+                valign: "middle",
+            },
+            headStyles: {
+                fillColor: [44, 62, 80],
+                textColor: [255, 255, 255],
+                fontSize: 11,
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240],
+            },
+        });
+
+        doc.save(proveedorTerceroPersona ? "Reporte_proveedores_persona.pdf" : "Reporte_clientes_persona.pdf");
+    };
+
     return (
         <section>
             <ContenedorFiltros title="">
@@ -154,6 +216,11 @@ const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorT
                         onClick={limpiarFiltros}
                         Symbol={XCircle}
                         name="Limpiar filtros" />
+
+                    {usuario.idUsuario == 2 && (<BotonFiltro
+                        onClick={exportarDatosPDF}
+                        Symbol={FileDown}
+                        name="Exportar datos" />)}
 
                 </ContenedorBotonesFiltros>
 

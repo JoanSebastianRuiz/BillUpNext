@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { List, PlusCircle, XCircle, Ban } from "lucide-react";
+import { List, PlusCircle, XCircle, Ban, FileDown } from "lucide-react";
 
 import { CompraDTO } from "@/dto/CompraDTO";
 import { useUsuarioContext } from "@/context/UsuarioContext";
@@ -25,6 +25,10 @@ import TableMessage from "@/components/common/TableMessage";
 import DateInputFiltro from "@/components/filtros/DateInputFiltro";
 import CancelarCompra from "@/components/compras/CancelarCompra";
 
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import { useEmpresaContext } from "@/context/EmpresaContext";
+
 
 const ComprasPage: React.FC = () => {
     const [modalRegistrar, setModalRegistrar] = useState(false);
@@ -33,6 +37,7 @@ const ComprasPage: React.FC = () => {
     const [compraSeleccionada, setCompraSeleccionada] = useState<CompraDTO | null>(null);
     const { compras } = useCompraContext()
     const { usuarios, usuario } = useUsuarioContext()
+    const { empresas } = useEmpresaContext()
     const [comprasFiltradas, setComprasFiltradas] = useState<CompraDTO[]>([]);
 
     const fechaCompraRef = useRef<HTMLInputElement | null>(null);
@@ -106,6 +111,69 @@ const ComprasPage: React.FC = () => {
         { titulo: "Acciones", center: false }
     ]
 
+    const exportarDatosPDF = () => {
+        const empresa = empresas.find(empresa => empresa.idEmpresa === usuario.idEmpresa);
+
+        const doc = new jsPDF({
+            orientation: "landscape", //  Orientación horizontal
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+
+        // Título centrado
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        const titulo = `Compras - ${empresa?.nombreEmpresa}`;
+        const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2;
+        doc.text(titulo, titleX, 20);
+
+        // Línea separadora
+        doc.setLineWidth(0.5);
+        doc.line(14, 30, pageWidth - 14, 30); // ajustado a landscape
+
+        // Tabla de compras
+        autoTable(doc, {
+            startY: 40, // ajustado por la línea separadora
+            head: [["Registrada por", "Fecha", "Valor", "Observaciones", "Estado"]],
+            body: comprasFiltradas.map((c) => {
+                const usuariRegistro = usuarios.find(usuario => usuario.idUsuario === c.idUsuario);
+
+                return [
+                    `${usuariRegistro?.nombreUsuario || ''} ${usuariRegistro?.apellidoUsuario || ''}`,
+                    c.fechaCompra
+                        ? new Date(c.fechaCompra).toLocaleString('es-ES', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                        })
+                        : 'N/A',
+                    `$ ${c.valorTotalCompra || 'N/A'}`,
+                    c.observacionCompra || 'N/A',
+                    c.estadoCompra ? 'Registrada' : 'Cancelada'
+                ]
+            }),
+            theme: "striped",
+            styles: {
+                fontSize: 10,
+                halign: "center",
+                valign: "middle",
+            },
+            headStyles: {
+                fillColor: [44, 62, 80],
+                textColor: [255, 255, 255],
+                fontSize: 11,
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240],
+            },
+        });
+
+        doc.save(`Reporte_compras.pdf`);
+    };
+
     return (
         <ContenedorPrincipal>
             <ContenedorFiltros title="Compras">
@@ -120,6 +188,10 @@ const ComprasPage: React.FC = () => {
                         Symbol={XCircle}
                         name="Limpiar filtros"
                     />
+                    <BotonFiltro
+                        onClick={exportarDatosPDF}
+                        Symbol={FileDown}
+                        name="Exportar datos" />
                 </ContenedorBotonesFiltros>
 
                 <ContenedorSelectores>

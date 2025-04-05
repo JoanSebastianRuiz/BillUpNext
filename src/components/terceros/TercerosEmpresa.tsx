@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Pencil, Eye, PlusCircle, XCircle, PackageSearch } from "lucide-react";
+import { Pencil, Eye, PlusCircle, XCircle, PackageSearch, FileDown } from "lucide-react";
 
 import { useUsuarioContext } from '@/context/UsuarioContext';
 import { useEmpresaContext } from "@/context/EmpresaContext";
@@ -26,6 +26,9 @@ import RegistrarTerceroEmpresa from "@/components/terceros/RegistrarTerceroEmpre
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 import SublistaProductos from "@/components/terceros/proveedores/SublistaProductos";
 
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+
 
 const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorTerceroEmpresa: boolean, tipoEmpresas: "clientes" | "proveedores" }) => {
     const [modalInfo, setModalInfo] = useState(false)
@@ -33,8 +36,8 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
     const [modalActualizar, setModalActualizar] = useState(false)
     const [modalProductos, setModalProductos] = useState(false)
     const [terceroSeleccionado, setTerceroSeleccionado] = useState<TerceroResponseEmpresaDTO | null>(null)
-    const { departamentos, municipios } = useUsuarioContext()
-    const { tiposPersona, regimenesContribuyente } = useEmpresaContext()
+    const { departamentos, municipios, usuario } = useUsuarioContext()
+    const { tiposPersona, regimenesContribuyente, empresas: empresasContext } = useEmpresaContext()
 
     const { clientesEmpresa, proveedoresEmpresa } = useTerceroContext()
     const empresas = proveedorTerceroEmpresa ? proveedoresEmpresa : clientesEmpresa;
@@ -146,6 +149,61 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
         filtrarEmpresas();
     }
 
+    const exportarDatosPDF = () => {
+        const empresaUsuario = empresasContext.find(empresa => empresa.idEmpresa === usuario.idEmpresa);
+
+        const doc = new jsPDF({
+            orientation: "landscape", //  Orientación horizontal
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+
+        // Título centrado
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        const titulo = `${proveedorTerceroEmpresa ? "Proveedores empresa" : "Clientes empresa"} - ${empresaUsuario?.nombreEmpresa}`;
+        const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2;
+        doc.text(titulo, titleX, 20);
+
+        // Línea separadora
+        doc.setLineWidth(0.5);
+        doc.line(14, 30, pageWidth - 14, 30); // ajustado a landscape
+
+        // Tabla de empresas
+        autoTable(doc, {
+            startY: 40, // ajustado por la línea separadora
+            head: [["Empresa", "NIT", "Correo", "Teléfono", "Departamento", "Ciudad", "Dirección", "Estado"]],
+            body: empresasFiltradas.map((e) => {
+                return [
+                    e.nombreTercero,
+                    `${e.nitTercero} - ${e.digitoVerificacionTercero}`,
+                    e.correoTercero,
+                    e.telefonoTercero,
+                    departamentos.find((d) => d.idDepartamento === e.idDepartamento)?.nombreDepartamento || "N/A",
+                    municipios.find((m) => m.idMunicipio === e.idMunicipio)?.nombreMunicipio || "N/A",
+                    e.direccionTercero,
+                    e.estadoTercero ? "Activo" : "Inactivo",
+                ]
+            }),
+            theme: "striped",
+            styles: {
+                fontSize: 10,
+                halign: "center",
+                valign: "middle",
+            },
+            headStyles: {
+                fillColor: [44, 62, 80],
+                textColor: [255, 255, 255],
+                fontSize: 11,
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240],
+            },
+        });
+
+        doc.save(proveedorTerceroEmpresa ? "Reporte_proveedores_empresa.pdf" : "Reporte_clientes_empresa.pdf");
+    };
+
     return (
         <section>
             <ContenedorFiltros title="">
@@ -160,6 +218,11 @@ const TercerosEmpresa = ({ proveedorTerceroEmpresa, tipoEmpresas }: { proveedorT
                         onClick={limpiarFiltros}
                         Symbol={XCircle}
                         name="Limpiar filtros" />
+
+                    {usuario.idUsuario == 2 && (<BotonFiltro
+                        onClick={exportarDatosPDF}
+                        Symbol={FileDown}
+                        name="Exportar datos" />)}
 
                 </ContenedorBotonesFiltros>
 

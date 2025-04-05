@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Pencil, Eye, PlusCircle, XCircle } from "lucide-react";
+import { Pencil, Eye, PlusCircle, XCircle, FileDown } from "lucide-react";
 
 import { useEmpresaContext } from "@/context/EmpresaContext";
 import { useUsuarioContext } from "@/context/UsuarioContext";
@@ -25,6 +25,9 @@ import Modal from "@/components/modal/Modal";
 import ContenedorPrincipal from "@/components/common/ContenedorPrincipal";
 import ControlesPaginacion from "@/components/common/ControlesPaginacion";
 
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+
 
 const EmpresasPage: React.FC = () => {
     const [modalInfo, setModalInfo] = useState(false)
@@ -37,7 +40,8 @@ const EmpresasPage: React.FC = () => {
         empresas
     } = useEmpresaContext()
 
-    const {departamentos, municipios } = useUsuarioContext()
+    const { departamentos, municipios } = useUsuarioContext()
+    const { usuario } = useUsuarioContext()
 
     const [empresasFiltradas, setEmpresasFiltradas] = useState<EmpresaResponseDTO[]>([]);
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
@@ -149,6 +153,61 @@ const EmpresasPage: React.FC = () => {
         filtrarEmpresas();
     }
 
+    const exportarDatosPDF = () => {
+        const empresa = empresas.find(empresa => empresa.idEmpresa === usuario.idEmpresa);
+
+        const doc = new jsPDF({
+            orientation: "landscape", //  Orientación horizontal
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+
+        // Título centrado
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        const titulo = `Empresas - ${empresa?.nombreEmpresa}`;
+        const titleX = (pageWidth - doc.getTextWidth(titulo)) / 2;
+        doc.text(titulo, titleX, 20);
+
+        // Línea separadora
+        doc.setLineWidth(0.5);
+        doc.line(14, 30, pageWidth - 14, 30); // ajustado a landscape
+
+        // Tabla de empresas
+        autoTable(doc, {
+            startY: 40, // ajustado por la línea separadora
+            head: [["Empresa", "NIT", "Correo", "Teléfono", "Departamento", "Ciudad", "Dirección", "Estado"]],
+            body: empresasFiltradas.map((e) => {
+                return [
+                    e.nombreEmpresa,
+                    `${e.nitEmpresa} - ${e.digitoVerificacionEmpresa}`,
+                    e.correoEmpresa,
+                    e.telefonoEmpresa,
+                    departamentos.find((d) => d.idDepartamento === e.idDepartamento)?.nombreDepartamento || "N/A",
+                    municipios.find((m) => m.idMunicipio === e.idMunicipio)?.nombreMunicipio || "N/A",
+                    e.direccionEmpresa,
+                    e.estadoEmpresa ? "Activa" : "Inactiva",
+                ]
+            }),
+            theme: "striped",
+            styles: {
+                fontSize: 10,
+                halign: "center",
+                valign: "middle",
+            },
+            headStyles: {
+                fillColor: [44, 62, 80],
+                textColor: [255, 255, 255],
+                fontSize: 11,
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240],
+            },
+        });
+
+        doc.save(`Reporte_empresas.pdf`);
+    };
+
     return (
         <ContenedorPrincipal>
             <ContenedorFiltros title="Empresas">
@@ -163,6 +222,11 @@ const EmpresasPage: React.FC = () => {
                         onClick={limpiarFiltros}
                         Symbol={XCircle}
                         name="Limpiar filtros" />
+
+                    <BotonFiltro
+                        onClick={exportarDatosPDF}
+                        Symbol={FileDown}
+                        name="Exportar datos" />
 
                 </ContenedorBotonesFiltros>
 
@@ -247,8 +311,8 @@ const EmpresasPage: React.FC = () => {
                         selectEstado={true}
                         defaultValue="true"
                     >
-                        <option value="true">Activo</option>
-                        <option value="false">Inactivo</option>
+                        <option value="true">Activa</option>
+                        <option value="false">Inactiva</option>
                     </SelectFiltro>
                 </ContenedorSelectores>
             </ContenedorFiltros>
