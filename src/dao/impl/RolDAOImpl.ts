@@ -1,5 +1,4 @@
 import { RolDAO } from "../RolDAO";
-import { Rol } from "@/models/Rol";
 import { RolDTO } from "@/dto/RolDTO";
 import { ejecutarQuery } from "@/connection/conexion";
 

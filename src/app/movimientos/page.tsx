@@ -245,7 +245,7 @@ const MovimientosPage: React.FC = () => {
             <ContenedorFiltros title="Movimientos">
                 <ContenedorBotonesFiltros>
                     {usuario.idRol === 3 && (
-                        cajaSeleccionada == null ?
+                        cajaSeleccionada == 0 ?
                             <BotonFiltro
                                 onClick={() => setModalAbrirCaja(true)}
                                 Symbol={Unlock}

@@ -334,7 +334,7 @@ const VentasPage: React.FC = () => {
             <ContenedorFiltros title="Ventas">
                 <ContenedorBotonesFiltros>
                     {usuario.idRol === 3 && (
-                        cajaSeleccionada == null ?
+                        cajaSeleccionada == 0 ?
                             <BotonFiltro
                                 onClick={() => setModalAbrirCaja(true)}
                                 Symbol={Unlock}

@@ -1,5 +1,4 @@
 import { DepartamentoService } from "../DepartamentoService";
-import { Departamento } from "../../models/Departamento";
 import { NextResponse } from "next/server";
 import { DepartamentoDAOImpl } from "@/dao/impl/DepartamentoDAOImpl";
 import { DepartamentoResponseDTO } from "@/dto/DepartamentoResponseDTO";

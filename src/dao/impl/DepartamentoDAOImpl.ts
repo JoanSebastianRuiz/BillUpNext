@@ -1,7 +1,6 @@
 import { DepartamentoDAO } from "../DepartamentoDAO";
 import { DepartamentoResponseDTO } from "@/dto/DepartamentoResponseDTO";
 import { ejecutarQuery } from "@/connection/conexion";
-import { Departamento } from "@/models/Departamento";
 
 export class DepartamentoDAOImpl implements DepartamentoDAO{
     private static instance: DepartamentoDAOImpl;

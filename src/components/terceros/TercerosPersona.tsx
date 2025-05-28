@@ -30,8 +30,6 @@ import autoTable from "jspdf-autotable";
 import { useEmpresaContext } from "@/context/EmpresaContext";
 
 
-
-
 const TercerosPersona = ({ proveedorTerceroPersona, tipoPersonas }: { proveedorTerceroPersona: boolean, tipoPersonas: "clientes" | "proveedores" }) => {
     const [modalInfo, setModalInfo] = useState(false)
     const [modalRegistrar, setModalRegistrar] = useState(false)

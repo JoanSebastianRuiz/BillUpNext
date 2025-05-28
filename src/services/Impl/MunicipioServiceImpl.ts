@@ -1,6 +1,5 @@
 import { MunicipioService } from "@/services/MunicipioService";
 import { MunicipioDAOImpl } from "@/dao/impl/MunicipioDAOImpl";
-import { Municipio } from "@/models/Municipio";
 import { NextResponse } from "next/server";
 import { MunicipioResponseDTO } from "@/dto/MunicipioResponseDTO";
 

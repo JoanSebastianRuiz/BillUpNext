@@ -1,5 +1,4 @@
 import { MunicipioDAO } from "@/dao/MunicipioDAO";
-import { Municipio } from "@/models/Municipio";
 import { MunicipioResponseDTO } from "@/dto/MunicipioResponseDTO";
 import { ejecutarQuery } from "@/connection/conexion";
 

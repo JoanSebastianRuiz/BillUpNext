@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { TerceroProductoServiceImpl } from "@/services/Impl/TerceroProductoServiceImpl";
 
-export const GET = async (_: Request, { params }: { params: { idTerceroProducto: string } }) => {
+export const GET = async (_: Request, context: { params: Promise<{ idTerceroProducto: string }> }) => {
     try {
         const terceroProductoService = TerceroProductoServiceImpl.getInstance();
-        const { idTerceroProducto } = await params;
+        const { idTerceroProducto } = await context.params;
 
         if (!idTerceroProducto) {
             return NextResponse.json({ message: "idTerceroProducto es requerido" }, { status: 400 });
@@ -23,10 +23,10 @@ export const GET = async (_: Request, { params }: { params: { idTerceroProducto:
 
 export const PUT = async (
     request: Request,
-    { params }: { params: { idTerceroProducto: string } }
+    context: { params: Promise<{ idTerceroProducto: string }> }
 ) => {
     const terceroProductoService = TerceroProductoServiceImpl.getInstance();
-    const { idTerceroProducto } = await params;
+    const { idTerceroProducto } = await context.params;
     const data = await request.json();
 
     if (!idTerceroProducto) {

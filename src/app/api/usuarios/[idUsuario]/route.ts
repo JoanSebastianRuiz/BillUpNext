@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server"
 import { UsuarioServiceImpl } from "@/services/Impl/UsuarioServiceImpl"
 
-export const PUT = async (request: Request, { params }: { params: { idUsuario: string } }) => {
+export const PUT = async (request: Request, context: { params: Promise<{ idUsuario: string }> }) => {
     const usuarioService = UsuarioServiceImpl.getInstance();
-    const { idUsuario } = await params;
+    const { idUsuario } = await context.params;
     const data = await request.json();
 
     if (!idUsuario) {
@@ -20,10 +20,10 @@ export const PUT = async (request: Request, { params }: { params: { idUsuario: s
     }
 };
 
-export const GET = async (request: Request, { params }: { params: { idUsuario: string } }) => {
+export const GET = async (request: Request, context: { params: Promise<{ idUsuario: string }> }) => {
     try {
         const usuarioService = UsuarioServiceImpl.getInstance();
-        const { idUsuario } = await params;
+        const { idUsuario } = await context.params;
         const usuario = await usuarioService.getByIdUser(parseInt(idUsuario));
         return NextResponse.json(usuario, { status: 200 });
     } catch (error) {

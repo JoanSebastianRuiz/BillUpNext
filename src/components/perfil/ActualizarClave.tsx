@@ -3,16 +3,11 @@
 import axios from 'axios';
 
 import { useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useUsuarioContext } from '@/context/UsuarioContext';
-
-import { DepartamentoResponseDTO } from '@/dto/DepartamentoResponseDTO';
-import { MunicipioResponseDTO } from '@/dto/MunicipioResponseDTO';
 import { UsuarioRequestDTO } from '@/dto/UsuarioRequestDTO';
-import { isValidEmail } from '@/util/validators/validators';
 
 import InputForm from '@/components/form/InputForm';
-import SelectForm from '@/components/form/SelectForm';
 import Notificacion from '@/components/form/Notificacion';
 import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';

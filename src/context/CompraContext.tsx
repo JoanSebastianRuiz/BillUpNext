@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import { createContext, useState, useContext, ReactNode } from "react";
 import { CompraDTO } from "@/dto/CompraDTO";
 import { useSession } from "next-auth/react";
 import { DetalleCompraDTO } from "@/dto/DetalleCompraDTO";
@@ -19,11 +19,11 @@ interface CompraContextType {
 const CompraContext = createContext<CompraContextType | undefined>(undefined);
 
 // Proveedor del contexto
-interface UbicacionVentaProviderProps {
+interface CompraProviderProps {
     children: ReactNode;
 }
 
-export const CompraContextProvider: React.FC<UbicacionVentaProviderProps> = ({ children }) => {
+export const CompraContextProvider: React.FC<CompraProviderProps> = ({ children }) => {
     const [compras, setCompras] = useState<CompraDTO[]>([]);
     const [detallesCompras, setDetallesCompras] = useState<DetalleCompraDTO[]>([]);
     const { data: session, status } = useSession();
@@ -52,7 +52,7 @@ export const CompraContextProvider: React.FC<UbicacionVentaProviderProps> = ({ c
         }
     };
 
-    useEffect(() => {
+    /* useEffect(() => {
         const fetchData = async () => {
             if (status !== "authenticated" || idEmpresa == undefined) return;
             if (idRol === 2) {
@@ -65,7 +65,7 @@ export const CompraContextProvider: React.FC<UbicacionVentaProviderProps> = ({ c
             }
         }
         fetchData();
-    }, [status])
+    }, [status]) */
 
     return (
         <CompraContext.Provider value={{

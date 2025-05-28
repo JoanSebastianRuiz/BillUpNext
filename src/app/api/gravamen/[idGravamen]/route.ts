@@ -3,11 +3,11 @@ import { GravamenServiceImpl } from "@/services/Impl/GravamenServiceImpl";
 
 export const GET = async (
   _: Request,
-  { params }: { params: { idGravamen: string } }
+  context: { params: Promise<{ idGravamen: string }> }
 ) => {
   try {
     const gravamenService = GravamenServiceImpl.getInstance();
-    const { idGravamen } = await params;
+    const { idGravamen } = await context.params;
 
     if (!idGravamen) {
       return NextResponse.json(
@@ -29,10 +29,10 @@ export const GET = async (
 
 export const PUT = async (
   request: Request,
-  { params }: { params: { idGravamen: string } }
+  context: { params: Promise<{ idGravamen: string }> }
 ) => {
   const gravamenService = GravamenServiceImpl.getInstance();
-  const { idGravamen } =await params;
+  const { idGravamen } =await context.params;
   const data = await request.json();
 
   if (!idGravamen) {

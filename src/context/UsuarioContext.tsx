@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import { createContext, useState, useContext, ReactNode } from "react";
 import { useSession } from "next-auth/react";
 
 import { DepartamentoResponseDTO } from "@/dto/DepartamentoResponseDTO";
@@ -71,7 +71,7 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
         }
     };
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (status !== "authenticated" || !idRol || !idEmpresa) return; // Esperar a que la sesión esté lista
         const fetchData = async () => {
 
@@ -116,7 +116,7 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
 
 
         if (idRol === 1 || idRol === 2 || idRol === 3) fetchData();
-    }, [status, idRol, idEmpresa]);
+    }, [status, idRol, idEmpresa]); */
 
     return (
         <UsuarioContext.Provider value={{

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import { createContext, useState, useContext, ReactNode } from "react";
 import { CajaDTO } from "@/dto/CajaDTO";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -12,8 +12,8 @@ interface CajaContextType {
     cajas: CajaDTO[]
     setCajas: (cajas: CajaDTO[]) => void
     obtenerCajas: () => void
-    cajaSeleccionada: CajaDTO | null
-    setCajaSeleccionada: (caja: CajaDTO | null) => void
+    cajaSeleccionada: number
+    setCajaSeleccionada: (caja: number) => void
     detalleCajaActual: DetalleCajaDTO | null
     setDetalleCajaActual: (detalleCaja: DetalleCajaDTO | null) => void
     obtenerDetalleCajaActual: (idCaja: number) => void
@@ -35,7 +35,7 @@ interface CajaProviderProps {
 export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) => {
     const [cajas, setCajas] = useState<CajaDTO[]>([]);
     const [movimientos, setMovimientos] = useState<MovimientoDTO[]>([]);
-    const [cajaSeleccionada, setCajaSeleccionada] = useState<CajaDTO | null>(null);
+    const [cajaSeleccionada, setCajaSeleccionada] = useState<number>(0);
     const [detalleCajaActual, setDetalleCajaActual] = useState<DetalleCajaDTO | null>(null);
     const [detallesCajas, setDetallesCajas] = useState<DetalleCajaDTO[]>([]);
     const { data: session, status } = useSession();
@@ -98,7 +98,7 @@ export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) =
         }
     };
 
-    useEffect(() => {
+    /* useEffect(() => {
         const fetchData = async () => {
             if (status !== "authenticated" || idEmpresa == undefined) return;
             if (idRol === 3) {
@@ -123,7 +123,7 @@ export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) =
             }
         }
         fetchData();
-    }, [status])
+    }, [status]) */
 
     return (
         <CajaContext.Provider value={{

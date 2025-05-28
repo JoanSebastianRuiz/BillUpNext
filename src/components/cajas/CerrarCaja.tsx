@@ -17,7 +17,7 @@ const CerrarCaja = ({ setModal }: { setModal?: (value: boolean) => void }) => {
 
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
-    const { detalleCajaActual, setCajaSeleccionada, setDetalleCajaActual, obtenerDetallesCajas } = useCajaContext();
+    const { detalleCajaActual, setCajaSeleccionada, setDetalleCajaActual, obtenerDetallesCajas, cajaSeleccionada } = useCajaContext();
 
     const { register, handleSubmit, formState: { errors }, setValue } = useForm<DetalleCajaDTO>();
 
@@ -26,11 +26,11 @@ const CerrarCaja = ({ setModal }: { setModal?: (value: boolean) => void }) => {
 
     const onSubmit = async (data: DetalleCajaDTO) => {
         try {
-            const datosModificados = { ...data, idUsuario, idCaja: Number(data.idCaja)}
+            const datosModificados = { ...data, idUsuario, idCaja: cajaSeleccionada}
             const respuesta = await axios.put(`/api/detalles-caja/${detalleCajaActual?.idDetalleCaja}`, datosModificados);
             setError(null);
             setSuccess(respuesta.data.message);
-            setCajaSeleccionada(null);
+            setCajaSeleccionada(0);
             setDetalleCajaActual(null);
             obtenerDetallesCajas();
             setModal?.(false);

@@ -2,7 +2,6 @@ import { UsuarioDAO } from "@/dao/UsuarioDAO";
 import { ejecutarQuery } from "@/connection/conexion"
 import { UsuarioRequestDTO } from "@/dto/UsuarioRequestDTO";
 import { ResultadoBooleanDTO } from "@/dto/ResultadoBooleanDTO";
-import { Usuario } from "@/models/Usuario";
 import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 import { UsuarioAutenticacionDTO } from "@/dto/UsuarioAutenticacionDTO";
 

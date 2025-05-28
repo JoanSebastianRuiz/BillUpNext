@@ -1,6 +1,6 @@
     "use client";
 
-    import { createContext, useState, useEffect, useContext, ReactNode } from "react";
+    import { createContext, useState, useContext, ReactNode } from "react";
     import { GravamenDTO } from "@/dto/GravamenDTO";
     import axios from "axios";
     import { useSession } from "next-auth/react";
@@ -36,13 +36,13 @@
             }
         };
 
-        useEffect(() => {
+/*         useEffect(() => {
             if (status !== "authenticated" || idRol === undefined) return;
             if (idRol === 1 || idRol === 2) {
                 if (!session || idRol === undefined || idEmpresa === undefined) return;
                 obtenerGravamenes();
             };
-        }, [status, idRol, idEmpresa]);
+        }, [status, idRol, idEmpresa]); */
 
         return (
             <GravamenContext.Provider value={{ gravamenes, setGravamenes, obtenerGravamenes }}>

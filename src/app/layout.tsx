@@ -10,6 +10,7 @@ import { ThemeProvider } from "next-themes";
 import { CajaContextProvider } from "@/context/CajaContext";
 import { CompraContextProvider } from "@/context/CompraContext";
 import { VentaContextProvider } from "@/context/VentaContext";
+import { LoadDataContextProvider } from '@/context/LoadDataContext'
 
 
 export const metadata: Metadata = {
@@ -33,11 +34,12 @@ export default function RootLayout({
                   <TerceroContextProvider>
                     <GravamenContextProvider>
                       <CajaContextProvider>
-                          <CompraContextProvider>
-                            <VentaContextProvider>
-                              {children}
-                            </VentaContextProvider>
-                          </CompraContextProvider>
+                        <CompraContextProvider>
+                          <VentaContextProvider>
+                            <LoadDataContextProvider />
+                            {children}
+                          </VentaContextProvider>
+                        </CompraContextProvider>
                       </CajaContextProvider>
                     </GravamenContextProvider>
                   </TerceroContextProvider>

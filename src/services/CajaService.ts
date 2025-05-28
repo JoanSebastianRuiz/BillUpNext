@@ -8,4 +8,5 @@ export interface CajaService {
     getById(idCaja: number): Promise<CajaDTO | null>;
     close(idCaja: number): Promise<NextResponse>;
     getDetalleCajaActual(idCaja: number): Promise<CajaDTO | null>;
+    getCajaAbiertaUsuario(idUsuario: number): Promise<number>;
 }

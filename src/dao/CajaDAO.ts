@@ -8,4 +8,5 @@ export interface CajaDAO {
     existCajaNombre(nombreCaja: string, idEmpresa: number): Promise<boolean>;
     close(idCaja: number): Promise<boolean>;
     getDetalleCajaActual(idCaja: number): Promise<CajaDTO | null>;
+    getCajaAbiertaUsuario(idUsuario: number): Promise<number>;
 }

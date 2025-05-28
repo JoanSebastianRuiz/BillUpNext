@@ -1,5 +1,4 @@
 import { RolService } from "../RolService";
-import { Rol } from "@/models/Rol";
 import { NextResponse } from "next/server";
 import { RolDAOImpl } from "@/dao/impl/RolDAOImpl";
 import { RolDTO } from "@/dto/RolDTO";

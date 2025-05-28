@@ -150,5 +150,14 @@ export class CajaServiceImpl implements CajaService {
       }
    }
 
+   public getCajaAbiertaUsuario = async (idUsuario: number): Promise<number> => {
+      try {
+         const respuesta = await this.cajaDAOImpl.getCajaAbiertaUsuario(idUsuario);
+         return respuesta;
+      } catch (error) {
+         throw new Error(`Error en CajaService.getCajaAbiertaUsuario: ${error}`);
+      }
+   }
+
 
 }

@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { CajaServiceImpl } from "@/services/Impl/CajaServiceImpl";
 
-export const PUT = async (request: Request, { params }: { params: { idCaja: string } }) => {
+export const PUT = async (request: Request, context: { params: Promise<{ idCaja: string }> }) => {
     const cajaService = CajaServiceImpl.getInstance();
-    const {idCaja} = await params;
+    const {idCaja} = await context.params;
     const data = await request.json();
 
     if (!idCaja) {
@@ -20,10 +20,10 @@ export const PUT = async (request: Request, { params }: { params: { idCaja: stri
     }
 };
 
-export const GET = async (request: Request, { params }: { params: { idCaja: string } }) => {
+export const GET = async (request: Request, context: { params: Promise<{ idCaja: string }> }) => {
     try {
         const cajaService = CajaServiceImpl.getInstance();
-        const { idCaja } = await params;
+        const { idCaja } = await context.params;
         const caja = await cajaService.getById(parseInt(idCaja));
         return NextResponse.json(caja, { status: 200 });
         

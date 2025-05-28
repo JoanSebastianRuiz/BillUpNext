@@ -3,11 +3,11 @@ import { CompraServiceImpl } from "@/services/Impl/CompraServiceImpl";
 
 export const GET = async (
   _: Request,
-  { params }: { params: { idCompra: string } }
+  context: { params: Promise<{ idCompra: string }> }
 ) => {
   try {
     const compraService = CompraServiceImpl.getInstance();
-    const { idCompra } = await params;
+    const { idCompra } = await context.params;
 
     if (!idCompra) {
       return NextResponse.json(
@@ -29,10 +29,10 @@ export const GET = async (
 
 export const PUT = async (
   request: Request,
-  { params }: { params: { idCompra: string } }
+  context: { params: Promise<{ idCompra: string }> }
 ) => {
   const compraService = CompraServiceImpl.getInstance();
-  const { idCompra } =await params;
+  const { idCompra } =await context.params;
   const data = await request.json();
 
   if (!idCompra) {

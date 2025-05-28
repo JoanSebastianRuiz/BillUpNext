@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { DetalleCajaServiceImpl } from "@/services/Impl/DetalleCajaServiceImpl";
 
-export const PUT = async (request: Request, {params}: {params: {idDetalleCaja: string}}) => {
+export const PUT = async (request: Request, context: { params: Promise<{ idDetalleCaja: string }> }) => {
     const detalleCajaService = DetalleCajaServiceImpl.getInstance();
-    const {idDetalleCaja} = params;
+    const { idDetalleCaja } = await context.params;
     const data = await request.json();
 
     if (!idDetalleCaja) {
@@ -20,10 +20,10 @@ export const PUT = async (request: Request, {params}: {params: {idDetalleCaja: s
     }
 }
 
-export const GET = async (request: Request, {params}: {params: {idDetalleCaja: string}}) => {
+export const GET = async (request: Request,  context: { params: Promise<{ idDetalleCaja: string }> }) => {
     try {
         const detalleCajaService = DetalleCajaServiceImpl.getInstance();
-        const {idDetalleCaja} =  await params;
+        const { idDetalleCaja } = await context.params;
         const detalleCaja = await detalleCajaService.getById(parseInt(idDetalleCaja));
         return NextResponse.json(detalleCaja, { status: 200 });
 

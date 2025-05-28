@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { MovimientoServiceImpl } from "@/services/Impl/MovimientoServiceImpl";
 
-export const GET = async (_:Request, { params }: { params: { idMovimiento: string } }) => {
+export const GET = async (_:Request, context: { params: Promise<{ idMovimiento: string }> }) => {
   try {
     const movimientoService = MovimientoServiceImpl.getInstance();
-    const { idMovimiento } = await params;
+    const { idMovimiento } = await context.params;
 
     if (!idMovimiento) {
       return NextResponse.json({ message: "idMovimiento es requerido" }, { status: 400 });

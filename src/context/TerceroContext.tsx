@@ -2,7 +2,7 @@
 
 import axios from "axios";
 
-import { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import { createContext, useState, useContext, ReactNode } from "react";
 import { useSession } from "next-auth/react";
 
 import { TerceroResponseEmpresaDTO } from "@/dto/TerceroResponseEmpresaDTO";
@@ -100,7 +100,7 @@ export const TerceroContextProvider: React.FC<TerceroProviderProps> = ({ childre
         }
     }
 
-    useEffect(() => {
+   /*  useEffect(() => {
         const fetchData = async () => {
             if (status !== "authenticated" || idRol === undefined || idEmpresa === undefined) return;
 
@@ -139,7 +139,7 @@ export const TerceroContextProvider: React.FC<TerceroProviderProps> = ({ childre
         };
 
         fetchData();
-    }, [status, idRol, idEmpresa]);
+    }, [status, idRol, idEmpresa]); */
 
     return (
         <TerceroContext.Provider value={{

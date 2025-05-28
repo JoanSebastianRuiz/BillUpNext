@@ -3,10 +3,10 @@ import { TerceroServiceImpl } from "@/services/Impl/TerceroServiceImpl";
 
 const terceroService = TerceroServiceImpl.getInstance();
 
-export const GET = async (request : NextRequest, {params} : {params : {idEmpresa : string}}) => {
+export const GET = async (request : NextRequest, context: { params: Promise<{ idEmpresa: string }> }) => {
     const {searchParams} = request.nextUrl;
     const tipo = searchParams.get("tipo");
-    const {idEmpresa} = await params;
+    const {idEmpresa} = await context.params;
 
     if (!idEmpresa) {
         return NextResponse.json({message: "ID inválido"}, {status: 400});

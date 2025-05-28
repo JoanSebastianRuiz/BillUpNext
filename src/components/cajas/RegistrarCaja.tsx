@@ -16,8 +16,6 @@ import ContenedorRegistrar from "@/components/modal/ContenedorRegistrar";
 import ButtonForm from "@/components/form/ButtonForm";
 
 
-
-
 const RegistrarCaja = ({ cajaSeleccionada, setModalActualizar, setModalRegistrar }:
     { cajaSeleccionada?: CajaDTO | null, setModalActualizar?: (value: boolean) => void, setModalRegistrar?: (value: boolean) => void }) => {
 

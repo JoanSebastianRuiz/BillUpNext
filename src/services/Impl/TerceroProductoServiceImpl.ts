@@ -2,7 +2,6 @@ import { TerceroProductoService } from "@/services/TerceroProductoService";
 import { TerceroProductoDAOImpl } from "@/dao/impl/TerceroProductoDAOImpl";
 import { NextResponse } from "next/server";
 import { TerceroProductoDTO } from "@/dto/TerceroProductoDTO";
-import { pre } from "framer-motion/client";
 
 export class TerceroProductoServiceImpl implements TerceroProductoService {
   private static instancia: TerceroProductoServiceImpl;
@@ -32,7 +31,7 @@ export class TerceroProductoServiceImpl implements TerceroProductoService {
       }
 
       if (
-        await this.terceroProductoDAOImpl.validarRelacion(idProducto, idTercero)
+        await this.terceroProductoDAOImpl.validarRelacion(Number(idProducto), Number(idTercero))
       ) {
         return NextResponse.json(
           { message: "La relación entre el proveedor y producto ya existe" },
@@ -97,7 +96,7 @@ export class TerceroProductoServiceImpl implements TerceroProductoService {
 
       if (
         await this.terceroProductoDAOImpl.validarRelacion(
-          idProducto,
+          Number(idProducto),
           idTercero,
           idTerceroProducto
         )

@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { CajaServiceImpl } from "@/services/Impl/CajaServiceImpl";
-import { parse } from "path";
 
-export const PUT = async (request: Request, { params }: { params: { idCaja: string } }) => {
+export const PUT = async (
+    request: Request,
+    context: { params: Promise<{ idCaja: string }> }
+) => {
     const cajaService = CajaServiceImpl.getInstance();
-    const { idCaja } = await params;
+    const { idCaja } = await context.params;
 
     if (!idCaja) {
         return NextResponse.json({ message: "ID inválido" }, { status: 400 });

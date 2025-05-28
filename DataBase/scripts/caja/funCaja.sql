@@ -165,3 +165,27 @@ $$
 LANGUAGE PLPGSQL;
 
 
+CREATE OR REPLACE FUNCTION obtenerCajaAbiertaPorUsuario(
+    _idUsuario INT
+)
+RETURNS INT AS
+$$
+DECLARE
+    _idCaja INT := 0;
+BEGIN
+    SELECT dc."idCaja"
+    INTO _idCaja
+    FROM "DetalleCaja" dc
+    JOIN "Caja" c ON dc."idCaja" = c."idCaja"
+    WHERE dc."idUsuario" = _idUsuario
+      AND c."openCaja" = TRUE
+    ORDER BY dc."fechaAperturaDetalleCaja" DESC
+    LIMIT 1;
+
+    RETURN COALESCE(_idCaja, 0);
+END;
+$$
+LANGUAGE PLPGSQL;
+
+
+

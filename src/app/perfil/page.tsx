@@ -1,7 +1,10 @@
 "use client";
 
+import axios from "axios";
+
 import { useUsuarioContext } from "@/context/UsuarioContext";
 import { useEmpresaContext } from "@/context/EmpresaContext";
+import { useCajaContext } from "@/context/CajaContext";
 import { useState, useEffect } from "react";
 import { Mail, Phone, MapPin, Building, User, FileText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,6 +24,7 @@ const PerfilPage = () => {
         tiposDocumento,
         roles
     } = useUsuarioContext();
+    const { setCajaSeleccionada, obtenerDetalleCajaActual } = useCajaContext();
 
     const { empresas } = useEmpresaContext();
 
@@ -32,6 +36,24 @@ const PerfilPage = () => {
     useEffect(() => {
         if (usuario && usuario.idUsuario) {
             setIsLoading(false);
+        }
+        const obtenerCajaAbierta = async () => {
+            try {
+                const response = await axios.get(`/api/cajas/caja-abierta-usuario/${usuario.idUsuario}`);
+                if (response.status === 200) {
+                    setCajaSeleccionada(response.data);
+                    if (response.data !== 0) {
+                        obtenerDetalleCajaActual(response.data);
+                    }
+                } else {
+                    console.error("Error al obtener la caja abierta:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Error en la solicitud:", error);
+            }
+        }
+        if (usuario.idRol === 3) {
+            obtenerCajaAbierta();
         }
     }, [usuario]);
 

@@ -1,9 +1,6 @@
 import { TipoDocumentoService } from '@/services/TipoDocumentoService';
 import { TipoDocumentoDAOImpl } from '@/dao/impl/TipoDocumentoDAOImpl';
-import { TipoDocumento } from '@/models/TipoDocumento';
-import { NextResponse } from 'next/server';
 import { TipoDocumentoResponseDTO } from '@/dto/TipoDocumentoResponseDTO';
-import { plainToInstance } from 'class-transformer';
 
 export class TipoDocumentoServiceImpl implements TipoDocumentoService {
     private static instance: TipoDocumentoServiceImpl;

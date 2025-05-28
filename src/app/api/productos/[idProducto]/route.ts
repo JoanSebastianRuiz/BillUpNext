@@ -3,11 +3,11 @@ import { ProductoServiceImpl } from "@/services/Impl/ProductoServiceImpl";
 
 export const GET = async (
   _: Request,
-  { params }: { params: { idProducto: string } }
+  context: { params: Promise<{ idProducto: string }> }
 ) => {
   try {
     const productoService = ProductoServiceImpl.getInstance();
-    const { idProducto } = await params;
+    const { idProducto } = await context.params;
 
     if (!idProducto) {
       return NextResponse.json({ message: "idProducto es requerido" }, { status: 400 });
@@ -26,10 +26,10 @@ export const GET = async (
 
 export const PUT = async (
   request: Request,
-  { params }: { params: { idProducto: string } }
+  context: { params: Promise<{ idProducto: string }> }
 ) => {
   const productoService = ProductoServiceImpl.getInstance();
-  const { idProducto } = params;
+  const { idProducto } = await context.params;
   const data = await request.json();
 
   if (!idProducto) {

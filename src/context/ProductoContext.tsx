@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { createContext, useState, useEffect, useContext, ReactNode } from "react";
+import { createContext, useState, useContext, ReactNode } from "react";
 import { useSession } from "next-auth/react";
 
 import { ProductoResponseDTO } from "@/dto/ProductoResponseDTO";
@@ -69,7 +69,7 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
     };
 
 
-    useEffect(() => {
+   /*  useEffect(() => {
         const fetchData = async () => {
             try {
                 if (status !== "authenticated" || idRol === undefined || idEmpresa === undefined) return;
@@ -113,7 +113,7 @@ export const ProductoContextProvider: React.FC<ProductoProviderProps> = ({ child
         };
 
         fetchData();
-    }, [status, idRol, idEmpresa]);
+    }, [status, idRol, idEmpresa]); */
 
     return (
         <ProductoContext.Provider value={{ productos, setProductos, categorias, setCategorias, gravamenesProducto, setGravamenesProducto, obtenerCategorias, obtenerProductos, obtenerGravamenesProducto }}>

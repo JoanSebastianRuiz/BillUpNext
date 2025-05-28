@@ -68,7 +68,7 @@ export class TerceroServiceImpl implements TerceroService {
                 return NextResponse.json({ message: 'El nit no es valido' }, { status: 400 });
             }
 
-            if (await this.terceroDAO.existTerceroNit(nitTercero, idEmpresa, proveedorTercero)) {
+            if (await this.terceroDAO.existTerceroNit(nitTercero, Number(idEmpresa), proveedorTercero)) {
                 return NextResponse.json({ message: 'El nit ya existe' }, { status: 400 });
             }
 
@@ -80,7 +80,7 @@ export class TerceroServiceImpl implements TerceroService {
                 return NextResponse.json({ message: 'El correo no es valido' }, { status: 400 });
             }
 
-            if (await this.terceroDAO.existTerceroCorreo(correoTercero, idEmpresa, proveedorTercero)) {
+            if (await this.terceroDAO.existTerceroCorreo(correoTercero, Number(idEmpresa), proveedorTercero)) {
                 return NextResponse.json({ message: 'El correo ya existe' }, { status: 400 });
             }
 
@@ -88,7 +88,7 @@ export class TerceroServiceImpl implements TerceroService {
                 return NextResponse.json({ message: 'El telefono no es valido' }, { status: 400 });
             }
 
-            if (await this.terceroDAO.existTerceroTelefono(telefonoTercero, idEmpresa, proveedorTercero)) {
+            if (await this.terceroDAO.existTerceroTelefono(telefonoTercero, Number(idEmpresa), proveedorTercero)) {
                 return NextResponse.json({ message: 'El telefono ya existe' }, { status: 400 });
             }
 
@@ -227,7 +227,7 @@ export class TerceroServiceImpl implements TerceroService {
             }
 
             if (nitTercero !== empresaExiste?.nitTercero) {
-                if (await this.terceroDAO.existTerceroNit(nitTercero, idEmpresa, proveedorTercero)) {
+                if (await this.terceroDAO.existTerceroNit(nitTercero, Number(idEmpresa), proveedorTercero)) {
                     return NextResponse.json({ message: 'El nit ya existe' }, { status: 400 });
                 }
             }
@@ -241,7 +241,7 @@ export class TerceroServiceImpl implements TerceroService {
             }
 
             if (correoTercero !== empresaExiste?.correoTercero) {
-                if (await this.terceroDAO.existTerceroCorreo(correoTercero, idEmpresa, proveedorTercero)) {
+                if (await this.terceroDAO.existTerceroCorreo(correoTercero, Number(idEmpresa), proveedorTercero)) {
                     return NextResponse.json({ message: 'El correo ya existe' }, { status: 400 });
                 }
             }
@@ -251,7 +251,7 @@ export class TerceroServiceImpl implements TerceroService {
             }
 
             if (telefonoTercero !== empresaExiste?.telefonoTercero) {
-                if (await this.terceroDAO.existTerceroTelefono(telefonoTercero, idEmpresa, proveedorTercero)) {
+                if (await this.terceroDAO.existTerceroTelefono(telefonoTercero, Number(idEmpresa), proveedorTercero)) {
                     return NextResponse.json({ message: 'El telefono ya existe' }, { status: 400 });
                 }
             }

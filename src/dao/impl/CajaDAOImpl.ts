@@ -117,4 +117,13 @@ export class CajaDAOImpl implements CajaDAO {
         }
     }
 
+    public getCajaAbiertaUsuario = async (idUsuario: number): Promise<number> => {
+        try {
+            const respuesta = await ejecutarQuery(`SELECT obtenerCajaAbiertaPorUsuario($1) as resultado;`, [idUsuario]);
+            return respuesta.length > 0 ? respuesta[0].resultado : 0;
+        } catch (error) {
+            throw new Error(`Error en CajaDAO.getCajaAbiertaUsuario: ${error}`);
+        }
+    }
+
 }

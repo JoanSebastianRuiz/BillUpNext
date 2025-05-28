@@ -29,7 +29,7 @@ const RegistrarMovimiento = ({ setModal }: { setModal?: (value: boolean) => void
 
     const onSubmit = async (data: MovimientoDTO) => {
         try {
-            const datosModificados = { ...data, idUsuario: Number(usuario.idUsuario), idCaja: cajaSeleccionada?.idCaja, tipoMovimiento: String(data.tipoMovimiento) === "true", valorMovimiento: Number(data.valorMovimiento) };
+            const datosModificados = { ...data, idUsuario: Number(usuario.idUsuario), idCaja: cajaSeleccionada, tipoMovimiento: String(data.tipoMovimiento) === "true", valorMovimiento: Number(data.valorMovimiento) };
 
             const respuesta = await axios.post('/api/movimientos', datosModificados);
             setError(null);

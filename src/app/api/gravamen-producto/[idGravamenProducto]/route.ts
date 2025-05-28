@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { GravamenProductoServiceImpl } from "@/services/Impl/GravamenProductoServiceImpl";
 
-export const GET = async (_:Request, { params }: { params: { idGravamenProducto: string } }) => {
+export const GET = async (_:Request, context: { params: Promise<{ idGravamenProducto: string }> }) => {
   try {
     const gravamenProductoService = GravamenProductoServiceImpl.getInstance();
-    const { idGravamenProducto } = await params;
+    const { idGravamenProducto } = await context.params;
 
     if (!idGravamenProducto) {
       return NextResponse.json({ message: "idGravamenProducto es requerido" }, { status: 400 });
@@ -23,10 +23,10 @@ export const GET = async (_:Request, { params }: { params: { idGravamenProducto:
 
 export const PUT = async (
   request: Request,
-  { params }: { params: { idGravamenProducto: string } }
+  context: { params: Promise<{ idGravamenProducto: string }> }
 ) => {
   const gravamenProductoService = GravamenProductoServiceImpl.getInstance();
-  const { idGravamenProducto } = params;
+  const { idGravamenProducto } = await context.params;
   const data = await request.json();
 
   if (!idGravamenProducto) {

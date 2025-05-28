@@ -1,7 +1,6 @@
-import NextAuth, { User, DefaultSession } from "next-auth";
+import NextAuth, { DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { UsuarioServiceImpl } from "@/services/Impl/UsuarioServiceImpl";
-import { UsuarioRequestDTO } from "@/dto/UsuarioRequestDTO";
 import { UsuarioAutenticacionDTO } from "@/dto/UsuarioAutenticacionDTO";
 
 declare module "next-auth" {

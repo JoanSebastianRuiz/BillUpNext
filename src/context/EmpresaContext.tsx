@@ -2,7 +2,7 @@
 
 import axios from "axios";
 
-import { createContext, useState, useEffect, useContext, ReactNode } from "react";
+import { createContext, useState, useContext, ReactNode } from "react";
 import { EmpresaResponseDTO } from "@/dto/EmpresaResponseDTO";
 import { TipoPersonaDTO } from "@/dto/TipoPersonaDTO";
 import { RegimenContribuyenteResponseDTO } from "@/dto/RegimenContribuyenteResponseDTO";
@@ -43,7 +43,7 @@ export const EmpresaContextProvider: React.FC<EmpresaProviderProps> = ({ childre
         }
     }
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (status !== "authenticated") return;
         const fetchData = async () => {
             try {
@@ -65,7 +65,7 @@ export const EmpresaContextProvider: React.FC<EmpresaProviderProps> = ({ childre
             }
         }
         fetchData();
-    }, [status])
+    }, [status]) */
 
 
     return (

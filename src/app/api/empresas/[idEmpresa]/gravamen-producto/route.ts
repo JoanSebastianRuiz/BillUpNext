@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
-import { TerceroProductoServiceImpl } from "@/services/Impl/TerceroProductoServiceImpl";
 import { GravamenProductoServiceImpl } from "@/services/Impl/GravamenProductoServiceImpl";
 
-export const GET = async (_: Request, { params }: { params: { idEmpresa: string } }) => {
+export const GET = async (_: Request, context: { params: Promise<{ idEmpresa: string }> }) => {
     try {
-        const { idEmpresa } = await params;
+        const { idEmpresa } = await context.params;
         if (!idEmpresa) {
             return NextResponse.json({ message: "idEmpresa es requerido" }, { status: 400 });
         }

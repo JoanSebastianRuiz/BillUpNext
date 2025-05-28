@@ -2,7 +2,6 @@
 
 import { useProductoContext } from "@/context/ProductoContext";
 import { useGravamenContext } from "@/context/GravamenContext";
-import { ReactNode } from "react";
 import { Pencil, PlusCircle, XCircle } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 

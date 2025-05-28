@@ -7,7 +7,6 @@ import ContenedorCard from "../modal/ContenedorCard";
 import ParrafoCard from "../modal/ParrafoCard";
 
 
-
 const TerceroPersonaCard = ({ tercero, children }: { tercero: TerceroResponsePersonaDTO, children: ReactNode }) => {
     const { tiposDocumento } = useUsuarioContext();
 

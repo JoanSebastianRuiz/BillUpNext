@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import { createContext, useState, useContext, ReactNode } from "react";
 import { UbicacionVentaDTO } from "@/dto/UbicacionVentaDTO";
 import { useSession } from "next-auth/react";
 import { VentaDTO } from "@/dto/VentaDTO";
@@ -84,7 +84,7 @@ export const VentaContextProvider: React.FC<CompraProviderProps> = ({ children }
         }
     }
 
-    useEffect(() => {
+    /* useEffect(() => {
         const fetchData = async () => {
             if (status !== "authenticated" || idEmpresa == undefined) return;
             if (idRol === 3) {
@@ -111,7 +111,7 @@ export const VentaContextProvider: React.FC<CompraProviderProps> = ({ children }
             }
         }
         fetchData();
-    }, [status])
+    }, [status]) */
 
     return (
         <VentaContext.Provider value={{

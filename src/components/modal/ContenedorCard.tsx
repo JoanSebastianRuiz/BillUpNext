@@ -1,4 +1,3 @@
-
 const ContenedorCard = ({ children, name }: { children: React.ReactNode, name: string }) => {
     return (
         <div className="border rounded-xl shadow-lg p-6 transition-all duration-300 

@@ -3,11 +3,11 @@ import { VentaServiceImpl } from "@/services/Impl/VentaServiceImpl";
 
 export const GET = async (
   _: Request,
-  { params }: { params: { idVenta: string } }
+  context: { params: Promise<{ idVenta: string }> }
 ) => {
   try {
     const ventaService = VentaServiceImpl.getInstance();
-    const { idVenta } = await params;
+    const { idVenta } = await context.params;
 
     if (!idVenta) {
       return NextResponse.json(
@@ -29,10 +29,10 @@ export const GET = async (
 
 export const PUT = async (
   request: Request,
-  { params }: { params: { idVenta: string } }
+  context: { params: Promise<{ idVenta: string }> }
 ) => {
   const ventaService = VentaServiceImpl.getInstance();
-  const { idVenta } =await params;
+  const { idVenta } = await context.params;
   const data = await request.json();
 
   if (!idVenta) {

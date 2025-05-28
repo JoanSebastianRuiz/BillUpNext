@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { CajaServiceImpl } from "@/services/Impl/CajaServiceImpl";
 
-export const GET = async (_: Request, { params }: { params: { idCaja: string } }) => {
+export const GET = async (_: Request, context: { params: Promise<{ idCaja: string }> }) => {
     try {
-        const { idCaja } = await params;
+        const { idCaja } = await context.params;
         if (!idCaja) {
             return NextResponse.json({ message: "idCaja es requerido" }, { status: 400 });
         }

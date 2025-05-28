@@ -38,7 +38,7 @@ const AbrirCaja = ({ setModal }: { setModal?: (value: boolean) => void }) => {
             const respuesta = await axios.post('/api/detalles-caja', datosModificados);
             setError(null);
             setSuccess(respuesta.data.message);
-            setCajaSeleccionada(cajasFiltradas.find(caja => caja.idCaja === Number(data.idCaja)) ?? null);
+            setCajaSeleccionada(cajasFiltradas.find(caja => caja.idCaja === Number(data.idCaja))?.idCaja ?? 0);
             obtenerDetalleCajaActual(data.idCaja);
             setModal?.(false);
 

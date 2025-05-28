@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { TipoMedioPagoServiceImpl } from "@/services/Impl/TipoMedioPagoServiceImpl";
 
-export const PUT = async (request: Request, { params }: { params: { idTipoMedioPago: string } }) => {
+export const PUT = async (request: Request, context: { params: Promise<{ idTipoMedioPago: string }> }) => {
     const tipoMedioPagoService = TipoMedioPagoServiceImpl.getInstance();
-    const { idTipoMedioPago } = await params;
+    const { idTipoMedioPago } = await context.params;
     const data = await request.json();
 
     if (!idTipoMedioPago) {
@@ -20,10 +20,10 @@ export const PUT = async (request: Request, { params }: { params: { idTipoMedioP
     }
 };
 
-export const GET = async (request: Request, { params }: { params: { idTipoMedioPago: string } }) => {
+export const GET = async (request: Request, context: { params: Promise<{ idTipoMedioPago: string }> }) => {
     try {
         const tipoMedioPagoService = TipoMedioPagoServiceImpl.getInstance();
-        const { idTipoMedioPago } = await params;
+        const { idTipoMedioPago } = await context.params;
         const tipoMedioPago = await tipoMedioPagoService.getById(parseInt(idTipoMedioPago));
         return NextResponse.json(tipoMedioPago, { status: 200 });
     } catch (error) {

@@ -65,7 +65,7 @@ const RegistrarVenta = ({ setModal }: { setModal?: (value: boolean) => void }) =
             });
 
             const valorTotalVenta = detallesVenta.reduce((acc, detalle) => acc + detalle.valorTotalDetalleVenta, 0);
-            const datosModificados = { ...data, idUsuario, valorTotalVenta, detallesVenta: detallesVentaModificados, idCaja: cajaSeleccionada?.idCaja, idUbicacionVenta: Number(data.idUbicacionVenta), idTipoMedioPago: Number(data.idTipoMedioPago), idTercero: Number(data.idTercero) };
+            const datosModificados = { ...data, idUsuario, valorTotalVenta, detallesVenta: detallesVentaModificados, idCaja: cajaSeleccionada, idUbicacionVenta: Number(data.idUbicacionVenta), idTipoMedioPago: Number(data.idTipoMedioPago), idTercero: Number(data.idTercero) };
             const respuesta = await axios.post('/api/ventas', datosModificados);
             setError(null);
             setSuccess(respuesta.data.message);
@@ -233,14 +233,14 @@ const RegistrarVenta = ({ setModal }: { setModal?: (value: boolean) => void }) =
 
             {error && <Notificacion type="error" message={error} />}
             {success && <Notificacion type="success" message={success} />}
-            
+
             {/* Modal para registrar detalle de venta */}
             <Modal isOpen={modalRegistrarDetalle} setIsOpen={() => setModalRegistrarDetalle(false)}>
                 <RegistrarDetalleVenta contadorDetalles={contadorDetalles} setModal={setModalRegistrarDetalle} detallesVenta={detallesVenta} setDetallesVenta={setDetallesVenta} setContadorDetalles={setContadorDetalles} />
             </Modal>
 
 
-            {/* Modal para actualizar detalle de venta */}                         
+            {/* Modal para actualizar detalle de venta */}
             <Modal isOpen={modalActualizarDetalle} setIsOpen={() => setModalActualizarDetalle(false)}>
                 <RegistrarDetalleVenta contadorDetalles={contadorDetalles} detalleVenta={detalleSeleccionado} setModal={setModalActualizarDetalle} detallesVenta={detallesVenta} setDetallesVenta={setDetallesVenta} setContadorDetalles={setContadorDetalles} />
             </Modal>
