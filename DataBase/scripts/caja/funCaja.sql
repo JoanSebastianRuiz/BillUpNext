@@ -73,7 +73,7 @@ BEGIN
     RETURN EXISTS(
         SELECT 1
         FROM "Caja"
-        WHERE "nombreCaja" = _nombreCaja AND "idEmpresa" = _idEmpresa
+        WHERE LOWER("nombreCaja") = LOWER(_nombreCaja) AND "idEmpresa" = _idEmpresa
     );
 END;
 $$
