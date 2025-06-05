@@ -7,7 +7,7 @@ import { isValidLength, isValidDinero } from "@/util/validators/validators";
 export class VentaServiceImpl implements VentaService {
   private static instancia: VentaServiceImpl;
   private ventaDAOImpl: VentaDAOImpl = VentaDAOImpl.getInstance();
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(): VentaServiceImpl {
     if (!VentaServiceImpl.instancia) {
@@ -26,7 +26,7 @@ export class VentaServiceImpl implements VentaService {
         idTipoMedioPago,
         observacionVenta,
         valorTotalVenta,
-        detallesVenta
+        detallesVenta,
       } = venta;
 
       if (
@@ -36,7 +36,8 @@ export class VentaServiceImpl implements VentaService {
         idUbicacionVenta == null ||
         idTipoMedioPago == null ||
         valorTotalVenta == null ||
-        !Array.isArray(detallesVenta) || detallesVenta.length === 0
+        !Array.isArray(detallesVenta) ||
+        detallesVenta.length === 0
       ) {
         return NextResponse.json(
           { message: "Faltan campos por llenar" },
@@ -64,7 +65,7 @@ export class VentaServiceImpl implements VentaService {
           cantidadDetalleVenta,
           valorTotalDetalleVenta,
           valorDescuentoDetalleVenta,
-          valorImpuestosDetalleVenta
+          valorImpuestosDetalleVenta,
         } = detalle;
 
         if (
@@ -76,6 +77,17 @@ export class VentaServiceImpl implements VentaService {
         ) {
           return NextResponse.json(
             { message: "Faltan campos por llenar" },
+            { status: 400 }
+          );
+        }
+
+        const tieneStock = await this.ventaDAOImpl.stockProducto(
+          idProducto,
+          cantidadDetalleVenta
+        );
+        if (!tieneStock) {
+          return NextResponse.json(
+            { message: "No hay suficiente stock del producto" },
             { status: 400 }
           );
         }
@@ -122,7 +134,8 @@ export class VentaServiceImpl implements VentaService {
 
   public cancel = async (venta: VentaDTO): Promise<NextResponse> => {
     try {
-      const { idVenta, motivoCancelacionVenta, idUsuarioCancelacionVenta } = venta;
+      const { idVenta, motivoCancelacionVenta, idUsuarioCancelacionVenta } =
+        venta;
 
       if (!idVenta || !motivoCancelacionVenta || !idUsuarioCancelacionVenta) {
         return NextResponse.json(

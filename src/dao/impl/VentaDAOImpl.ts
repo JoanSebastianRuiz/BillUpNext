@@ -84,4 +84,20 @@ export class VentaDAOImpl implements VentaDAO {
       throw new Error(`Error en VentaDAO.cancel: ${error}`);
     }
   };
+
+  public stockProducto = async (
+    idProducto: number,
+    cantidadDetalleVenta: number
+  ): Promise<boolean> => { 
+    try {
+      const respuesta = await ejecutarQuery<ResultadoBooleanDTO> (
+        `SELECT verificarStockProducto($1, $2) as resultado;`,
+        [idProducto, cantidadDetalleVenta]
+      );
+
+      return respuesta.length > 0 ? respuesta[0].resultado : false;
+    } catch (error) {
+      throw new Error(`Error en VentaDAO.stockProducto: ${error}`);
+    }
+  };
 }
