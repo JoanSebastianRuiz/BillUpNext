@@ -45,7 +45,6 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
     const { data: session, status } = useSession();
     const idRol = session?.user?.idRol;
     const idEmpresa = session?.user?.idEmpresa;
-    const idUsuario = session?.user?.idUsuario;
 
     const obtenerUsuarios = async () => {
         if (status !== "authenticated" || idRol === undefined || idEmpresa === undefined) return;
@@ -56,11 +55,10 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
 
             if (respuesta.status === 200) {
                 if (idRol === 1) {
-                    setUsuarios(respuesta.data.filter((usuario: UsuarioResponseDTO) => usuario.idRol !== 3 && usuario.idUsuario !== session.user.idUsuario) || []);
+                    setUsuarios(respuesta.data);
                 } else {
-                    setUsuarios(respuesta.data.filter((usuario: UsuarioResponseDTO) => usuario.idUsuario !== session.user.idUsuario) || []);
+                    setUsuarios(respuesta.data.filter((usuario: UsuarioResponseDTO) => usuario.idUsuario !== session.user.idUsuario && usuario.idUsuario !== 1) || []);
                 }
-                setUsuario(respuesta.data.find(usuario => usuario.idUsuario === idUsuario) || {} as UsuarioResponseDTO);
             } else {
                 console.error(respuesta.data);
             }
@@ -70,53 +68,6 @@ export const UsuarioContextProvider: React.FC<UserProviderProps> = ({ children }
             setLoading(false);
         }
     };
-
-    /* useEffect(() => {
-        if (status !== "authenticated" || !idRol || !idEmpresa) return; // Esperar a que la sesión esté lista
-        const fetchData = async () => {
-
-            setLoading(true); // Iniciar carga antes de la petición
-            try {
-                const [departamentosRes, municipiosRes, rolesRes, tiposDocumentoRes, usuariosRes] = await Promise.all([
-                    axios.get("/api/departamentos"),
-                    axios.get("/api/municipios"),
-                    axios.get("/api/roles"),
-                    axios.get("/api/tipos-documento"),
-                    idRol === 2 || idRol === 3 ? axios.get(`/api/empresas/${idEmpresa}/usuarios`) : axios.get("/api/usuarios")
-                ]);
-
-                if (departamentosRes.status === 200) setDepartamentos(departamentosRes.data);
-                if (municipiosRes.status === 200) setMunicipios(municipiosRes.data);
-                if (rolesRes.status === 200) {
-                    if (idRol === 1) {
-                        setRoles(rolesRes.data.filter((rol: RolDTO) => rol.idRol !== 3));
-                    } else if (idRol === 2) {
-                        setRoles(rolesRes.data.filter((rol: RolDTO) => rol.idRol !== 1));
-                    } else if (idRol === 3) {
-                        setRoles(rolesRes.data.filter((rol: RolDTO) => rol.idRol == 3));
-                    }
-                }
-                if (tiposDocumentoRes.status === 200) {
-                    setTiposDocumento(tiposDocumentoRes.data.filter((tipo: TipoDocumentoResponseDTO) => tipo.estadoTipoDocumento === true) || []);
-                }
-                if (usuariosRes.status === 200) {
-                    if (idRol === 1) {
-                        setUsuarios(usuariosRes.data.filter((usuario: UsuarioResponseDTO) => usuario.idRol !== 3 && usuario.idUsuario !== session.user.idUsuario) || []);
-                    } else {
-                        setUsuarios(usuariosRes.data.filter((usuario: UsuarioResponseDTO) => usuario.idUsuario !== session.user.idUsuario) || []);
-                    }
-                    setUsuario(usuariosRes.data.find((usuario: UsuarioResponseDTO) => usuario.idUsuario === idUsuario) || {} as UsuarioResponseDTO);
-                }
-            } catch (error) {
-                console.error("Error al obtener los datos de Usuario Context:", error);
-            } finally {
-                setLoading(false); // Finalizar carga después de obtener los datos
-            }
-        };
-
-
-        if (idRol === 1 || idRol === 2 || idRol === 3) fetchData();
-    }, [status, idRol, idEmpresa]); */
 
     return (
         <UsuarioContext.Provider value={{

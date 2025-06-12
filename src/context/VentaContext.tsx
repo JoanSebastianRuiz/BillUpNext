@@ -38,7 +38,6 @@ export const VentaContextProvider: React.FC<CompraProviderProps> = ({ children }
     const [detallesVentas, setDetallesVentas] = useState<DetalleVentaDTO[]>([]);
     const { data: session, status } = useSession();
     const idEmpresa = session?.user?.idEmpresa;
-    const idRol = session?.user?.idRol;
 
     const obtenerUbicacionesVenta = async () => {
         try {
@@ -83,35 +82,6 @@ export const VentaContextProvider: React.FC<CompraProviderProps> = ({ children }
             console.error("Error obteniendo Tipos Medio Pago ", error)
         }
     }
-
-    /* useEffect(() => {
-        const fetchData = async () => {
-            if (status !== "authenticated" || idEmpresa == undefined) return;
-            if (idRol === 3) {
-                const [ubicacionesVentaRes, ventasRes, detallesVentasRes, tiposMedioPagoRes ] = await Promise.all([
-                    axios.get<UbicacionVentaDTO[]>(`/api/empresas/${idEmpresa}/ubicaciones-venta`),
-                    axios.get<VentaDTO[]>(`/api/empresas/${idEmpresa}/ventas`),
-                    axios.get<DetalleVentaDTO[]>(`/api/empresas/${idEmpresa}/detalles-ventas`),
-                    axios.get<TipoMedioPagoDTO[]>("/api/tipos-medio-pago")
-                ]);
-                if (ubicacionesVentaRes.status === 200) setUbicacionesVenta(ubicacionesVentaRes.data.filter(ubicacion => ubicacion.estadoUbicacionVenta === true));
-                if (ventasRes.status === 200) setVentas(ventasRes.data.filter(venta => venta.idUsuario === session?.user?.idUsuario));
-                if (detallesVentasRes.status === 200) setDetallesVentas(detallesVentasRes.data);
-                if (tiposMedioPagoRes.status === 200) setTiposMedioPago(tiposMedioPagoRes.data.filter(tipo => tipo.estadoTipoMedioPago === true));
-
-            } else if (idRol === 2) {
-                const [ubicacionesVentaRes, ventasRes, detallesVentasRes] = await Promise.all([
-                    axios.get<UbicacionVentaDTO[]>(`/api/empresas/${idEmpresa}/ubicaciones-venta`),
-                    axios.get<VentaDTO[]>(`/api/empresas/${idEmpresa}/ventas`),
-                    axios.get<DetalleVentaDTO[]>(`/api/empresas/${idEmpresa}/detalles-ventas`)
-                ]);
-                if (ubicacionesVentaRes.status === 200) setUbicacionesVenta(ubicacionesVentaRes.data);
-                if (ventasRes.status === 200) setVentas(ventasRes.data);
-                if (detallesVentasRes.status === 200) setDetallesVentas(detallesVentasRes.data);
-            }
-        }
-        fetchData();
-    }, [status]) */
 
     return (
         <VentaContext.Provider value={{

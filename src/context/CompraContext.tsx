@@ -28,7 +28,6 @@ export const CompraContextProvider: React.FC<CompraProviderProps> = ({ children 
     const [detallesCompras, setDetallesCompras] = useState<DetalleCompraDTO[]>([]);
     const { data: session, status } = useSession();
     const idEmpresa = session?.user?.idEmpresa;
-    const idRol = session?.user?.idRol;
 
     const obtenerCompras = async () => {
         try {
@@ -51,21 +50,6 @@ export const CompraContextProvider: React.FC<CompraProviderProps> = ({ children 
             console.error("Error obteniendo detalles compras", error);
         }
     };
-
-    /* useEffect(() => {
-        const fetchData = async () => {
-            if (status !== "authenticated" || idEmpresa == undefined) return;
-            if (idRol === 2) {
-                const [comprasRes, detallesComprasRes] = await Promise.all([
-                    axios.get<CompraDTO[]>(`/api/empresas/${idEmpresa}/compras`),
-                    axios.get<DetalleCompraDTO[]>(`/api/empresas/${idEmpresa}/detalles-compras`)
-                ]);
-                if (comprasRes.status === 200) setCompras(comprasRes.data);
-                if (detallesComprasRes.status === 200) setDetallesCompras(detallesComprasRes.data);
-            }
-        }
-        fetchData();
-    }, [status]) */
 
     return (
         <CompraContext.Provider value={{

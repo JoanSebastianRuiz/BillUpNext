@@ -6,8 +6,6 @@ export const GET = async (request: Request, context: { params: Promise<{ idUbica
         const ubicacionVentaService = UbicacionVentaServiceImpl.getInstance();
         const { idUbicacionVenta } = await context.params;
 
-        console.log(idUbicacionVenta);
-
         if (!idUbicacionVenta) {
             return NextResponse.json({ message: "idUbicacionVenta es requerido" }, { status: 400 });
         }

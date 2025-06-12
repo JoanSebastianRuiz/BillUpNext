@@ -43,31 +43,6 @@ export const EmpresaContextProvider: React.FC<EmpresaProviderProps> = ({ childre
         }
     }
 
-    /* useEffect(() => {
-        if (status !== "authenticated") return;
-        const fetchData = async () => {
-            try {
-                if (idRol == 1 || idRol == 2) { 
-                    const [tiposPersonaRes, regimenesContribuyenteRes, empresasRes] = await Promise.all([
-                        axios.get<TipoPersonaDTO[]>("/api/tipos-persona"),
-                        axios.get<RegimenContribuyenteResponseDTO[]>("/api/regimenes-contribuyente"),
-                        axios.get<EmpresaResponseDTO[]>("/api/empresas")
-                    ])
-
-                    if (tiposPersonaRes.status === 200) setTiposPersona(tiposPersonaRes.data)
-                    if (regimenesContribuyenteRes.status === 200) setRegimenesContribuyente(regimenesContribuyenteRes.data)
-                    if (empresasRes.status === 200) setEmpresas(empresasRes.data)
-                } else {
-                    obtenerEmpresas()
-                }
-            } catch (error) {
-                console.error("Error al obtener los datos de Empresa Context:", error);
-            }
-        }
-        fetchData();
-    }, [status]) */
-
-
     return (
         <EmpresaContext.Provider value={{
             tiposPersona,

@@ -61,7 +61,6 @@ export class CategoriaServiceImpl implements CategoriaService {
   public update = async (categoria: CategoriaDTO): Promise<NextResponse> => {
     try {
       const { idCategoria, idEmpresa, nombreCategoria, estadoCategoria } = categoria;
-      console.log(categoria);
 
       if (!idCategoria || !idEmpresa || !nombreCategoria || estadoCategoria === undefined) {
         return NextResponse.json(

@@ -45,7 +45,6 @@ const MostrarInfoVenta = ({ venta }: { venta: VentaDTO | null }) => {
     }
 
     for (let detalle of detallesVenta) {
-        console.log(detalle);
         descuentosTotales += detalle?.valorDescuentoDetalleVenta;
         impuestosTotales += detalle?.valorImpuestosDetalleVenta;
     }

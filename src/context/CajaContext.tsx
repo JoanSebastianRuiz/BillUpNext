@@ -98,33 +98,6 @@ export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) =
         }
     };
 
-    /* useEffect(() => {
-        const fetchData = async () => {
-            if (status !== "authenticated" || idEmpresa == undefined) return;
-            if (idRol === 3) {
-                const [cajasRes, detallesCajasRes, movimientosRes] = await Promise.all([
-                    axios.get<CajaDTO[]>(`/api/empresas/${idEmpresa}/cajas`),
-                    axios.get<DetalleCajaDTO[]>(`/api/empresas/${idEmpresa}/detalles-cajas`),
-                    axios.get<MovimientoDTO[]>(`/api/empresas/${idEmpresa}/movimientos`)
-                ]);
-                if (cajasRes.status === 200) setCajas(cajasRes.data);
-                if (detallesCajasRes.status === 200) setDetallesCajas(detallesCajasRes.data.filter(detalle => detalle.idUsuario === idUsuario));
-                if (movimientosRes.status === 200) setMovimientos(movimientosRes.data.filter(movimiento => movimiento.idUsuario === idUsuario));
-
-            } else if (idRol === 2) {
-                const [cajasRes, detallesCajasRes, movimientosRes] = await Promise.all([
-                    axios.get<CajaDTO[]>(`/api/empresas/${idEmpresa}/cajas`),
-                    axios.get<DetalleCajaDTO[]>(`/api/empresas/${idEmpresa}/detalles-cajas`),
-                    axios.get<MovimientoDTO[]>(`/api/empresas/${idEmpresa}/movimientos`)
-                ]);
-                if (cajasRes.status === 200) setCajas(cajasRes.data);
-                if (detallesCajasRes.status === 200) setDetallesCajas(detallesCajasRes.data);
-                if (movimientosRes.status === 200) setMovimientos(movimientosRes.data);
-            }
-        }
-        fetchData();
-    }, [status]) */
-
     return (
         <CajaContext.Provider value={{
             cajas,

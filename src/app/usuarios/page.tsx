@@ -240,8 +240,6 @@ const UsuariosPage: React.FC = () => {
         doc.save(`Reporte_usuarios_${fechaNombre}.pdf`);
     };
 
-
-
     return (
         <ContenedorPrincipal>
             <ContenedorFiltros title="Usuarios">

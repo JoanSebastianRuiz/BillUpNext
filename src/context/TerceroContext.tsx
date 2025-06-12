@@ -100,46 +100,6 @@ export const TerceroContextProvider: React.FC<TerceroProviderProps> = ({ childre
         }
     }
 
-   /*  useEffect(() => {
-        const fetchData = async () => {
-            if (status !== "authenticated" || idRol === undefined || idEmpresa === undefined) return;
-
-            setLoading(true); // Iniciar carga antes de la petición
-            try {
-                if (idRol === 2) {
-                    const [clientesPersonaRes, clientesEmpresaRes, proveedoresPersonaRes, proveedoresEmpresaRes, proveedoresProductoRes] = await Promise.all([
-                        axios.get<TerceroResponsePersonaDTO[]>(`/api/empresas/${idEmpresa}/clientes?tipo=persona`),
-                        axios.get<TerceroResponseEmpresaDTO[]>(`/api/empresas/${idEmpresa}/clientes?tipo=empresa`),
-                        axios.get<TerceroResponsePersonaDTO[]>(`/api/empresas/${idEmpresa}/proveedores?tipo=persona`),
-                        axios.get<TerceroResponseEmpresaDTO[]>(`/api/empresas/${idEmpresa}/proveedores?tipo=empresa`),
-                        axios.get<TerceroProductoDTO[]>(`/api/empresas/${idEmpresa}/tercero-producto`)
-                    ]); // Obtener los datos de los clientes y proveedores de la empresa
-
-                    if (clientesPersonaRes.status === 200) setClientesPersona(clientesPersonaRes.data);
-                    if (clientesEmpresaRes.status === 200) setClientesEmpresa(clientesEmpresaRes.data);
-                    if (proveedoresPersonaRes.status === 200) setProveedoresPersona(proveedoresPersonaRes.data);
-                    if (proveedoresEmpresaRes.status === 200) setProveedoresEmpresa(proveedoresEmpresaRes.data);
-                    if (proveedoresProductoRes.status === 200) setProveedoresProducto(proveedoresProductoRes.data);
-
-                } else if (idRol === 3 || idRol === 4) {
-                    const [clientesPersonaRes, clientesEmpresaRes] = await Promise.all([
-                        axios.get<TerceroResponsePersonaDTO[]>(`/api/empresas/${idEmpresa}/clientes?tipo=persona`),
-                        axios.get<TerceroResponseEmpresaDTO[]>(`/api/empresas/${idEmpresa}/clientes?tipo=empresa`)
-                    ]); // Obtener los datos de los clientes y proveedores de la empresa
-
-                    if (clientesPersonaRes.status === 200) setClientesPersona(clientesPersonaRes.data);
-                    if (clientesEmpresaRes.status === 200) setClientesEmpresa(clientesEmpresaRes.data);
-                }
-
-            } catch (error) {
-                console.error("Error al obtener los datos de Tercero Context:", error);
-            } finally {
-                setLoading(false); // Finalizar carga después de obtener los datos
-            }
-        };
-
-        fetchData();
-    }, [status, idRol, idEmpresa]); */
 
     return (
         <TerceroContext.Provider value={{

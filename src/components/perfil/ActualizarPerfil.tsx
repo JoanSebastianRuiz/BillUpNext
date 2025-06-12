@@ -16,11 +16,12 @@ import SelectForm from '@/components/form/SelectForm';
 import Notificacion from '@/components/form/Notificacion';
 import ContenedorRegistrar from '../modal/ContenedorRegistrar';
 import ButtonForm from '../form/ButtonForm';
+import { UsuarioResponseDTO } from "@/dto/UsuarioResponseDTO";
 
 
 const ActualizarPerfil = ({ setModalActualizarPerfil }: { setModalActualizarPerfil?: (value: boolean) => void }) => {
 
-    const { departamentos, municipios, tiposDocumento, usuario, obtenerUsuarios } = useUsuarioContext();
+    const { departamentos, municipios, tiposDocumento, usuario, setUsuario } = useUsuarioContext();
 
     const [municipiosFiltrados, setMunicipiosFiltrados] = useState<MunicipioResponseDTO[]>([]);
     const [departamentosFiltrados, setDepartamentosFiltrados] = useState<DepartamentoResponseDTO[]>([]);
@@ -59,7 +60,6 @@ const ActualizarPerfil = ({ setModalActualizarPerfil }: { setModalActualizarPerf
 
     useEffect(() => {
         if (!usuario) return; // Evita errores si usuario es undefined
-        console.log("Datos del usuario:", usuario);
         setValue("nombreUsuario", usuario.nombreUsuario || '');
         setValue("apellidoUsuario", usuario.apellidoUsuario || '');
         setValue("idTipoDocumento", usuario.idTipoDocumento || 0);
@@ -70,11 +70,10 @@ const ActualizarPerfil = ({ setModalActualizarPerfil }: { setModalActualizarPerf
         setValue("direccionUsuario", usuario.direccionUsuario || '');
         setValue("correoUsuario", usuario.correoUsuario || '');
     }, [usuario, setValue]);
-    
+
 
     const onSubmit = async (data: UsuarioRequestDTO) => {
         try {
-            console.log(usuario);
             let { idDepartamento, ...datosModificados } = data;
 
             datosModificados = { ...data, idTipoDocumento: parseInt(data.idTipoDocumento.toString()), idMunicipio: parseInt(data.idMunicipio.toString()), idEmpresa: parseInt(usuario.idEmpresa.toString()), idRol: parseInt(usuario.idRol.toString()), estadoUsuario: true };
@@ -82,7 +81,9 @@ const ActualizarPerfil = ({ setModalActualizarPerfil }: { setModalActualizarPerf
             const respuesta = await axios.put(`/api/usuarios/${usuario.idUsuario}`, datosModificados);
             setError(null);
             setSuccess(respuesta.data.message);
-            obtenerUsuarios();
+            const responseInfoUsuario = await axios.get(`/api/usuarios/${usuario.idUsuario}`);
+            const infoUsuario = responseInfoUsuario.data;
+            setUsuario(infoUsuario);
             setModalActualizarPerfil?.(false);
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response) {

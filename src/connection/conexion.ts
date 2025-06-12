@@ -47,7 +47,6 @@ const ejecutarQuery = async <T = any>(query: string, params: QueryParams = []): 
 const finalizarPool = async (): Promise<void> => {
     try {
         await pool.end(); // Cierra todas las conexiones
-        console.log('Conexión con la base de datos cerrada correctamente.');
     } catch (error) {
         console.error('Error al cerrar la conexión:', error);
     }
