@@ -12,6 +12,8 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        brandBlue: '#4a78c2',
+        brandBlueHover: '#355d99',
       },
     },
   },

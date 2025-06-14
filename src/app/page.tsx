@@ -53,7 +53,7 @@ export default function Home() {
         className="w-full max-w-md bg-white dark:bg-gray-800 shadow-2xl rounded-2xl border border-gray-200 dark:border-gray-700 p-10 space-y-8 transition-all"
       >
         {/* Título centrado con un poco más de separación */}
-        <h1 className="text-4xl font-extrabold text-center text-gray-900 dark:text-gray-200">
+        <h1 className="text-4xl font-bold text-center text-gray-700 dark:text-gray-200">
           Billup
         </h1>
 
