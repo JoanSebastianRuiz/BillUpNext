@@ -21,6 +21,7 @@ import { GravamenProductoServiceImpl } from "@/services/Impl/GravamenProductoSer
 import { TerceroServiceImpl } from "@/services/Impl/TerceroServiceImpl";
 import { TerceroProductoServiceImpl } from "@/services/Impl/TerceroProductoServiceImpl";
 import { TipoMedioPagoServiceImpl } from "@/services/Impl/TipoMedioPagoServiceImpl";
+import { GravamenServiceImpl } from "@/services/Impl/GravamenServiceImpl";
 
 export const GET = async (request: NextRequest) => {
     try {
@@ -63,6 +64,7 @@ export const GET = async (request: NextRequest) => {
         const terceroService = TerceroServiceImpl.getInstance();
         const proveedorProductoService = TerceroProductoServiceImpl.getInstance();
         const tipoMedioPagoService = TipoMedioPagoServiceImpl.getInstance();
+        const gravamenSevice = GravamenServiceImpl.getInstance();
 
 
         if (idRol === "1" || idRol === "2") {
@@ -92,6 +94,7 @@ export const GET = async (request: NextRequest) => {
                 proveedoresEmpresa,
                 proveedoresProducto,
                 usuario,
+                gravamenes,
             ] = await Promise.all([
                 tipoPersonaService.getAll(),
                 regimenContribuyenteService.getAll(),
@@ -118,6 +121,7 @@ export const GET = async (request: NextRequest) => {
                 terceroService.getAllEmpresa(Number(idEmpresa), true),
                 proveedorProductoService.getAll(Number(idEmpresa)),
                 usuarioService.getByIdUser(Number(idUsuario)),
+                gravamenSevice.getAll(),
             ]);
 
             return NextResponse.json({
@@ -146,6 +150,7 @@ export const GET = async (request: NextRequest) => {
                 proveedoresEmpresa,
                 proveedoresProducto,
                 usuario,
+                gravamenes,
             }, { status: 200 });
 
         } else if (idRol === "3") {
@@ -168,6 +173,7 @@ export const GET = async (request: NextRequest) => {
                 clientesPersona,
                 clientesEmpresa,
                 usuario,
+                gravamenes,
             ] = await Promise.all([
                 tipoPersonaService.getAll(),
                 regimenContribuyenteService.getAll(),
@@ -186,7 +192,8 @@ export const GET = async (request: NextRequest) => {
                 productoService.getAll(Number(idEmpresa)),
                 terceroService.getAllPersona(Number(idEmpresa), false),
                 terceroService.getAllEmpresa(Number(idEmpresa), false),
-                usuarioService.getByIdUser(Number(idUsuario)),
+                usuarioService.getByIdUser(Number(idUsuario)),         
+                gravamenSevice.getAll(),
             ]);
 
             return NextResponse.json({
@@ -208,6 +215,7 @@ export const GET = async (request: NextRequest) => {
                 clientesPersona,
                 clientesEmpresa,
                 usuario,
+                gravamenes,
             }, { status: 200 });
 
         } else if (idRol === "4") {
@@ -223,6 +231,7 @@ export const GET = async (request: NextRequest) => {
                 clientesPersona,
                 clientesEmpresa,
                 usuario,
+                gravamenes,
             ] = await Promise.all([
                 tipoPersonaService.getAll(),
                 regimenContribuyenteService.getAll(),
@@ -235,6 +244,7 @@ export const GET = async (request: NextRequest) => {
                 terceroService.getAllPersona(Number(idEmpresa), false),
                 terceroService.getAllEmpresa(Number(idEmpresa), false),
                 usuarioService.getByIdUser(Number(idUsuario)),
+                gravamenSevice.getAll(),
             ]);
 
             return NextResponse.json({
@@ -249,6 +259,7 @@ export const GET = async (request: NextRequest) => {
                 clientesPersona,
                 clientesEmpresa,
                 usuario,
+                gravamenes,
             }, { status: 200 });
         } else {
             return NextResponse.json({ message: "Rol no reconocido" }, { status: 400 });

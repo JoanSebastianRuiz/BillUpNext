@@ -15,15 +15,17 @@ import { UbicacionVentaDTO } from "@/dto/UbicacionVentaDTO";
 import { VentaDTO } from "@/dto/VentaDTO";
 import { DetalleVentaDTO } from "@/dto/DetalleVentaDTO";
 import { TipoMedioPagoDTO } from "@/dto/TipoMedioPagoDTO";
+import { useGravamenContext } from "./GravamenContext";
 
 export const LoadDataContextProvider = () => {
     const { setCajas, setDetallesCajas, setMovimientos } = useCajaContext();
     const { setCompras, setDetallesCompras } = useCompraContext()
-    const { setTiposPersona, setRegimenesContribuyente, setEmpresas, obtenerEmpresas } = useEmpresaContext();
+    const { setTiposPersona, setRegimenesContribuyente, setEmpresas } = useEmpresaContext();
     const { setCategorias, setProductos, setGravamenesProducto } = useProductoContext();
     const { setClientesPersona, setClientesEmpresa, setProveedoresPersona, setProveedoresEmpresa, setProveedoresProducto } = useTerceroContext();
     const { setDepartamentos, setMunicipios, setRoles, setTiposDocumento, setUsuario, setUsuarios } = useUsuarioContext();
     const { setDetallesVentas, setTiposMedioPago, setUbicacionesVenta, setVentas } = useVentaContext();
+    const { setGravamenes } = useGravamenContext();
 
     const { data: session, status } = useSession();
     const idEmpresa = session?.user?.idEmpresa;
@@ -70,7 +72,8 @@ export const LoadDataContextProvider = () => {
                         detallesVentas,
                         tiposMedioPago,
                         ubicacionesVenta,
-                        ventas
+                        ventas,
+                        gravamenes,
                     } = data.data;
 
                     setCajas(cajas);
@@ -99,6 +102,7 @@ export const LoadDataContextProvider = () => {
                     setTiposMedioPago(tiposMedioPago as TipoMedioPagoDTO[]);
                     setUbicacionesVenta(ubicacionesVenta as UbicacionVentaDTO[]);
                     setVentas(ventas as VentaDTO[]);
+                    setGravamenes(gravamenes);
                 }
 
             } catch (error) {
