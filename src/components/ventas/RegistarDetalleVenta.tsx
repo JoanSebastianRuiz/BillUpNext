@@ -29,7 +29,7 @@ const RegistrarDetalleVenta = ({
   setContadorDetalles,
 }: RegistrarDetalleVentaProps) => {
   const { productos } = useProductoContext();
-  const [productosFiltrados, setProductosFiltrados] = useState(productos);
+  const [productosFiltrados, setProductosFiltrados] = useState(productos.filter((producto) => producto.stockProducto > 0));
   const [success, setSuccess] = useState<string | null>(null);
 
   const {
@@ -46,7 +46,7 @@ const RegistrarDetalleVenta = ({
   const cantidadDetalleVenta = watch("cantidadDetalleVenta");
 
   useEffect(() => {
-    let filtrados = [...productos];
+    let filtrados = [...productos.filter((producto) => producto.stockProducto > 0)];
     for (const detalle of detallesVenta) {
       filtrados = filtrados.filter(
         (producto) => producto.idProducto !== detalle.idProducto
@@ -69,7 +69,7 @@ const RegistrarDetalleVenta = ({
     }
   }, [detalleVenta, setValue]);
 
-  // ✅ NUEVO: Función para verificar el stock usando el API
+  //  Función para verificar el stock usando el API
   const verificarStockAntesDeAgregar = async (
     idProducto: number,
     cantidadDetalleVenta: number
@@ -87,7 +87,7 @@ const RegistrarDetalleVenta = ({
       console.error("Error al verificar stock:", error);
       return false;
     }
-  };// Fin de la función de verificación de stock
+  };
 
   const onSubmit = async (data: DetalleVentaDTO) => {
     const producto = productos.find(
@@ -117,7 +117,7 @@ const RegistrarDetalleVenta = ({
       setSuccess("Producto actualizado");
       setModal(false);
     } else {
-      // ✅ NUEVO: Verificación de stock antes de agregar el producto
+      // Verificación de stock antes de agregar el producto
       const idProducto = parseInt(data.idProducto.toString());
       const cantidad = parseInt(data.cantidadDetalleVenta.toString());
 
@@ -171,7 +171,7 @@ const RegistrarDetalleVenta = ({
           errors={errors}
         >
           <option value="" disabled>
-            Seleccione un producto
+            {productosFiltrados.length > 0 ? 'Seleccione un producto' : 'No hay productos disponibles'}
           </option>
           {productosFiltrados.map((producto) => (
             <option key={producto.idProducto} value={producto.idProducto}>

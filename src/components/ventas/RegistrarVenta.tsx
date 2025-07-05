@@ -39,7 +39,7 @@ const RegistrarVenta = ({ setModal }: { setModal?: (value: boolean) => void }) =
 
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
-    const { productos } = useProductoContext();
+    const { productos, obtenerProductos } = useProductoContext();
     const [detallesVenta, setDetallesVenta] = useState<DetalleVentaDTO[]>([]);
     const [detalleSeleccionado, setDetalleSeleccionado] = useState<DetalleVentaDTO | null>(null);
 
@@ -71,6 +71,7 @@ const RegistrarVenta = ({ setModal }: { setModal?: (value: boolean) => void }) =
             setSuccess(respuesta.data.message);
             obtenerVentas();
             obtenerDetallesVentas();
+            obtenerProductos();
             setModal?.(false);
             setContadorDetalles(0);
 

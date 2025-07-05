@@ -1,11 +1,12 @@
 "use client";
 
-import { createContext, useState, useContext, ReactNode } from "react";
+import { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import { CajaDTO } from "@/dto/CajaDTO";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { DetalleCajaDTO } from "@/dto/DetalleCajaDTO";
 import { MovimientoDTO } from "@/dto/MovimientoDTO";
+import { useUsuarioContext } from "./UsuarioContext";
 
 
 interface CajaContextType {
@@ -42,6 +43,7 @@ export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) =
     const idEmpresa = session?.user?.idEmpresa;
     const idRol = session?.user?.idRol;
     const idUsuario = session?.user?.idUsuario;
+    const { usuario } = useUsuarioContext();
 
 
     const obtenerCajas = async () => {
@@ -97,6 +99,28 @@ export const CajaContextProvider: React.FC<CajaProviderProps> = ({ children }) =
             console.error("Error obteniendo detalles cajas", error);
         }
     };
+
+    const obtenerCajaAbierta = async () => {
+        try {
+            const response = await axios.get(`/api/cajas/caja-abierta-usuario/${usuario.idUsuario}`);
+            if (response.status === 200) {
+                setCajaSeleccionada(response.data);
+                if (response.data !== 0) {
+                    obtenerDetalleCajaActual(response.data);
+                }
+            } else {
+                console.error("Error al obtener la caja abierta:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error en la solicitud:", error);
+        }
+    }
+
+    useEffect(() => {
+        if (usuario.idRol === 3) {
+            obtenerCajaAbierta();
+        }
+    }, [usuario]);
 
     return (
         <CajaContext.Provider value={{
